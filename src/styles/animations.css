@@ -1,0 +1,450 @@
+/**
+ * CENTRALIZED ANIMATION SYSTEM
+ * 
+ * This file contains all reusable animations for the application to prevent
+ * duplication and ensure consistency across components.
+ * 
+ * USAGE:
+ * - Use Tailwind utility classes like @apply animate-fade-in in component styles
+ * - Or apply classes directly in HTML like class="animate-slide-down"
+ * 
+ * ANIMATION CATEGORIES:
+ * 1. Scroll-based animations (fade-up, fade-in, slide-left)
+ * 2. Component animations (slide-down/up, fade-in/out, spin)
+ * 3. Progress animations (countdown, stripes, indeterminate, shimmer, pulse)
+ * 4. Utility classes with delays and controls
+ * 
+ * ACCESSIBILITY:
+ * - All animations respect prefers-reduced-motion
+ * - Fallbacks provided for older browsers
+ * 
+ * Modern CSS Animation Timeline Enhancements
+ * Progressive enhancement for scroll-based animations using modern CSS
+ * Fallback handled by Tailwind classes + scroll-animations.ts
+ */
+
+/* Modern browsers: Use CSS animation-timeline for scroll-based animations */
+@supports (animation-timeline: view()) {
+  .animate-fade-up {
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+
+  .animate-fade-in {
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+
+  .animate-slide-left {
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
+/* Enhanced accessibility - respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-slide-left {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Fallback visibility handling for older browsers (works with scroll-animations.ts) */
+@supports not (animation-timeline: view()) {
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-slide-left {
+    opacity: 0;
+  }
+
+  .animate-fade-up.visible,
+  .animate-fade-in.visible,
+  .animate-slide-left.visible {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* ==============================================
+   REUSABLE COMPONENT ANIMATIONS
+   ============================================== */
+
+/* Loading Spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ==============================================
+   SLIDE ANIMATIONS
+   ============================================== */
+
+/* Banner/Toast Slide Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* Left/Right Slide Animations */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* ==============================================
+   FADE ANIMATIONS
+   ============================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* ==============================================
+   PROGRESS ANIMATIONS
+   ============================================== */
+
+@keyframes progressCountdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 0;
+  }
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-progress-countdown {
+  transform-origin: left center;
+  animation: progressCountdown var(--duration, 5000ms) linear forwards;
+}
+
+.animate-stripes {
+  animation: stripes 1s linear infinite;
+}
+
+.animate-indeterminate {
+  animation: indeterminate 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ==============================================
+   UTILITY ANIMATION CLASSES
+   ============================================== */
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.animate-slide-out-up {
+  animation: slideOutUp 0.3s ease-in forwards;
+}
+
+.animate-slide-out-down {
+  animation: slideOutDown 0.3s ease-in forwards;
+}
+
+.animate-slide-out-left {
+  animation: slideOutLeft 0.3s ease-in forwards;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 0.3s ease-in forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease-out;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+.animate-fade-out-scale {
+  animation: fadeOutScale 0.2s ease-in forwards;
+}
+
+/* ==============================================
+   ANIMATION DELAYS
+   ============================================== */
+
+.animate-delay-1 {
+  animation-delay: 100ms;
+}
+.animate-delay-2 {
+  animation-delay: 200ms;
+}
+.animate-delay-3 {
+  animation-delay: 300ms;
+}
+.animate-delay-4 {
+  animation-delay: 400ms;
+}
+.animate-delay-5 {
+  animation-delay: 500ms;
+}
+
+/* ==============================================
+   ANIMATION STATES & CONTROLS
+   ============================================== */
+
+.animation-paused {
+  animation-play-state: paused;
+}
+
+.animation-running {
+  animation-play-state: running;
+}
+
+/* Hover to pause (useful for progress bars in toasts) */
+.hover-pause:hover {
+  animation-play-state: paused;
+}
+
+/* ==============================================
+   RESPONSIVE & ACCESSIBILITY
+   ============================================== */
+
+/* Enhanced accessibility - respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin,
+  .animate-slide-down,
+  .animate-slide-up,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-slide-out-up,
+  .animate-slide-out-down,
+  .animate-slide-out-left,
+  .animate-slide-out-right,
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-fade-in-scale,
+  .animate-fade-out-scale,
+  .animate-progress-countdown {
+    animation: none !important;
+  }
+
+  /* Ensure immediate visibility for reduced motion users */
+  .animate-slide-down,
+  .animate-slide-up,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-fade-in,
+  .animate-fade-in-scale {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

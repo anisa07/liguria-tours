@@ -1,0 +1,96 @@
+---
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/types";
+import { cn } from "@/lib/utils";
+import type { HeroAction } from "./Hero.astro";
+
+export interface Props {
+  tourInfo: {
+    name: string;
+    date: string;
+    participants: number;
+    duration?: string;
+  };
+  locale?: Locale;
+  description?: string;
+  actions?: HeroAction[];
+}
+
+const { tourInfo, locale = "ru", actions = [], description = "" } = Astro.props;
+const { t } = await getPageTranslations(locale, ["hero", "common"]);
+
+const getActionButtonClasses = (actionVariant: string = "primary") => {
+  const baseClasses =
+    "inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm shadow-md";
+
+  switch (actionVariant) {
+    case "secondary":
+      return cn(
+        baseClasses,
+        "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
+      );
+    case "outline":
+      return cn(
+        baseClasses,
+        "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary"
+      );
+    default:
+      return cn(
+        baseClasses,
+        "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-foreground/75 focus:ring-primary"
+      );
+  }
+};
+---
+
+<div
+  class="bg-background/80 backdrop-blur-md rounded-2xl p-6 w-full lg:max-w-md shadow-md"
+>
+  <h3 class="text-xl font-semibold mb-4">{tourInfo.name}</h3>
+  <div class="text-lg mb-3">{tourInfo.date}</div>
+  <div class="flex items-center space-x-2 mb-4">
+    <div class="flex -space-x-2">
+      {
+        Array.from({
+          length: Math.min(tourInfo.participants, 5),
+        }).map((_, i) => (
+          <div class="w-8 h-8 bg-primary/70 rounded-full border-2 border-primary/95 flex items-center justify-center text-sm font-medium text-background">
+            +{i + 1}
+          </div>
+        ))
+      }
+    </div>
+    <span class="text-sm">
+      {tourInfo.participants}{" "}
+      {t("common.people_joined", "People Joined")}
+    </span>
+  </div>
+  <p class="text-foreground/80 text-md mb-6">{description}</p>
+
+  {
+    actions.length > 0 && (
+      <div class="flex flex-wrap justify-center gap-3">
+        {actions.map((action) => (
+          <a
+            href={action.href}
+            class={getActionButtonClasses(action.variant)}
+            target={action.external ? "_blank" : undefined}
+            rel={action.external ? "noopener noreferrer" : undefined}
+          >
+            {action.icon && (
+              <span class="mr-2" aria-hidden="true">
+                {action.icon}
+              </span>
+            )}
+            {action.label}
+            {action.external && (
+              <span class="ml-2 text-sm" aria-hidden="true">
+                ↗
+              </span>
+            )}
+          </a>
+        ))}
+      </div>
+    )
+  }
+</div>

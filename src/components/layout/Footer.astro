@@ -1,0 +1,445 @@
+---
+import { createT } from "@/i18n/t";
+import type { Locale } from "@/i18n/config";
+
+export interface SocialLink {
+  name: string;
+  href: string;
+  icon: string;
+  ariaLabel?: string;
+}
+
+export interface FooterLink {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
+export interface FooterSection {
+  title: string;
+  links: FooterLink[];
+}
+
+export interface Props {
+  locale?: Locale;
+  translations?: Record<string, any>[];
+  sections?: FooterSection[];
+  socialLinks?: SocialLink[];
+  showNewsletter?: boolean;
+  newsletterTitle?: string;
+  newsletterDescription?: string;
+  copyrightText?: string;
+  logoText?: string;
+  logoHref?: string;
+  showBackToTop?: boolean;
+  class?: string;
+}
+
+const {
+  locale = "en",
+  translations = [],
+  sections = [],
+  socialLinks = [],
+  showNewsletter = false,
+  newsletterTitle,
+  newsletterDescription,
+  copyrightText,
+  logoText,
+  logoHref = "/",
+  showBackToTop = true,
+  class: className = "",
+} = Astro.props;
+
+// Create translation function
+const t = createT(translations);
+
+const currentYear = new Date().getFullYear();
+const defaultCopyright =
+  copyrightText ||
+  t(
+    "footer.copyright",
+    `© ${currentYear} ${logoText || t("footer.company_name", "Your Company")}. ${t("footer.rights_reserved", "All rights reserved")}.`
+  );
+---
+
+<footer
+  class={`bg-background border-t border-border ${className}`}
+  role="contentinfo"
+>
+  <div class="container mx-auto px-4 py-12">
+    <!-- Main Footer Content -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <!-- Brand/Company Section -->
+      <div class="col-span-1 lg:col-span-1">
+        {
+          logoText && (
+            <a
+              href={logoHref}
+              class="inline-block mb-4 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md"
+            >
+              <span class="text-xl font-bold text-foreground">{logoText}</span>
+            </a>
+          )
+        }
+
+        <!-- Company description slot -->
+        <div class="text-muted-foreground text-sm leading-relaxed">
+          <slot name="description">
+            <p>
+              {
+                t(
+                  "footer.company_description",
+                  "Building exceptional digital experiences with modern web technologies."
+                )
+              }
+            </p>
+          </slot>
+        </div>
+
+        <!-- Social Links -->
+        {
+          socialLinks.length > 0 && (
+            <div class="mt-6">
+              <h3 class="text-sm font-medium text-foreground mb-3">
+                {t("footer.follow_us", "Follow us")}
+              </h3>
+              <div class="flex space-x-3">
+                {socialLinks.map((social) => (
+                  <a
+                    href={social.href}
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-1 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    aria-label={
+                      social.ariaLabel ||
+                      t("footer.follow_on", `Follow us on ${social.name}`, {
+                        platform: social.name,
+                      })
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span class="text-lg" aria-hidden="true">
+                      {social.icon}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Link Sections -->
+      {
+        sections.map((section) => (
+          <div class="col-span-1">
+            <h3 class="text-sm font-medium text-foreground mb-4">
+              {section.title}
+            </h3>
+            <ul class="space-y-3">
+              {section.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                  >
+                    {link.label}
+                    {link.external && (
+                      <span class="ml-1 text-xs" aria-hidden="true">
+                        ↗
+                      </span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+
+      <!-- Newsletter Section -->
+      {
+        showNewsletter && (
+          <div class="col-span-1 md:col-span-2 lg:col-span-1">
+            <h3 class="text-sm font-medium text-foreground mb-4">
+              {newsletterTitle ||
+                t("footer.newsletter.title", "Subscribe to our newsletter")}
+            </h3>
+            <p class="text-sm text-muted-foreground mb-4">
+              {newsletterDescription ||
+                t(
+                  "footer.newsletter.description",
+                  "Get the latest updates and news delivered to your inbox."
+                )}
+            </p>
+
+            <!-- Alert container for newsletter messages -->
+            <div id="newsletter-alert-container" class="mb-4"></div>
+            
+            <form 
+              class="space-y-3" 
+              action="#" 
+              method="POST"
+              data-success-message={t("footer.newsletter.success", "Thank you for subscribing! Please check your email for confirmation.")}
+              data-error-message={t("footer.newsletter.error", "Please enter a valid email address")}
+            >
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="email"
+                  name="email"
+                  id="newsletter-email"
+                  placeholder={t(
+                    "footer.newsletter.email_placeholder",
+                    "Enter your email"
+                  )}
+                  required
+                  class="flex-1 px-3 py-2 bg-background border border-border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                  aria-label={t(
+                    "footer.newsletter.email_label",
+                    "Email address for newsletter"
+                  )}
+                />
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+                >
+                  {t("footer.newsletter.subscribe", "Subscribe")}
+                </button>
+              </div>
+              <p class="text-xs text-muted-foreground">
+                {t(
+                  "footer.newsletter.privacy_notice",
+                  "We respect your privacy. Unsubscribe at any time."
+                )}
+              </p>
+            </form>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Additional content slot -->
+    <slot name="content" />
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-border pt-8 mt-8">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- Copyright -->
+        <div class="text-sm text-muted-foreground">
+          {defaultCopyright}
+        </div>
+
+        <!-- Legal Links -->
+        <div class="flex items-center space-x-4 text-sm">
+          <slot name="legal">
+            <a
+              href="/privacy"
+              class="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+            >
+              {t("footer.legal.privacy", "Privacy Policy")}
+            </a>
+            <a
+              href="/terms"
+              class="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+            >
+              {t("footer.legal.terms", "Terms of Service")}
+            </a>
+          </slot>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to Top Button -->
+  {
+    showBackToTop && (
+      <button
+        id="back-to-top"
+        class="fixed bottom-6 right-6 w-12 h-12 bg-primary text-primary-foreground rounded-full shadow-lg opacity-0 invisible transform translate-y-4 transition-all duration-300 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-50"
+        aria-label={t("footer.back_to_top", "Back to top")}
+        title={t("footer.back_to_top", "Back to top")}
+      >
+        <span class="text-lg" aria-hidden="true">
+          ↑
+        </span>
+      </button>
+    )
+  }
+</footer>
+
+<script>
+  // Back to top functionality
+  function initBackToTop() {
+    const backToTopButton = document.getElementById("back-to-top");
+    if (!backToTopButton) return;
+
+    function toggleButtonVisibility() {
+      const scrolled = window.scrollY > 300;
+
+      if (scrolled) {
+        backToTopButton!.classList.remove(
+          "opacity-0",
+          "invisible",
+          "translate-y-4"
+        );
+        backToTopButton!.classList.add(
+          "opacity-100",
+          "visible",
+          "translate-y-0"
+        );
+      } else {
+        backToTopButton!.classList.add(
+          "opacity-0",
+          "invisible",
+          "translate-y-4"
+        );
+        backToTopButton!.classList.remove(
+          "opacity-100",
+          "visible",
+          "translate-y-0"
+        );
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+
+    // Show/hide button based on scroll position
+    window.addEventListener("scroll", toggleButtonVisibility);
+
+    // Handle click
+    backToTopButton.addEventListener("click", scrollToTop);
+
+    // Handle keyboard
+    backToTopButton.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        scrollToTop();
+      }
+    });
+
+    // Initial check
+    toggleButtonVisibility();
+  }
+
+  // Newsletter form enhancement
+  function initNewsletter() {
+    const newsletterForm = document.querySelector(
+      'form[action="#"]'
+    ) as HTMLFormElement;
+    if (!newsletterForm) return;
+
+    newsletterForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const emailInput = newsletterForm.querySelector(
+        'input[type="email"]'
+      ) as HTMLInputElement;
+      const submitButton = newsletterForm.querySelector(
+        'button[type="submit"]'
+      ) as HTMLButtonElement;
+
+      if (!emailInput || !submitButton) return;
+
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      // Basic email validation
+      const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!EMAIL_REGEX.test(email)) {
+        const errorMessage = newsletterForm.dataset.errorMessage || 
+                           'Please enter a valid email address';
+        emailInput.focus();
+        emailInput.setCustomValidity(errorMessage);
+        emailInput.reportValidity();
+        return;
+      }
+
+      // Reset custom validity
+      emailInput.setCustomValidity("");
+
+      // Disable form during submission
+      submitButton.disabled = true;
+      const originalText = submitButton.textContent;
+      submitButton.textContent = "Subscribing...";
+
+      // Simulate API call (replace with actual implementation)
+      setTimeout(() => {
+        // Show success message using Alert component
+        const alertContainer = (document.querySelector('#newsletter-alert-container') || 
+                              newsletterForm.parentElement) as HTMLElement;
+        
+        // Check if AlertUtils is available (from Alert.astro component)
+        interface AlertUtilsInterface {
+          show: (container: HTMLElement, options: {
+            variant?: string;
+            message: string;
+            dismissible?: boolean;
+            duration?: number;
+          }) => HTMLElement | null;
+        }
+        const alertUtils = (globalThis as typeof globalThis & { AlertUtils?: AlertUtilsInterface }).AlertUtils;
+        if (alertContainer && alertUtils) {
+          // Get translation from data attribute set on the form
+          const successMessage = newsletterForm.dataset.successMessage || 
+                                'Thank you for subscribing! Please check your email for confirmation.';
+          
+          alertUtils.show(alertContainer, {
+            variant: 'success',
+            message: successMessage,
+            dismissible: true,
+            duration: 5000
+          });
+        } 
+        // else {
+        //   // Fallback for when Alert component is not available
+        //   alert("Thank you for subscribing! Please check your email for confirmation.");
+        // }
+        
+        emailInput.value = "";
+        submitButton.disabled = false;
+        submitButton.textContent = originalText || "Subscribe";
+      }, 1000);
+    });
+  }
+
+  // Initialize features
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      initBackToTop();
+      initNewsletter();
+    });
+  } else {
+    initBackToTop();
+    initNewsletter();
+  }
+</script>
+
+<style>
+  /* Smooth transitions for back to top button */
+  #back-to-top {
+    transition:
+      opacity 0.3s ease-out,
+      visibility 0.3s ease-out,
+      transform 0.3s ease-out;
+  }
+
+  /* Focus states */
+  #back-to-top:focus {
+    transform: translateY(0) scale(1.05);
+  }
+
+  /* Newsletter form enhancements */
+  form input:invalid {
+    border-color: hsl(var(--destructive));
+  }
+
+  form input:valid {
+    border-color: hsl(var(--primary));
+  }
+</style>

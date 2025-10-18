@@ -1,0 +1,252 @@
+---
+import { ChevronDown, Check } from "@lucide/astro";
+import { locales, localeNames, type Locale } from "@/i18n/config";
+
+export interface Props {
+  currentLocale: Locale;
+  className?: string;
+  showFlag?: boolean;
+}
+
+const {
+  currentLocale = "en" as Locale,
+  className = "",
+  showFlag = false,
+} = Astro.props;
+
+// Get available languages
+const languages = locales.map((locale) => ({
+  label: localeNames[locale],
+  value: locale,
+  flag: locale === "en" ? "🇺🇸" : locale === "nl" ? "🇳🇱" : "",
+}));
+
+const currentLanguage = languages.find((lang) => lang.value === currentLocale);
+---
+
+<div
+  class={`language-switcher relative ${className}`}
+  data-current-locale={currentLocale}
+>
+  <!-- Toggle Button -->
+  <button
+    id="language-switcher-button"
+    class="flex items-center justify-between w-[150px] h-10 px-3 py-2 bg-background border border-border rounded-md hover:bg-accent/50 hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-label="Select language"
+  >
+    <span class="flex items-center gap-2">
+      {
+        showFlag && currentLanguage?.flag && (
+          <span class="text-sm">{currentLanguage.flag}</span>
+        )
+      }
+      <span class="text-sm font-medium">
+        {currentLanguage?.label || "Select language"}
+      </span>
+    </span>
+    <ChevronDown class="h-4 w-4 opacity-50" />
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div
+    id="language-switcher-menu"
+    class="absolute top-full left-0 mt-1 w-[140px] bg-popover border border-border rounded-md shadow-md z-50 hidden"
+    role="listbox"
+    aria-label="Language options"
+  >
+    <div class="p-1">
+      {
+        languages.map((language) => (
+          <button
+            class="language-option w-full flex items-center justify-between px-3 py-2 text-sm rounded-sm hover:bg-accent/50 hover:text-accent-foreground transition-colors"
+            role="option"
+            aria-selected={language.value === currentLocale ? "true" : "false"}
+            data-locale={language.value}
+          >
+            <span class="flex items-center gap-2">
+              {showFlag && language.flag && (
+                <span class="text-sm">{language.flag}</span>
+              )}
+              <span>{language.label}</span>
+            </span>
+            {language.value === currentLocale && <Check class="h-4 w-4" />}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  function initLanguageSwitcher() {
+    const switcher = document.querySelector(".language-switcher");
+    const button = document.getElementById("language-switcher-button");
+    const menu = document.getElementById("language-switcher-menu");
+    const options = document.querySelectorAll(".language-option");
+
+    if (!switcher || !button || !menu || !options.length) {
+      return;
+    }
+
+    let isOpen = false;
+
+    // Toggle dropdown
+    function toggleDropdown() {
+      if (!button || !menu) return;
+
+      isOpen = !isOpen;
+
+      if (isOpen) {
+        menu.classList.remove("hidden");
+        button.setAttribute("aria-expanded", "true");
+        // Focus first option
+        const firstOption = menu.querySelector(".language-option");
+        if (firstOption) {
+          (firstOption as HTMLElement).focus();
+        }
+      } else {
+        menu.classList.add("hidden");
+        button.setAttribute("aria-expanded", "false");
+        button.focus();
+      }
+    }
+
+    // Close dropdown
+    function closeDropdown() {
+      if (!button || !menu) return;
+
+      if (isOpen) {
+        isOpen = false;
+        menu.classList.add("hidden");
+        button.setAttribute("aria-expanded", "false");
+      }
+    }
+
+    // Handle locale change
+    function changeLocale(newLocale: string) {
+      if (!switcher) return;
+
+      const currentPath = window.location.pathname;
+      const currentLocale = switcher.getAttribute("data-current-locale");
+
+      if (currentLocale && newLocale !== currentLocale) {
+        // Replace locale in URL path
+        const pathSegments = currentPath
+          .split("/")
+          .filter((segment) => segment);
+
+        if (pathSegments[0] === currentLocale) {
+          // Replace existing locale
+          pathSegments[0] = newLocale;
+        } else {
+          // Add locale to beginning
+          pathSegments.unshift(newLocale);
+        }
+
+        const newPath = "/" + pathSegments.join("/");
+        window.location.href = newPath;
+      }
+
+      closeDropdown();
+    }
+
+    // Event listeners
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    // Handle option clicks
+    options.forEach((option) => {
+      option.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const locale = (e.currentTarget as HTMLElement).getAttribute(
+          "data-locale"
+        );
+        if (locale) {
+          changeLocale(locale);
+        }
+      });
+
+      // Handle keyboard navigation
+      option.addEventListener("keydown", (e) => {
+        switch ((e as KeyboardEvent).key) {
+          case "Enter":
+          case " ": {
+            e.preventDefault();
+            const locale = (e.currentTarget as HTMLElement).getAttribute(
+              "data-locale"
+            );
+            if (locale) {
+              changeLocale(locale);
+            }
+            break;
+          }
+          case "Escape": {
+            e.preventDefault();
+            closeDropdown();
+            break;
+          }
+          case "ArrowDown": {
+            e.preventDefault();
+            const nextOption = (e.currentTarget as HTMLElement)
+              .nextElementSibling as HTMLElement;
+            if (nextOption) {
+              nextOption.focus();
+            }
+            break;
+          }
+          case "ArrowUp": {
+            e.preventDefault();
+            const prevOption = (e.currentTarget as HTMLElement)
+              .previousElementSibling as HTMLElement;
+            if (prevOption) {
+              prevOption.focus();
+            } else if (button) {
+              button.focus();
+              closeDropdown();
+            }
+            break;
+          }
+        }
+      });
+    });
+
+    // Handle button keyboard events
+    button.addEventListener("keydown", (e) => {
+      const keyEvent = e as KeyboardEvent;
+      switch (keyEvent.key) {
+        case "Enter":
+        case " ":
+        case "ArrowDown": {
+          e.preventDefault();
+          if (!isOpen) {
+            toggleDropdown();
+          }
+          break;
+        }
+        case "Escape": {
+          e.preventDefault();
+          if (isOpen) {
+            closeDropdown();
+          }
+          break;
+        }
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!switcher.contains(e.target as Node)) {
+        closeDropdown();
+      }
+    });
+  }
+
+  // Initialize language switcher (DOM is already ready in Astro)
+  initLanguageSwitcher();
+</script>

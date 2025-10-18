@@ -1,0 +1,343 @@
+---
+export interface CTAAction {
+  label: string;
+  href: string;
+  variant?: "primary" | "secondary" | "outline";
+  external?: boolean;
+  icon?: string;
+}
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  actions?: CTAAction[];
+  variant?: "default" | "centered" | "split" | "minimal" | "banner";
+  backgroundColor?: "primary" | "secondary" | "surface" | "gradient";
+  backgroundImage?: string;
+  overlayOpacity?: number;
+  size?: "sm" | "md" | "lg";
+  class?: string;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  actions = [],
+  variant = "default",
+  backgroundColor = "primary",
+  backgroundImage,
+  overlayOpacity = 0.8,
+  size = "md",
+  class: className = "",
+} = Astro.props;
+
+const getBackgroundClasses = (bgType: string) => {
+  switch (bgType) {
+    case "secondary":
+      return "bg-secondary text-secondary-foreground";
+    case "surface":
+      return "bg-surface-2 text-foreground";
+    case "gradient":
+      return "bg-gradient-to-r from-primary to-secondary text-primary-foreground";
+    default:
+      return "bg-primary text-primary-foreground";
+  }
+};
+
+const getSizeClasses = (size: string) => {
+  switch (size) {
+    case "sm":
+      return variant === "banner" ? "py-8" : "py-12";
+    case "lg":
+      return variant === "banner" ? "py-16 md:py-20" : "py-20 md:py-28";
+    default:
+      return variant === "banner" ? "py-12" : "py-16 md:py-20";
+  }
+};
+
+const getActionButtonClasses = (
+  actionVariant: string = "primary",
+  isOnPrimary: boolean = false
+) => {
+  const baseClasses =
+    "inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+
+  if (isOnPrimary) {
+    switch (actionVariant) {
+      case "secondary":
+        return `${baseClasses} bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary`;
+      case "outline":
+        return `${baseClasses} border-2 border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground hover:text-primary focus:ring-primary-foreground`;
+      default:
+        return `${baseClasses} bg-background text-foreground hover:bg-background/90 focus:ring-background`;
+    }
+  } else {
+    switch (actionVariant) {
+      case "secondary":
+        return `${baseClasses} bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary`;
+      case "outline":
+        return `${baseClasses} border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary`;
+      default:
+        return `${baseClasses} bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary`;
+    }
+  }
+};
+
+const sectionClasses = [
+  "relative",
+  getSizeClasses(size),
+  !backgroundImage ? getBackgroundClasses(backgroundColor) : "text-white",
+  variant === "banner" ? "border-t border-b border-border/20" : "",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+
+const isOnPrimaryBg =
+  backgroundColor === "primary" ||
+  backgroundColor === "gradient" ||
+  backgroundImage;
+---
+
+<section class={sectionClasses}>
+  <!-- Background Elements -->
+  {
+    backgroundImage && (
+      <div class="absolute inset-0 z-0">
+        <img
+          src={backgroundImage}
+          alt=""
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div
+          class="absolute inset-0"
+          style={`background-color: rgb(var(--color-background)); opacity: ${overlayOpacity}`}
+        />
+      </div>
+    )
+  }
+
+  <div class="container mx-auto px-4 relative z-10">
+    {
+      variant === "split" ? (
+        // Split Layout
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div class="space-y-6">
+            {subtitle && (
+              <div
+                class={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                  isOnPrimaryBg
+                    ? "bg-background/10 text-primary-foreground"
+                    : "bg-primary/10 text-primary"
+                }`}
+              >
+                {subtitle}
+              </div>
+            )}
+
+            <h2
+              class={`font-bold leading-tight ${
+                size === "sm"
+                  ? "text-2xl md:text-3xl"
+                  : size === "lg"
+                    ? "text-3xl md:text-4xl lg:text-5xl"
+                    : "text-3xl md:text-4xl"
+              }`}
+            >
+              {title}
+            </h2>
+
+            {description && (
+              <p
+                class={`leading-relaxed ${
+                  isOnPrimaryBg
+                    ? "text-primary-foreground/90"
+                    : "text-muted-foreground"
+                } ${
+                  size === "lg" ? "text-lg md:text-xl" : "text-base md:text-lg"
+                }`}
+              >
+                {description}
+              </p>
+            )}
+          </div>
+
+          <div class="flex flex-wrap gap-4 lg:justify-end">
+            {actions.map((action) => (
+              <a
+                href={action.href}
+                class={getActionButtonClasses(action.variant, !!isOnPrimaryBg)}
+                target={action.external ? "_blank" : undefined}
+                rel={action.external ? "noopener noreferrer" : undefined}
+              >
+                {action.icon && (
+                  <span class="mr-2" aria-hidden="true">
+                    {action.icon}
+                  </span>
+                )}
+                {action.label}
+                {action.external && (
+                  <span class="ml-2 text-sm" aria-hidden="true">
+                    ↗
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : (
+        // Standard Layouts (default, centered, minimal, banner)
+        <div
+          class={`space-y-8 ${variant === "centered" ? "text-center max-w-4xl mx-auto" : ""}`}
+        >
+          {subtitle && (
+            <div
+              class={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                variant === "centered" ? "mx-auto" : ""
+              } ${
+                isOnPrimaryBg
+                  ? "bg-background/10 text-primary-foreground"
+                  : "bg-primary/10 text-primary"
+              }`}
+            >
+              {subtitle}
+            </div>
+          )}
+
+          <h2
+            class={`font-bold leading-tight ${
+              variant === "banner"
+                ? "text-2xl md:text-3xl"
+                : size === "sm"
+                  ? "text-2xl md:text-3xl"
+                  : size === "lg"
+                    ? "text-4xl md:text-5xl lg:text-6xl"
+                    : "text-3xl md:text-4xl lg:text-5xl"
+            }`}
+          >
+            {title}
+          </h2>
+
+          {description && (
+            <p
+              class={`leading-relaxed max-w-3xl ${
+                variant === "centered" ? "mx-auto" : ""
+              } ${isOnPrimaryBg ? "text-primary-foreground/90" : "text-muted-foreground"} ${
+                variant === "banner" || size === "sm"
+                  ? "text-base"
+                  : size === "lg"
+                    ? "text-lg md:text-xl"
+                    : "text-base md:text-lg"
+              }`}
+            >
+              {description}
+            </p>
+          )}
+
+          {actions.length > 0 && (
+            <div
+              class={`flex flex-wrap gap-4 pt-4 ${
+                variant === "centered"
+                  ? "justify-center"
+                  : variant === "banner"
+                    ? "justify-center sm:justify-start"
+                    : "justify-start"
+              }`}
+            >
+              {actions.map((action) => (
+                <a
+                  href={action.href}
+                  class={getActionButtonClasses(
+                    action.variant,
+                    !!isOnPrimaryBg
+                  )}
+                  target={action.external ? "_blank" : undefined}
+                  rel={action.external ? "noopener noreferrer" : undefined}
+                >
+                  {action.icon && (
+                    <span class="mr-2" aria-hidden="true">
+                      {action.icon}
+                    </span>
+                  )}
+                  {action.label}
+                  {action.external && (
+                    <span class="ml-2 text-sm" aria-hidden="true">
+                      ↗
+                    </span>
+                  )}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    <!-- Additional Content Slot -->
+    <div class="mt-12">
+      <slot name="content" />
+    </div>
+  </div>
+
+  <!-- Decorative Elements -->
+  {
+    backgroundColor === "gradient" && (
+      <>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-background/5 rounded-full blur-3xl" />
+        <div class="absolute bottom-0 left-0 w-72 h-72 bg-background/5 rounded-full blur-3xl" />
+      </>
+    )
+  }
+</section>
+
+<style>
+  /* Gradient background animation */
+  .bg-gradient-to-r {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Focus styles for CTA buttons */
+  .focus\:ring-primary:focus {
+    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity));
+  }
+
+  .focus\:ring-secondary:focus {
+    --tw-ring-color: rgb(var(--color-secondary) / var(--tw-ring-opacity));
+  }
+
+  .focus\:ring-background:focus {
+    --tw-ring-color: rgb(var(--color-background) / var(--tw-ring-opacity));
+  }
+
+  .focus\:ring-primary-foreground:focus {
+    --tw-ring-color: rgb(
+      var(--color-primary-foreground) / var(--tw-ring-opacity)
+    );
+  }
+
+  /* Ensure good contrast for buttons on dark backgrounds */
+  .text-white {
+    color: rgb(var(--color-primary-foreground));
+  }
+
+  /* Smooth transitions */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+</style>

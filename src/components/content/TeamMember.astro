@@ -1,0 +1,449 @@
+---
+import { cn } from "@/lib/utils";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import { Image } from "astro:assets";
+import Card from "./Card.astro";
+
+export interface SocialLink {
+  platform: string;
+  url: string;
+  icon?: string;
+  handle?: string;
+}
+
+export interface TeamMember {
+  name: string;
+  title: string;
+  bio?: string;
+  avatar: string;
+  email?: string;
+  socialLinks?: SocialLink[];
+  skills?: string[];
+  location?: string;
+  joinDate?: string;
+  featured?: boolean;
+}
+
+export interface Props {
+  member?: TeamMember;
+  members?: TeamMember[];
+  variant?: "card" | "minimal" | "detailed" | "grid";
+  showBio?: boolean;
+  showSocial?: boolean;
+  showSkills?: boolean;
+  showEmail?: boolean;
+  showLocation?: boolean;
+  columns?: 2 | 3 | 4;
+  class?: string;
+  locale?: Locale;
+}
+
+const {
+  member,
+  members = [],
+  variant = "card",
+  showBio = true,
+  showSocial = true,
+  showSkills = false,
+  showEmail = false,
+  showLocation = false,
+  columns = 3,
+  class: className = "",
+  locale = "en",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["team", "common"]);
+
+// Use single member or multiple members
+const singleMember = member;
+const isMultipleMembers = variant === "grid" && members.length > 0;
+
+const getGridClasses = (cols: number) => {
+  switch (cols) {
+    case 2:
+      return "grid-cols-1 md:grid-cols-2";
+    case 4:
+      return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+    default:
+      return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+  }
+};
+
+// Card styling is now handled by the Card component
+
+const getSocialIcon = (platform: string) => {
+  const icons: Record<string, string> = {
+    twitter: "𝕏",
+    linkedin: "💼",
+    github: "👨‍💻",
+    dribbble: "🎨",
+    behance: "🎨",
+    instagram: "📷",
+    facebook: "👥",
+    youtube: "📺",
+    website: "🌐",
+    email: "📧",
+  };
+
+  return icons[platform.toLowerCase()] || "🔗";
+};
+
+const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
+---
+
+{
+  isMultipleMembers ? (
+    // Multiple Members Grid
+    <section class={sectionClasses}>
+      <div class="container mx-auto px-4">
+        <div class={cn("grid gap-6 md:gap-8", getGridClasses(columns))}>
+          {members.map((memberItem, index) => (
+            <Card
+              variant="elevated"
+              padding="lg"
+              clickable={true}
+              animationDelay={index > 0 ? Math.min(index, 5) : 0}
+              className={cn(
+                "relative",
+                memberItem.featured && "ring-2 ring-primary/20"
+              )}
+            >
+              {/* Featured Badge */}
+              {memberItem.featured && (
+                <div class="absolute top-4 right-4 z-10">
+                  <span class="inline-flex items-center px-2 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium">
+                    {t("team.team_lead", "Team Lead")}
+                  </span>
+                </div>
+              )}
+
+              {/* Avatar */}
+              <div class="flex items-center space-x-4 mb-6">
+                <div class="relative">
+                  <Image
+                    src={memberItem.avatar}
+                    alt={memberItem.name}
+                    width={64}
+                    height={64}
+                    class="w-16 h-16 object-cover rounded-full"
+                    loading="lazy"
+                  />
+
+                  {/* Online Status Indicator (optional) */}
+                  <div class="absolute bottom-1 right-1 w-4 h-4 bg-success border-2 border-background rounded-full" />
+                </div>
+
+                {/* Basic Info */}
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-lg font-semibold text-foreground mb-1">
+                    {memberItem.name}
+                  </h3>
+
+                  <p class="text-primary font-medium mb-2">
+                    {memberItem.title}
+                  </p>
+
+                  {/* Location */}
+                  {showLocation && memberItem.location && (
+                    <div class="flex items-center text-sm text-muted-foreground mb-2">
+                      <span class="mr-1" aria-hidden="true">
+                        📍
+                      </span>
+                      {memberItem.location}
+                    </div>
+                  )}
+
+                  {/* Email */}
+                  {showEmail && memberItem.email && (
+                    <div class="flex items-center text-sm mb-2">
+                      <a
+                        href={`mailto:${memberItem.email}`}
+                        class="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
+                      >
+                        <span class="mr-1" aria-hidden="true">
+                          📧
+                        </span>
+                        {memberItem.email}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Bio */}
+              {showBio && memberItem.bio && (
+                <p class="text-muted-foreground text-sm leading-relaxed mb-4">
+                  {memberItem.bio}
+                </p>
+              )}
+
+              {/* Skills */}
+              {showSkills &&
+                memberItem.skills &&
+                memberItem.skills.length > 0 && (
+                  <div class="mb-4">
+                    <h4 class="text-sm font-medium text-foreground mb-2">
+                      {t("team.skills", "Skills")}
+                    </h4>
+                    <div class="flex flex-wrap gap-2">
+                      {memberItem.skills.slice(0, 5).map((skill) => (
+                        <span class="inline-flex items-center px-2 py-1 bg-surface-1 text-muted-foreground rounded-full text-xs">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Social Links */}
+              {showSocial &&
+                memberItem.socialLinks &&
+                memberItem.socialLinks.length > 0 && (
+                  <div class="flex gap-3">
+                    {memberItem.socialLinks.map((social) => (
+                      <a
+                        href={social.url}
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-1 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        aria-label={`${memberItem.name} on ${social.platform}`}
+                        title={social.handle || social.platform}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span class="text-sm" aria-hidden="true">
+                          {social.icon || getSocialIcon(social.platform)}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : singleMember ? (
+    // Single Member Card
+    <Card
+      variant={variant === "minimal" ? "flat" : "elevated"}
+      padding={variant === "detailed" ? "xl" : "lg"}
+      clickable={true}
+      className={cn(
+        "max-w-md mx-auto relative",
+        singleMember.featured && "ring-2 ring-primary/20",
+        className
+      )}
+    >
+      {/* Featured Badge */}
+      {singleMember.featured && (
+        <div class="absolute top-4 right-4 z-10">
+          <span class="inline-flex items-center px-2 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium">
+            {t("team.team_lead", "Team Lead")}
+          </span>
+        </div>
+      )}
+
+      {/* Avatar */}
+      <div
+        class={cn(
+          "flex",
+          variant === "minimal"
+            ? "justify-center mb-6"
+            : "items-start space-x-6 mb-6"
+        )}
+      >
+        <div class="relative">
+          <Image
+            src={singleMember.avatar}
+            alt={singleMember.name}
+            width={
+              variant === "detailed" ? 96 : variant === "minimal" ? 128 : 80
+            }
+            height={
+              variant === "detailed" ? 96 : variant === "minimal" ? 128 : 80
+            }
+            class={cn(
+              "object-cover rounded-full",
+              variant === "detailed"
+                ? "w-24 h-24"
+                : variant === "minimal"
+                  ? "w-32 h-32 mx-auto"
+                  : "w-20 h-20"
+            )}
+            loading="lazy"
+          />
+
+          {/* Online Status Indicator */}
+          <div class="absolute bottom-1 right-1 w-5 h-5 bg-success border-2 border-background rounded-full" />
+        </div>
+
+        {/* Basic Info */}
+        {variant !== "minimal" && (
+          <div class="flex-1 min-w-0">
+            <h3 class="text-2xl font-bold text-foreground mb-2">
+              {singleMember.name}
+            </h3>
+
+            <p class="text-primary font-semibold text-lg mb-3">
+              {singleMember.title}
+            </p>
+
+            {/* Location */}
+            {showLocation && singleMember.location && (
+              <div class="flex items-center text-muted-foreground mb-2">
+                <span class="mr-2" aria-hidden="true">
+                  📍
+                </span>
+                {singleMember.location}
+              </div>
+            )}
+
+            {/* Email */}
+            {showEmail && singleMember.email && (
+              <div class="flex items-center mb-3">
+                <a
+                  href={`mailto:${singleMember.email}`}
+                  class="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
+                >
+                  <span class="mr-2" aria-hidden="true">
+                    📧
+                  </span>
+                  {singleMember.email}
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Minimal Variant Info */}
+      {variant === "minimal" && (
+        <div class="text-center mb-6">
+          <h3 class="text-2xl font-bold text-foreground mb-2">
+            {singleMember.name}
+          </h3>
+
+          <p class="text-primary font-semibold text-lg mb-3">
+            {singleMember.title}
+          </p>
+
+          {/* Location */}
+          {showLocation && singleMember.location && (
+            <div class="text-muted-foreground mb-2">
+              <span class="mr-1" aria-hidden="true">
+                📍
+              </span>
+              {singleMember.location}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Bio */}
+      {showBio && singleMember.bio && (
+        <p
+          class={cn(
+            "text-muted-foreground leading-relaxed mb-6",
+            variant === "minimal" && "text-center"
+          )}
+        >
+          {singleMember.bio}
+        </p>
+      )}
+
+      {/* Skills */}
+      {showSkills && singleMember.skills && singleMember.skills.length > 0 && (
+        <div class="mb-6">
+          <h4
+            class={cn(
+              "font-semibold text-foreground mb-3",
+              variant === "minimal" && "text-center"
+            )}
+          >
+            {t("team.skills_expertise", "Skills & Expertise")}
+          </h4>
+          <div
+            class={cn(
+              "flex flex-wrap gap-2",
+              variant === "minimal" && "justify-center"
+            )}
+          >
+            {singleMember.skills.map((skill) => (
+              <span class="inline-flex items-center px-3 py-1 bg-surface-1 text-muted-foreground rounded-full text-sm">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Social Links */}
+      {showSocial &&
+        singleMember.socialLinks &&
+        singleMember.socialLinks.length > 0 && (
+          <div
+            class={cn("flex gap-4", variant === "minimal" && "justify-center")}
+          >
+            {singleMember.socialLinks.map((social) => (
+              <a
+                href={social.url}
+                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-1 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                aria-label={`${singleMember.name} on ${social.platform}`}
+                title={social.handle || social.platform}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span aria-hidden="true">
+                  {social.icon || getSocialIcon(social.platform)}
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
+    </Card>
+  ) : (
+    // Placeholder
+    <div
+      class={cn(
+        "max-w-md mx-auto bg-surface-1 border-2 border-dashed border-border rounded-lg p-8 text-center",
+        className
+      )}
+    >
+      <div class="text-4xl mb-4" aria-hidden="true">
+        👥
+      </div>
+      <h3 class="text-lg font-semibold text-foreground mb-2">
+        {t("team.no_members_available", "No Team Member Available")}
+      </h3>
+      <p class="text-muted-foreground">
+        {t(
+          "team.add_members_message",
+          "Add a member or members prop to display team information."
+        )}
+      </p>
+    </div>
+  )
+}
+
+<style>
+  /* Animations are now handled via global animations.css */
+
+  /* Hover effects for social links */
+  .hover\:bg-primary:hover {
+    background-color: rgb(var(--color-primary));
+  }
+
+  .hover\:text-primary-foreground:hover {
+    color: rgb(var(--color-primary-foreground));
+  }
+
+  /* Focus styles */
+  .focus\:ring-primary:focus {
+    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity));
+  }
+
+  /* Online status indicator uses CSS variable bg-success */
+</style>
+
+<!-- Animations are now handled via global animations.css -->

@@ -1,0 +1,574 @@
+---
+import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCcw } from "@lucide/astro";
+import { Image } from "astro:assets";
+
+export interface GalleryImage {
+  id: string;
+  src: string;
+  alt: string;
+  title?: string;
+  description?: string;
+  thumbnail?: string;
+}
+
+export interface Props {
+  images: GalleryImage[];
+  columns?: number;
+  gap?: number;
+  showThumbnails?: boolean;
+  showCaption?: boolean;
+  showFullscreen?: boolean;
+  lazy?: boolean;
+  aspectRatio?: "square" | "landscape" | "portrait" | "auto";
+  className?: string;
+  imageClassName?: string;
+  thumbnailClassName?: string;
+}
+
+const {
+  images = [],
+  columns = 3,
+  gap = 16,
+  showThumbnails = true,
+  showCaption = true,
+  showFullscreen = true,
+  lazy = true,
+  aspectRatio = "auto",
+  className = "",
+  imageClassName = "",
+  thumbnailClassName = "",
+} = Astro.props;
+
+// Get aspect ratio classes
+const getAspectRatioClasses = () => {
+  switch (aspectRatio) {
+    case "square":
+      return "aspect-square";
+    case "landscape":
+      return "aspect-video";
+    case "portrait":
+      return "aspect-[3/4]";
+    default:
+      return "";
+  }
+};
+
+// Get grid classes
+const getGridClasses = () => {
+  const colsMap = {
+    1: "grid-cols-1",
+    2: "grid-cols-1 sm:grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+    5: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
+    6: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6",
+  };
+  return colsMap[columns as keyof typeof colsMap] || "grid-cols-3";
+};
+---
+
+<!-- Main Gallery -->
+<div
+  id="image-gallery"
+  class={`grid ${getGridClasses()} ${className}`}
+  style={`gap: ${gap}px;`}
+  role="grid"
+  aria-label="Image gallery"
+  data-show-fullscreen={showFullscreen}
+  data-show-thumbnails={showThumbnails}
+  data-show-caption={showCaption}
+  data-lazy={lazy}
+>
+  {images.map((image, index) => (
+    <div
+      class={`
+        gallery-item group relative overflow-hidden rounded-lg bg-muted cursor-pointer
+        transform transition-all duration-200 hover:scale-105 hover:shadow-lg
+        focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2
+        ${getAspectRatioClasses()}
+      `}
+      data-index={index}
+      data-image-id={image.id}
+      data-src={image.src}
+      data-thumbnail={image.thumbnail || image.src}
+      data-alt={image.alt}
+      data-title={image.title || ""}
+      data-description={image.description || ""}
+      role="gridcell"
+    >
+      <!-- Image -->
+      <button
+        type="button"
+        class="gallery-button w-full h-full p-0 border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+        aria-label={`View ${image.title || image.alt} in fullscreen`}
+      >
+        <Image
+          src={image.thumbnail || image.src}
+          alt={image.alt}
+          class={`w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90 ${imageClassName}`}
+          loading={lazy ? "lazy" : "eager"}
+          width={400}
+          height={400}
+          format="webp"
+        />
+      </button>
+
+      <!-- Overlay -->
+      <div class="absolute inset-0 bg-overlay/0 group-hover:bg-overlay/20 transition-all duration-200"></div>
+
+      <!-- Zoom Icon -->
+      <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+        <button
+          type="button"
+          class="zoom-trigger bg-background/80 hover:bg-background rounded-full p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          aria-label={`View ${image.title || image.alt} in fullscreen`}
+          data-image-index={index}
+        >
+          <ZoomIn class="w-4 h-4 text-foreground" />
+        </button>
+      </div>
+
+      <!-- Caption -->
+      {showCaption && (image.title || image.description) && (
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 via-background/50 to-transparent p-4 text-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          {image.title && (
+            <h3 class="text-sm font-medium truncate">
+              {image.title}
+            </h3>
+          )}
+          {image.description && (
+            <p class="text-xs text-muted-foreground mt-1 line-clamp-2">
+              {image.description}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
+<!-- Fullscreen Modal -->
+<div
+  id="gallery-fullscreen"
+  class="fixed inset-0 z-50 bg-background/90 cursor-pointer hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="fullscreen-title"
+  tabindex="-1"
+>
+  <!-- Close Button -->
+  <button
+    type="button"
+    id="fullscreen-close"
+    class="absolute top-4 right-4 z-60 text-foreground hover:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md p-2"
+    aria-label="Close fullscreen view"
+  >
+    <X class="w-6 h-6" />
+  </button>
+
+  <!-- Navigation Arrows -->
+  <button
+    type="button"
+    id="fullscreen-prev"
+    class="absolute left-4 top-1/2 -translate-y-1/2 z-60 text-foreground hover:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md p-2 hidden"
+    aria-label="Previous image"
+  >
+    <ChevronLeft class="w-8 h-8" />
+  </button>
+
+  <button
+    type="button"
+    id="fullscreen-next"
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-60 text-foreground hover:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md p-2 hidden"
+    aria-label="Next image"
+  >
+    <ChevronRight class="w-8 h-8" />
+  </button>
+
+  <!-- Main Image Container -->
+  <div id="fullscreen-content" class="max-w-full max-h-full p-8 flex flex-col items-center justify-center overflow-hidden">
+    <div id="image-zoom-container" class="relative cursor-zoom-in">
+      <img
+        id="fullscreen-image"
+        src=""
+        alt=""
+        class="max-w-full max-h-full object-contain transition-transform duration-200"
+        draggable="false"
+      />
+    </div>
+
+    <!-- Fullscreen Caption -->
+    <div id="fullscreen-caption" class="mt-7 text-center text-foreground hidden">
+      <h2 id="fullscreen-title" class="text-xl font-medium"></h2>
+      <p id="fullscreen-description" class="text-muted-foreground mt-2 hidden"></p>
+    </div>
+  </div>
+
+  <!-- Thumbnails Navigation -->
+  <div id="fullscreen-thumbnails" class="absolute bottom-20 left-1/2 -translate-x-1/2 space-x-2 max-w-full overflow-x-auto px-4 hidden">
+    <!-- Thumbnails will be populated by JavaScript -->
+  </div>
+
+  <!-- Image Counter -->
+  <div id="fullscreen-counter" class="absolute top-4 left-4 text-foreground text-sm bg-background/80 border border-border px-3 py-1 rounded-md hidden">
+    <span id="current-image-number">1</span> / <span id="total-images">1</span>
+  </div>
+
+  <!-- Zoom Controls -->
+  <div id="zoom-controls" class="absolute bottom-4 right-4 gap-2 hidden">
+    <button
+      type="button"
+      id="zoom-out"
+      class="bg-background/80 border border-border text-foreground hover:bg-accent hover:text-accent-foreground p-2 rounded-md transition-colors"
+      aria-label="Zoom out"
+    >
+      <ZoomOut class="w-4 h-4" />
+    </button>
+    <button
+      type="button"
+      id="zoom-in"
+      class="bg-background/80 border border-border text-foreground hover:bg-accent hover:text-accent-foreground p-2 rounded-md transition-colors"
+      aria-label="Zoom in"
+    >
+      <ZoomIn class="w-4 h-4" />
+    </button>
+    <button
+      type="button"
+      id="zoom-reset"
+      class="bg-background/80 border border-border text-foreground hover:bg-accent hover:text-accent-foreground p-2 rounded-md transition-colors"
+      aria-label="Reset zoom"
+    >
+      <RotateCcw class="w-4 h-4" />
+    </button>
+  </div>
+</div>
+
+<script>
+  function initImageGallery() {
+    const gallery = document.getElementById('image-gallery');
+    const fullscreen = document.getElementById('gallery-fullscreen');
+    const fullscreenImage = document.getElementById('fullscreen-image') as HTMLImageElement;
+    const fullscreenTitle = document.getElementById('fullscreen-title');
+    const fullscreenDescription = document.getElementById('fullscreen-description');
+    const fullscreenCaption = document.getElementById('fullscreen-caption');
+    const fullscreenThumbnails = document.getElementById('fullscreen-thumbnails');
+    const fullscreenCounter = document.getElementById('fullscreen-counter');
+    const currentImageNumber = document.getElementById('current-image-number');
+    const totalImages = document.getElementById('total-images');
+    const closeBtn = document.getElementById('fullscreen-close');
+    const prevBtn = document.getElementById('fullscreen-prev');
+    const nextBtn = document.getElementById('fullscreen-next');
+    const zoomContainer = document.getElementById('image-zoom-container');
+    const zoomControls = document.getElementById('zoom-controls');
+
+    if (!gallery || !fullscreen) return;
+
+    // Zoom variables
+    let currentZoom = 1;
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let imagePosition = { x: 0, y: 0 };
+
+    const showFullscreen = gallery.getAttribute('data-show-fullscreen') === 'true';
+    const showThumbnails = gallery.getAttribute('data-show-thumbnails') === 'true';
+    const showCaption = gallery.getAttribute('data-show-caption') === 'true';
+
+    const galleryItems = gallery.querySelectorAll('.gallery-item');
+    const images = Array.from(galleryItems).map((item, index) => ({
+      index,
+      id: item.getAttribute('data-image-id') || '',
+      src: item.getAttribute('data-src') || '',
+      thumbnail: item.getAttribute('data-thumbnail') || '',
+      alt: item.getAttribute('data-alt') || '',
+      title: item.getAttribute('data-title') || '',
+      description: item.getAttribute('data-description') || '',
+      element: item
+    }));
+
+    let currentImageIndex = 0;
+
+    // Gallery item click handlers
+    galleryItems.forEach((item, index) => {
+      const button = item.querySelector('.gallery-button');
+      const zoomTrigger = item.querySelector('.zoom-trigger');
+      
+      if (button) {
+        button.addEventListener('click', () => {
+          currentImageIndex = index;
+          if (showFullscreen) {
+            openFullscreen(index);
+          }
+        });
+      }
+      
+      // Add click handler for zoom trigger button
+      if (zoomTrigger) {
+        zoomTrigger.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent triggering the gallery button
+          e.preventDefault();
+          currentImageIndex = index;
+          if (showFullscreen) {
+            openFullscreen(index);
+          }
+        });
+      }
+    });
+
+    // Fullscreen functions
+    function openFullscreen(index: number) {
+      if (!fullscreenImage) return;
+      
+      currentImageIndex = index;
+      const image = images[index];
+      
+      fullscreenImage.src = image.src;
+      fullscreenImage.alt = image.alt;
+      
+      // Update caption
+      if (showCaption && fullscreenTitle && fullscreenDescription && fullscreenCaption) {
+        if (image.title || image.description) {
+          fullscreenCaption.classList.remove('hidden');
+          fullscreenTitle.textContent = image.title;
+          
+          if (image.description) {
+            fullscreenDescription.textContent = image.description;
+            fullscreenDescription.classList.remove('hidden');
+          } else {
+            fullscreenDescription.classList.add('hidden');
+          }
+        } else {
+          fullscreenCaption.classList.add('hidden');
+        }
+      }
+      
+      // Update counter
+      if (fullscreenCounter && currentImageNumber && totalImages) {
+        fullscreenCounter.classList.remove('hidden');
+        currentImageNumber.textContent = (index + 1).toString();
+        totalImages.textContent = images.length.toString();
+      }
+      
+      // Show/hide navigation
+      if (images.length > 1 && prevBtn && nextBtn) {
+        prevBtn.classList.remove('hidden');
+        nextBtn.classList.remove('hidden');
+      }
+      
+      // Setup thumbnails
+      if (showThumbnails && images.length > 1 && fullscreenThumbnails) {
+        setupThumbnails();
+        fullscreenThumbnails.classList.remove('hidden');
+        fullscreenThumbnails.classList.add('flex');
+      }
+      
+      // Reset zoom
+      resetZoom();
+      
+      // Show zoom controls
+      if (zoomControls) {
+        zoomControls.classList.remove('hidden');
+        zoomControls.classList.add('flex');
+      }
+      
+      if (fullscreen) {
+        fullscreen.classList.remove('hidden');
+        fullscreen.classList.add('flex', 'items-center', 'justify-center');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus the fullscreen container for keyboard navigation
+        fullscreen.focus();
+      }
+    }
+
+    function closeFullscreen() {
+      if (!fullscreen) return;
+      
+      fullscreen.classList.add('hidden');
+      fullscreen.classList.remove('flex');
+      document.body.style.overflow = '';
+      
+      // Hide zoom controls and reset zoom
+      if (zoomControls) {
+        zoomControls.classList.add('hidden');
+        zoomControls.classList.remove('flex');
+      }
+      resetZoom();
+    }
+
+    function navigateFullscreen(direction: 'prev' | 'next') {
+      if (direction === 'prev') {
+        currentImageIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+      } else {
+        currentImageIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+      }
+      
+      openFullscreen(currentImageIndex);
+    }
+
+    function setupThumbnails() {
+      if (!fullscreenThumbnails) return;
+      
+      fullscreenThumbnails.innerHTML = '';
+      images.forEach((image, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `
+          flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200
+          ${index === currentImageIndex ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'}
+        `;
+        button.setAttribute('aria-label', `View ${image.title || image.alt}`);
+        
+        const img = document.createElement('img');
+        img.src = image.thumbnail;
+        img.alt = image.alt;
+        img.className = 'w-full h-full object-cover';
+        
+        button.appendChild(img);
+        button.addEventListener('click', () => openFullscreen(index));
+        fullscreenThumbnails.appendChild(button);
+      });
+    }
+
+    // Zoom functions
+    function resetZoom() {
+      currentZoom = 1;
+      imagePosition = { x: 0, y: 0 };
+      updateImageTransform();
+      updateCursor();
+    }
+
+    function updateImageTransform() {
+      if (fullscreenImage) {
+        fullscreenImage.style.transform = `scale(${currentZoom}) translate(${imagePosition.x}px, ${imagePosition.y}px)`;
+      }
+    }
+
+    function updateCursor() {
+      if (zoomContainer) {
+        zoomContainer.style.cursor = currentZoom === 1 ? 'zoom-in' : 'grab';
+      }
+    }
+
+    function zoomIn() {
+      currentZoom = Math.min(currentZoom * 1.5, 5);
+      updateImageTransform();
+      updateCursor();
+    }
+
+    function zoomOut() {
+      currentZoom = Math.max(currentZoom / 1.5, 1);
+      if (currentZoom === 1) {
+        imagePosition = { x: 0, y: 0 };
+      }
+      updateImageTransform();
+      updateCursor();
+    }
+
+    // Event listeners
+    closeBtn?.addEventListener('click', closeFullscreen);
+    prevBtn?.addEventListener('click', () => navigateFullscreen('prev'));
+    nextBtn?.addEventListener('click', () => navigateFullscreen('next'));
+
+    // Click outside to close
+    fullscreen.addEventListener('click', (e) => {
+      if (e.target === fullscreen) {
+        closeFullscreen();
+      }
+    });
+
+    // Zoom event listeners - ensure elements exist before adding listeners
+    const setupZoomListeners = () => {
+      const zoomInElement = document.getElementById('zoom-in');
+      const zoomOutElement = document.getElementById('zoom-out');
+      const zoomResetElement = document.getElementById('zoom-reset');
+      
+      zoomInElement?.addEventListener('click', zoomIn);
+      zoomOutElement?.addEventListener('click', zoomOut);
+      zoomResetElement?.addEventListener('click', resetZoom);
+    };
+    
+    // Setup zoom listeners immediately
+    setupZoomListeners();
+
+    // Image click to zoom
+    zoomContainer?.addEventListener('click', () => {
+      if (currentZoom === 1) {
+        zoomIn();
+      }
+    });
+
+    // Mouse wheel zoom
+    zoomContainer?.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        zoomIn();
+      } else {
+        zoomOut();
+      }
+    });
+
+    // Drag functionality when zoomed
+    zoomContainer?.addEventListener('mousedown', (e) => {
+      if (currentZoom > 1) {
+        isDragging = true;
+        dragStart = { x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y };
+        if (zoomContainer) {
+          zoomContainer.style.cursor = 'grabbing';
+        }
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging && currentZoom > 1) {
+        imagePosition = {
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y
+        };
+        updateImageTransform();
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        updateCursor();
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!fullscreen.classList.contains('hidden')) {
+        switch (e.key) {
+          case 'Escape':
+            closeFullscreen();
+            break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            navigateFullscreen('prev');
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            navigateFullscreen('next');
+            break;
+          case '+':
+          case '=':
+            e.preventDefault();
+            zoomIn();
+            break;
+          case '-':
+            e.preventDefault();
+            zoomOut();
+            break;
+          case '0':
+            e.preventDefault();
+            resetZoom();
+            break;
+        }
+      }
+    });
+  }
+
+  // Initialize gallery (DOM is already ready in Astro)
+  initImageGallery();
+</script>

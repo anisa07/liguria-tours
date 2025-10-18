@@ -1,0 +1,185 @@
+---
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  badge?: string;
+  badgeVariant?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "danger";
+  variant?: "default" | "bordered" | "elevated" | "flat";
+  padding?: "sm" | "md" | "lg" | "xl";
+  className?: string;
+  titleClassName?: string;
+  subtitleClassName?: string;
+  descriptionClassName?: string;
+  badgeClassName?: string;
+  href?: string;
+  target?: "_blank" | "_self" | "_parent" | "_top";
+  animationDelay?: number;
+  clickable?: boolean;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  badge,
+  badgeVariant = "default",
+  variant = "default",
+  padding = "md",
+  className = "",
+  titleClassName = "",
+  subtitleClassName = "",
+  descriptionClassName = "",
+  badgeClassName = "",
+  href,
+  target = "_self",
+  animationDelay = 0,
+  clickable = false,
+} = Astro.props;
+
+// Base card classes
+const baseClasses = "rounded-lg transition-all duration-200";
+
+// Variant classes
+const variantClasses = {
+  default: "bg-card border border-border",
+  bordered: "bg-card border-2 border-border",
+  elevated: "bg-card border border-border shadow-lg hover:shadow-xl",
+  flat: "bg-card",
+};
+
+// Padding classes
+const paddingClasses = {
+  sm: "p-4",
+  md: "p-6",
+  lg: "p-8",
+  xl: "p-10",
+};
+
+// Badge variant classes
+const badgeVariantClasses = {
+  default: "bg-muted text-muted-foreground",
+  primary: "bg-primary/10 text-primary",
+  secondary: "bg-secondary/10 text-secondary",
+  success:
+    "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+  warning:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+  danger: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+};
+
+// Title classes
+const titleClasses = "text-xl font-bold text-foreground mb-1";
+const subtitleClasses = "text-muted-foreground text-sm";
+const descriptionClasses = "text-muted-foreground";
+
+// Badge classes
+const badgeBaseClasses = "px-3 py-1 text-xs font-semibold rounded-full";
+
+// Animation classes
+const animationClasses =
+  animationDelay > 0
+    ? `animate-fade-up animate-delay-${animationDelay}`
+    : "animate-fade-up";
+
+// Clickable classes
+const clickableClasses =
+  clickable || href ? "cursor-pointer hover:scale-[1.02] hover:shadow-lg" : "";
+
+// Combine classes
+const cardClasses = `
+  ${baseClasses}
+  ${variantClasses[variant]}
+  ${paddingClasses[padding]}
+  ${animationClasses}
+  ${clickableClasses}
+  ${className}
+`.trim();
+
+// Remove the CardContent function - we'll inline the JSX below
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      target={target}
+      class={cardClasses}
+      rel={target === "_blank" ? "noopener noreferrer" : undefined}
+    >
+      {/* Header with title/subtitle and badge */}
+      {(title || subtitle) && (
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            {title && (
+              <h3 class={`${titleClasses} ${titleClassName}`}>{title}</h3>
+            )}
+            {subtitle && (
+              <p class={`${subtitleClasses} ${subtitleClassName}`}>
+                {subtitle}
+              </p>
+            )}
+          </div>
+          {badge && (
+            <span
+              class={`${badgeBaseClasses} ${badgeVariantClasses[badgeVariant]} ${badgeClassName}`}
+            >
+              {badge}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Description */}
+      {description && (
+        <div class={`${descriptionClasses} ${descriptionClassName}`}>
+          {description}
+        </div>
+      )}
+
+      {/* Slot for custom content */}
+      <slot />
+    </a>
+  ) : (
+    <div class={cardClasses}>
+      {/* Header with title/subtitle and badge */}
+      {(title || subtitle) && (
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            {title && (
+              <h3 class={`${titleClasses} ${titleClassName}`}>{title}</h3>
+            )}
+            {subtitle && (
+              <p class={`${subtitleClasses} ${subtitleClassName}`}>
+                {subtitle}
+              </p>
+            )}
+          </div>
+          {badge && (
+            <span
+              class={`${badgeBaseClasses} ${badgeVariantClasses[badgeVariant]} ${badgeClassName}`}
+            >
+              {badge}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Description */}
+      {description && (
+        <div class={`${descriptionClasses} ${descriptionClassName}`}>
+          {description}
+        </div>
+      )}
+
+      {/* Slot for custom content */}
+      <slot />
+    </div>
+  )
+}

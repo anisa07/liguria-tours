@@ -1,0 +1,138 @@
+---
+import { Sun, Moon } from "@lucide/astro";
+import { THEME_KEY } from "@/config/variables";
+
+export interface Props {
+  className?: string;
+  locale?: string;
+}
+
+const { className = "", locale = "en" } = Astro.props;
+
+// Simple fallback for aria label (can be enhanced with i18n later)
+const toggleLabel = "Toggle theme";
+---
+
+<button
+  id="theme-toggle"
+  class={`btn btn-outline h-12 w-12 flex items-center justify-center ${className}`}
+  aria-label={toggleLabel}
+  data-theme-toggle
+>
+  <!-- Light theme icon (shown when dark theme is active) -->
+  <Sun class="sun-icon h-4 w-4 hidden" />
+
+  <!-- Dark theme icon (shown when light theme is active) -->
+  <Moon class="moon-icon h-4 w-4" />
+
+  <!-- Loading state -->
+  <div
+    class="loading-icon h-4 w-4 bg-muted-foreground/30 rounded animate-pulse hidden"
+  >
+  </div>
+</button>
+
+<script define:vars={{ THEME_KEY }}>
+  // Theme toggle functionality
+
+  function initThemeToggle() {
+    const toggleButton = document.getElementById("theme-toggle");
+    const sunIcon = toggleButton?.querySelector(".sun-icon");
+    const moonIcon = toggleButton?.querySelector(".moon-icon");
+    const loadingIcon = toggleButton?.querySelector(".loading-icon");
+
+    if (!toggleButton || !sunIcon || !moonIcon || !loadingIcon) {
+      return;
+    }
+
+    // Initialize theme from localStorage or system preference
+    function getInitialTheme() {
+      if (typeof localStorage !== "undefined") {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme) return savedTheme;
+      }
+
+      // Check system preference
+      if (typeof window !== "undefined" && window.matchMedia) {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
+
+      return "light";
+    }
+
+    // Update UI based on current theme
+    function updateThemeUI(theme) {
+      // Hide loading, show appropriate icon
+      loadingIcon.classList.add("hidden");
+
+      if (theme === "dark") {
+        sunIcon.classList.remove("hidden");
+        moonIcon.classList.add("hidden");
+        document.documentElement.classList.add("dark");
+      } else {
+        sunIcon.classList.add("hidden");
+        moonIcon.classList.remove("hidden");
+        document.documentElement.classList.remove("dark");
+      }
+    }
+
+    // Toggle theme
+    function toggleTheme() {
+      const currentTheme = localStorage.getItem(THEME_KEY) || getInitialTheme();
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+      localStorage.setItem(THEME_KEY, newTheme);
+      updateThemeUI(newTheme);
+
+      // Dispatch custom event for other components that might need to know
+      window.dispatchEvent(
+        new CustomEvent("theme-changed", {
+          detail: { theme: newTheme },
+        })
+      );
+    }
+
+    // Initialize on page load
+    function initialize() {
+      // Show loading initially
+      sunIcon.classList.add("hidden");
+      moonIcon.classList.add("hidden");
+      loadingIcon.classList.remove("hidden");
+
+      // Get initial theme and apply it
+      const initialTheme = getInitialTheme();
+
+      // Save to localStorage if not already saved
+      if (!localStorage.getItem(THEME_KEY)) {
+        localStorage.setItem(THEME_KEY, initialTheme);
+      }
+
+      // Apply theme after a brief moment to prevent flash
+      requestAnimationFrame(() => {
+        updateThemeUI(initialTheme);
+      });
+    }
+
+    // Add click event listener
+    toggleButton.addEventListener("click", toggleTheme);
+
+    // Initialize the theme
+    initialize();
+
+    // Listen for system theme changes
+    if (typeof window !== "undefined" && window.matchMedia) {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      mediaQuery.addEventListener("change", (e) => {
+        // Only update if user hasn't manually set a preference
+        if (!localStorage.getItem(THEME_KEY)) {
+          const newTheme = e.matches ? "dark" : "light";
+          updateThemeUI(newTheme);
+        }
+      });
+    }
+  }
+
+  initThemeToggle();
+</script>

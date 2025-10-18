@@ -1,0 +1,347 @@
+---
+export interface Props {
+  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12 | "auto" | "subgrid";
+  rows?: 1 | 2 | 3 | 4 | 5 | 6 | "auto" | "subgrid";
+  gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  gapX?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  gapY?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  responsive?: {
+    sm?: number | "auto";
+    md?: number | "auto";
+    lg?: number | "auto";
+    xl?: number | "auto";
+  };
+  alignItems?: "start" | "end" | "center" | "stretch";
+  justifyItems?: "start" | "end" | "center" | "stretch";
+  placeItems?: "start" | "end" | "center" | "stretch";
+  autoRows?: "auto" | "min" | "max" | "fr";
+  autoCols?: "auto" | "min" | "max" | "fr";
+  as?: "div" | "section" | "main" | "article" | "aside" | "ul" | "ol";
+  class?: string;
+}
+
+const {
+  cols = 1,
+  rows,
+  gap = "md",
+  gapX,
+  gapY,
+  responsive,
+  alignItems,
+  justifyItems,
+  placeItems,
+  autoRows,
+  autoCols,
+  as: Element = "div",
+  class: className = "",
+} = Astro.props;
+
+const getColsClasses = (
+  cols: Props["cols"],
+  responsive?: Props["responsive"]
+) => {
+  let classes: string[] = [];
+
+  // Base columns
+  switch (cols) {
+    case 1:
+      classes.push("grid-cols-1");
+      break;
+    case 2:
+      classes.push("grid-cols-2");
+      break;
+    case 3:
+      classes.push("grid-cols-3");
+      break;
+    case 4:
+      classes.push("grid-cols-4");
+      break;
+    case 5:
+      classes.push("grid-cols-5");
+      break;
+    case 6:
+      classes.push("grid-cols-6");
+      break;
+    case 12:
+      classes.push("grid-cols-12");
+      break;
+    case "auto":
+      classes.push("grid-cols-auto");
+      break;
+    case "subgrid":
+      classes.push("grid-cols-subgrid");
+      break;
+  }
+
+  // Responsive columns
+  if (responsive) {
+    if (responsive.sm) {
+      classes.push(
+        responsive.sm === "auto"
+          ? "sm:grid-cols-auto"
+          : `sm:grid-cols-${responsive.sm}`
+      );
+    }
+    if (responsive.md) {
+      classes.push(
+        responsive.md === "auto"
+          ? "md:grid-cols-auto"
+          : `md:grid-cols-${responsive.md}`
+      );
+    }
+    if (responsive.lg) {
+      classes.push(
+        responsive.lg === "auto"
+          ? "lg:grid-cols-auto"
+          : `lg:grid-cols-${responsive.lg}`
+      );
+    }
+    if (responsive.xl) {
+      classes.push(
+        responsive.xl === "auto"
+          ? "xl:grid-cols-auto"
+          : `xl:grid-cols-${responsive.xl}`
+      );
+    }
+  }
+
+  return classes;
+};
+
+const getRowsClasses = (rows?: Props["rows"]): string[] => {
+  if (!rows) return [];
+
+  switch (rows) {
+    case 1:
+      return ["grid-rows-1"];
+    case 2:
+      return ["grid-rows-2"];
+    case 3:
+      return ["grid-rows-3"];
+    case 4:
+      return ["grid-rows-4"];
+    case 5:
+      return ["grid-rows-5"];
+    case 6:
+      return ["grid-rows-6"];
+    case "auto":
+      return ["grid-rows-auto"];
+    case "subgrid":
+      return ["grid-rows-subgrid"];
+    default:
+      return [];
+  }
+};
+
+const getGapClasses = (
+  gap?: string,
+  gapX?: string,
+  gapY?: string
+): string[] => {
+  let classes: string[] = [];
+
+  // General gap
+  if (gap && !gapX && !gapY) {
+    switch (gap) {
+      case "none":
+        classes.push("gap-0");
+        break;
+      case "xs":
+        classes.push("gap-1");
+        break;
+      case "sm":
+        classes.push("gap-2");
+        break;
+      case "md":
+        classes.push("gap-4");
+        break;
+      case "lg":
+        classes.push("gap-6");
+        break;
+      case "xl":
+        classes.push("gap-8");
+        break;
+      case "2xl":
+        classes.push("gap-12");
+        break;
+    }
+  }
+
+  // X gap
+  if (gapX) {
+    switch (gapX) {
+      case "none":
+        classes.push("gap-x-0");
+        break;
+      case "xs":
+        classes.push("gap-x-1");
+        break;
+      case "sm":
+        classes.push("gap-x-2");
+        break;
+      case "md":
+        classes.push("gap-x-4");
+        break;
+      case "lg":
+        classes.push("gap-x-6");
+        break;
+      case "xl":
+        classes.push("gap-x-8");
+        break;
+      case "2xl":
+        classes.push("gap-x-12");
+        break;
+    }
+  }
+
+  // Y gap
+  if (gapY) {
+    switch (gapY) {
+      case "none":
+        classes.push("gap-y-0");
+        break;
+      case "xs":
+        classes.push("gap-y-1");
+        break;
+      case "sm":
+        classes.push("gap-y-2");
+        break;
+      case "md":
+        classes.push("gap-y-4");
+        break;
+      case "lg":
+        classes.push("gap-y-6");
+        break;
+      case "xl":
+        classes.push("gap-y-8");
+        break;
+      case "2xl":
+        classes.push("gap-y-12");
+        break;
+    }
+  }
+
+  return classes;
+};
+
+const getAlignmentClasses = (
+  alignItems?: string,
+  justifyItems?: string,
+  placeItems?: string
+): string[] => {
+  let classes: string[] = [];
+
+  if (placeItems) {
+    classes.push(`place-items-${placeItems}`);
+  } else {
+    if (alignItems) {
+      classes.push(`items-${alignItems}`);
+    }
+    if (justifyItems) {
+      classes.push(`justify-items-${justifyItems}`);
+    }
+  }
+
+  return classes;
+};
+
+const getAutoClasses = (autoRows?: string, autoCols?: string): string[] => {
+  let classes: string[] = [];
+
+  if (autoRows) {
+    switch (autoRows) {
+      case "auto":
+        classes.push("auto-rows-auto");
+        break;
+      case "min":
+        classes.push("auto-rows-min");
+        break;
+      case "max":
+        classes.push("auto-rows-max");
+        break;
+      case "fr":
+        classes.push("auto-rows-fr");
+        break;
+    }
+  }
+
+  if (autoCols) {
+    switch (autoCols) {
+      case "auto":
+        classes.push("auto-cols-auto");
+        break;
+      case "min":
+        classes.push("auto-cols-min");
+        break;
+      case "max":
+        classes.push("auto-cols-max");
+        break;
+      case "fr":
+        classes.push("auto-cols-fr");
+        break;
+    }
+  }
+
+  return classes;
+};
+
+const gridClasses = [
+  "grid",
+  ...getColsClasses(cols, responsive),
+  ...getRowsClasses(rows),
+  ...getGapClasses(gap, gapX, gapY),
+  ...getAlignmentClasses(alignItems, justifyItems, placeItems),
+  ...getAutoClasses(autoRows, autoCols),
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<Element class={gridClasses}>
+  <slot />
+</Element>
+
+<style>
+  /* Grid auto utilities that might not be in Tailwind by default */
+  .grid-cols-auto {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  }
+
+  .grid-rows-auto {
+    grid-template-rows: repeat(auto-fit, minmax(0, 1fr));
+  }
+
+  .grid-cols-subgrid {
+    grid-template-columns: subgrid;
+  }
+
+  .grid-rows-subgrid {
+    grid-template-rows: subgrid;
+  }
+
+  /* Responsive grid utilities */
+  @media (min-width: 640px) {
+    .sm\:grid-cols-auto {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 768px) {
+    .md\:grid-cols-auto {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .lg\:grid-cols-auto {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .xl\:grid-cols-auto {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+</style>

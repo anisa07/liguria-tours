@@ -1,0 +1,316 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import {
+  Search,
+  AlertTriangle,
+  RefreshCw,
+  Inbox,
+  FileX,
+  Package,
+} from "lucide-react";
+import { cn } from "../../lib/utils";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+interface Props extends HTMLAttributes<"div"> {
+  variant?: "default" | "search" | "error" | "loading" | "custom";
+  size?: "sm" | "md" | "lg";
+  title?: string;
+  description?: string;
+  icon?: boolean;
+  actions?: {
+    label: string;
+    href?: string;
+    onclick?: string;
+    variant?: "primary" | "secondary";
+  }[];
+  illustration?: string;
+  locale?: Locale;
+}
+
+const {
+  variant = "default",
+  size = "md",
+  title,
+  description,
+  icon = true,
+  actions = [],
+  illustration,
+  locale = "en",
+  class: className = "",
+  ...rest
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["common"]);
+
+// Size classes
+const sizeClasses = {
+  sm: {
+    container: "py-8",
+    icon: "w-12 h-12",
+    title: "text-lg",
+    description: "text-sm",
+    illustration: "w-24 h-24",
+  },
+  md: {
+    container: "py-12",
+    icon: "w-16 h-16",
+    title: "text-xl",
+    description: "text-base",
+    illustration: "w-32 h-32",
+  },
+  lg: {
+    container: "py-16",
+    icon: "w-20 h-20",
+    title: "text-2xl",
+    description: "text-lg",
+    illustration: "w-40 h-40",
+  },
+};
+
+// Get translated content based on variant
+const getTranslatedContent = (variant: string) => {
+  switch (variant) {
+    case "search":
+      return {
+        title: t("empty_state.search.title", "No results found"),
+        description: t(
+          "empty_state.search.description",
+          "Try adjusting your search or filter criteria to find what you're looking for."
+        ),
+      };
+    case "error":
+      return {
+        title: t("empty_state.error.title", "Something went wrong"),
+        description: t(
+          "empty_state.error.description",
+          "We encountered an error while loading this content. Please try again."
+        ),
+      };
+    case "loading":
+      return {
+        title: t("empty_state.loading.title", "Loading..."),
+        description: t(
+          "empty_state.loading.description",
+          "Please wait while we load your content."
+        ),
+      };
+    default:
+      return {
+        title: t("empty_state.default.title", "No items to display"),
+        description: t(
+          "empty_state.default.description",
+          "When you have content, it will appear here."
+        ),
+      };
+  }
+};
+
+const translatedContent = getTranslatedContent(variant);
+const displayTitle = title || translatedContent.title;
+const displayDescription = description || translatedContent.description;
+const showIcon = icon !== false;
+---
+
+<div
+  class={cn(
+    "flex flex-col items-center justify-center text-center",
+    sizeClasses[size].container,
+    className
+  )}
+  role="status"
+  aria-live="polite"
+  data-variant={variant}
+  {...rest}
+>
+  <!-- Illustration or Icon -->
+  {
+    illustration ? (
+      <div
+        class={cn(
+          "mb-6 flex items-center justify-center",
+          sizeClasses[size].illustration
+        )}
+      >
+        <img src={illustration} alt="" class="w-full h-full object-contain" />
+      </div>
+    ) : showIcon ? (
+      <div
+        class={cn(
+          "mb-6 text-muted-foreground flex items-center justify-center",
+          sizeClasses[size].icon
+        )}
+      >
+        {variant === "search" && (
+          <Search className="w-full h-full" client:load />
+        )}
+        {variant === "error" && (
+          <AlertTriangle className="w-full h-full" client:load />
+        )}
+        {variant === "loading" && (
+          <RefreshCw className="w-full h-full animate-spin" client:load />
+        )}
+        {variant === "custom" && (
+          <FileX className="w-full h-full" client:load />
+        )}
+        {variant === "default" && (
+          <Package className="w-full h-full" client:load />
+        )}
+      </div>
+    ) : null
+  }
+
+  <!-- Content -->
+  <div class="max-w-md mx-auto">
+    <!-- Title -->
+    {
+      displayTitle && (
+        <h3
+          class={cn(
+            sizeClasses[size].title,
+            "font-semibold text-foreground mb-2"
+          )}
+        >
+          {displayTitle}
+        </h3>
+      )
+    }
+
+    <!-- Description -->
+    {
+      displayDescription && (
+        <p
+          class={cn(
+            sizeClasses[size].description,
+            "text-muted-foreground mb-6"
+          )}
+        >
+          {displayDescription}
+        </p>
+      )
+    }
+
+    <!-- Custom Content -->
+    <div class="mb-6">
+      <slot />
+    </div>
+
+    <!-- Actions -->
+    {
+      actions.length > 0 && (
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          {actions.map((action) =>
+            action.href ? (
+              <a
+                href={action.href}
+                class={cn(
+                  "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg",
+                  "transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                  action.variant === "secondary"
+                    ? "text-foreground bg-background border border-border hover:bg-accent focus:ring-ring"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-ring"
+                )}
+              >
+                {action.label}
+              </a>
+            ) : (
+              <button
+                type="button"
+                class={cn(
+                  "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg",
+                  "transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                  action.variant === "secondary"
+                    ? "text-foreground bg-background border border-border hover:bg-accent focus:ring-ring"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-ring"
+                )}
+                onclick={action.onclick}
+                data-empty-state-action
+              >
+                {action.label}
+              </button>
+            )
+          )}
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* Animation for empty state appearance - using centralized animations.css */
+  [role="status"] {
+    animation: fadeUp 0.5s ease-out;
+  }
+
+  /* Loading state animation */
+  [role="status"][data-variant="loading"] svg {
+    animation: spin 1s linear infinite;
+  }
+
+  /* Hover effects for illustrations */
+  [role="status"] img:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [role="status"] {
+      border: 1px solid currentColor;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [role="status"],
+    [role="status"] svg,
+    [role="status"] img {
+      animation: none;
+      transition: none;
+    }
+  }
+
+  /* Focus styles */
+  [role="status"]:focus-within {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 4px;
+  }
+</style>
+
+<script>
+  // Simple empty state functionality for static Astro components
+  function initEmptyStates() {
+    // Handle action button clicks
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const actionBtn = target.closest("[data-empty-state-action]");
+
+      if (actionBtn) {
+        const emptyState = actionBtn.closest('[role="status"]') as HTMLElement;
+
+        // Emit custom event for action handling
+        if (emptyState) {
+          const event = new CustomEvent("emptyStateAction", {
+            detail: { emptyState, button: actionBtn },
+          });
+          emptyState.dispatchEvent(event);
+        }
+      }
+    });
+
+    // Set up proper ARIA attributes for accessibility
+    const emptyStates = document.querySelectorAll("[data-empty-state]");
+    emptyStates.forEach((state) => {
+      if (!state.getAttribute("role")) {
+        state.setAttribute("role", "status");
+      }
+      if (!state.getAttribute("aria-live")) {
+        state.setAttribute("aria-live", "polite");
+      }
+    });
+  }
+
+  // Initialize immediately - DOM is already ready in Astro
+  initEmptyStates();
+</script>

@@ -1,0 +1,290 @@
+---
+export interface DropdownItem {
+  label: string;
+  href: string;
+  icon?: string;
+  description?: string;
+  disabled?: boolean;
+}
+
+export interface NavItem {
+  label: string;
+  href?: string;
+  icon?: string;
+  active?: boolean;
+  disabled?: boolean;
+  dropdown?: DropdownItem[];
+}
+
+export interface Props {
+  items: NavItem[];
+  class?: string;
+  logo?: string;
+  logoHref?: string;
+  logoAlt?: string;
+}
+
+const {
+  items,
+  class: className = "",
+  logo,
+  logoHref = "/",
+  logoAlt = "Logo",
+} = Astro.props;
+---
+
+<nav
+  class={`flex items-center justify-between p-4 ${className}`}
+  role="navigation"
+  aria-label="Main navigation"
+>
+  <!-- Logo/Brand -->
+  <div class="flex items-center">
+    <a
+      href={logoHref}
+      class="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md"
+    >
+      {logo && <img src={logo} alt={logoAlt} class="h-8 w-auto" />}
+      <span class="text-xl font-bold text-foreground">
+        <slot name="logo">{logoAlt}</slot>
+      </span>
+    </a>
+  </div>
+
+  <!-- Desktop Navigation -->
+  <div
+    id="desktop-nav"
+    class="hidden lg:flex lg:items-center lg:space-x-1 bg-primary/75 rounded-full"
+  >
+    {
+      items.map((item, index) => {
+        const hasDropdown = item.dropdown && item.dropdown.length > 0;
+        const dropdownId = hasDropdown ? `dropdown-${index}` : undefined;
+
+        return (
+          <div class="relative" data-dropdown={hasDropdown ? "true" : "false"}>
+            {item.href ? (
+              <a
+                href={item.href}
+                class={`nav-item inline-flex items-center px-3 py-2 text-sm font-medium rounded-full focus:outline-none text-background ${
+                  item.active
+                    ? "bg-surface-2"
+                    : "hover:text-foreground hover:bg-surface-1"
+                } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                tabindex={item.disabled ? -1 : undefined}
+                aria-disabled={item.disabled ? "true" : undefined}
+                aria-current={item.active ? "page" : undefined}
+              >
+                {item.icon && (
+                  <span class="mr-2" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+              </a>
+            ) : hasDropdown ? (
+              <button
+                type="button"
+                class={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                  item.active
+                    ? "text-foreground bg-surface-2"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls={dropdownId}
+                data-dropdown-trigger="true"
+                disabled={item.disabled}
+              >
+                {item.icon && (
+                  <span class="mr-2" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+                <span class="ml-1 text-xs" aria-hidden="true">
+                  ▼
+                </span>
+              </button>
+            ) : (
+              <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground">
+                {item.icon && (
+                  <span class="mr-2" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+              </span>
+            )}
+
+            {/* Dropdown Menu */}
+            {hasDropdown && (
+              <div
+                id={dropdownId}
+                class="absolute top-full left-0 mt-1 w-64 bg-background border border-border rounded-md shadow-lg z-50 opacity-0 invisible transform scale-95"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby={`dropdown-trigger-${index}`}
+              >
+                <div class="py-1">
+                  {item.dropdown!.map((dropdownItem) => (
+                    <a
+                      href={dropdownItem.href}
+                      class={`flex items-start px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background ${
+                        dropdownItem.disabled
+                          ? "opacity-50 cursor-not-allowed text-muted-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                      }`}
+                      role="menuitem"
+                      tabindex={dropdownItem.disabled ? -1 : 0}
+                      aria-disabled={dropdownItem.disabled ? "true" : undefined}
+                    >
+                      <div class="flex-1">
+                        <div class="flex items-center">
+                          {dropdownItem.icon && (
+                            <span class="mr-3 text-base" aria-hidden="true">
+                              {dropdownItem.icon}
+                            </span>
+                          )}
+                          <span class="font-medium">{dropdownItem.label}</span>
+                        </div>
+                        {dropdownItem.description && (
+                          <p class="mt-1 text-xs text-muted-foreground">
+                            {dropdownItem.description}
+                          </p>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+
+  <!-- Right side slot for additional content -->
+  <div class="flex items-center space-x-2">
+    <slot name="actions" />
+  </div>
+</nav>
+
+<script>
+  // Simple dropdown functionality for static Astro navigation
+  function initDropdowns() {
+    const dropdowns = document.querySelectorAll('[data-dropdown="true"]');
+
+    dropdowns.forEach((dropdown) => {
+      const trigger = dropdown.querySelector(
+        '[data-dropdown-trigger="true"]'
+      ) as HTMLElement;
+      const menu = dropdown.querySelector('[role="menu"]') as HTMLElement;
+
+      if (!trigger || !menu) return;
+
+      function toggleDropdown() {
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+        if (isOpen) {
+          menu.classList.add("opacity-0", "invisible", "scale-95");
+          menu.classList.remove("opacity-100", "visible", "scale-100");
+          trigger.setAttribute("aria-expanded", "false");
+        } else {
+          menu.classList.remove("opacity-0", "invisible", "scale-95");
+          menu.classList.add("opacity-100", "visible", "scale-100");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+      }
+
+      // Simple click to toggle
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleDropdown();
+      });
+
+      // Close when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target as Node)) {
+          menu.classList.add("opacity-0", "invisible", "scale-95");
+          menu.classList.remove("opacity-100", "visible", "scale-100");
+          trigger.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      // Basic keyboard support
+      trigger.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleDropdown();
+        }
+      });
+    });
+  }
+
+  // Initialize immediately - DOM is ready in Astro
+  initDropdowns();
+</script>
+
+<style>
+  /* Comprehensive anti-jumping navigation styles */
+
+  /* Force stable rendering for all elements */
+  nav,
+  nav * {
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    transition: none !important;
+    animation: none !important;
+    will-change: auto !important;
+  }
+
+  /* Prevent any hover/focus movements */
+  nav a,
+  nav button,
+  nav span {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  nav a:hover,
+  nav a:focus,
+  nav a:active,
+  nav button:hover,
+  nav button:focus,
+  nav button:active {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* Static dropdown styles - no animations or transforms */
+  [role="menu"] {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* Focus styles for dropdown items - no outline offset */
+  [role="menuitem"]:focus {
+    outline: none;
+    outline-offset: 0 !important;
+  }
+
+  /* Static hover states - remove all transforms */
+  [data-dropdown-trigger="true"] [aria-hidden="true"]:last-child {
+    /* Remove rotation to prevent any movement */
+  }
+
+  /* No transforms on any state */
+  [aria-expanded="true"] [aria-hidden="true"]:last-child {
+    /* Remove rotation to prevent any movement */
+  }
+
+  /* Force text stability */
+  .text-xl,
+  .font-bold,
+  .text-sm,
+  .font-medium {
+    text-rendering: geometricPrecision !important;
+  }
+</style>

@@ -1,0 +1,81 @@
+{
+  "site": {
+    "title": "Туры по Лигурии",
+    "description": "Откройте для себя живописную Лигурию с нашими экскурсионными турами",
+    "keywords": "лигурия, туры, италия, чинкве-терре, портофино, генуя, экскурсии",
+    "name": "Туры по Лигурии"
+  },
+  "nav": {
+    "home": "Главная",
+    "about": "Обо мне",
+    "contact": "Контакты",
+    "tours": "Туры с гидом",
+    "language_switcher": "Переключатель языка",
+    "switch_to_language": "Переключить на {{language}}",
+    "select_language": "Выберите язык...",
+    "no_language_found": "Язык не найден.",
+    "features": "Туры",
+    "pricing": "Цены",
+    "team": "Наша команда",
+    "docs": "Документация",
+    "destinations": "Направления",
+    "gallery": "Фотогалерея"
+  },
+  "actions": {
+    "read_more": "Читать далее",
+    "get_started": "Начать",
+    "learn_more": "Узнать больше",
+    "book_now": "Забронировать",
+    "view_gallery": "Посмотреть галерею",
+    "contact_us": "Связаться с нами",
+    "view_tours": "Посмотреть туры",
+    "see_all_tours": "Посмотреть все туры"
+  },
+  "team": {
+    "team_lead": "Руководитель команды",
+    "skills": "Навыки",
+    "skills_expertise": "Навыки и экспертиза",
+    "no_member_available": "Информация о члене команды недоступна",
+    "guide": "Гид",
+    "experience": "Опыт работы",
+    "languages": "Языки",
+    "specialization": "Специализация"
+  },
+  "form": {
+    "name": "Имя",
+    "email": "Email",
+    "phone": "Телефон",
+    "message": "Сообщение",
+    "submit": "Отправить",
+    "sending": "Отправка...",
+    "success": "Сообщение отправлено успешно!",
+    "error": "Произошла ошибка. Попробуйте еще раз.",
+    "required": "Обязательное поле",
+    "invalid_email": "Неверный email адрес",
+    "tour_date": "Дата тура",
+    "number_of_people": "Количество человек",
+    "special_requests": "Особые пожелания"
+  },
+  "footer": {
+    "about_us": "О нас",
+    "quick_links": "Быстрые ссылки",
+    "contact_info": "Контактная информация",
+    "follow_us": "Следите за нами",
+    "copyright": "© 2025 Туры по Лигурии. Все права защищены.",
+    "privacy_policy": "Политика конфиденциальности",
+    "terms_of_service": "Условия использования"
+  },
+  "destinations": {
+    "cinque_terre": "Чинкве-Терре",
+    "portofino": "Портофино",
+    "genoa": "Генуя",
+    "la_spezia": "Ла-Специя",
+    "levanto": "Леванто",
+    "monterosso": "Монтероссо",
+    "vernazza": "Вернацца",
+    "corniglia": "Корнилья",
+    "manarola": "Манарола",
+    "riomaggiore": "Риомаджоре"
+  },
+  "people_joined": "человек присоединились"
+}

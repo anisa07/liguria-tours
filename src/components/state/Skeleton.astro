@@ -1,0 +1,341 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/lib/utils";
+import { ImageIcon } from "lucide-react";
+
+interface Props extends HTMLAttributes<"div"> {
+  variant?: "text" | "card" | "list" | "profile" | "image" | "table" | "custom";
+  lines?: number;
+  height?: string;
+  width?: string;
+  animated?: boolean;
+  rounded?: "none" | "sm" | "md" | "lg" | "full";
+  spacing?: "tight" | "normal" | "loose";
+}
+
+const {
+  variant = "text",
+  lines = 3,
+  height,
+  width,
+  animated = true,
+  rounded = "md",
+  spacing = "normal",
+  class: className = "",
+  ...rest
+} = Astro.props;
+
+// Base skeleton classes
+const baseClasses = "bg-muted";
+const animatedClasses = animated ? "animate-pulse" : "";
+
+// Rounded classes
+const roundedClasses = {
+  none: "rounded-none",
+  sm: "rounded-sm",
+  md: "rounded-md",
+  lg: "rounded-lg",
+  full: "rounded-full",
+};
+
+// Spacing classes
+const spacingClasses = {
+  tight: "space-y-1",
+  normal: "space-y-2",
+  loose: "space-y-4",
+};
+
+// Helper functions using cn() for class concatenation
+const getSkeletonClasses = (additionalClasses?: string) => {
+  return cn(
+    baseClasses,
+    roundedClasses[rounded],
+    animatedClasses,
+    additionalClasses
+  );
+};
+
+const getFullRoundedClasses = (additionalClasses?: string) => {
+  return cn(
+    baseClasses,
+    roundedClasses.full,
+    animatedClasses,
+    additionalClasses
+  );
+};
+
+const getSpacingClasses = (spacing: keyof typeof spacingClasses) => {
+  return cn(spacingClasses[spacing]);
+};
+
+// Generate skeleton lines for text variant
+const generateTextLines = (count: number) => {
+  const lines = [];
+  for (let i = 0; i < count; i++) {
+    const isLastLine = i === count - 1;
+    const widthClass = isLastLine
+      ? "w-3/4"
+      : i % 3 === 0
+        ? "w-full"
+        : i % 3 === 1
+          ? "w-5/6"
+          : "w-4/5";
+    lines.push(
+      `<div class="${getSkeletonClasses(`h-4 ${widthClass}`)}"></div>`
+    );
+  }
+  return lines.join("");
+};
+
+// Variant templates
+const getVariantContent = (variant: string) => {
+  switch (variant) {
+    case "card":
+      return `
+        <!-- Card Image -->
+        <div class="${getSkeletonClasses("h-48")}"></div>
+        <!-- Card Content -->
+        <div class="${cn("p-4", spacingClasses[spacing])}">
+          <div class="${getSkeletonClasses("h-6 w-3/4 mb-2")}"></div>
+          <div class="${getSkeletonClasses("h-4 w-full mb-2")}"></div>
+          <div class="${getSkeletonClasses("h-4 w-5/6")}"></div>
+        </div>
+      `;
+
+    case "list":
+      return Array.from(
+        { length: lines },
+        (_, i) => `
+        <div class="flex items-center space-x-3 p-3">
+          <div class="${getFullRoundedClasses("w-10 h-10 flex-shrink-0")}"></div>
+          <div class="${cn("flex-1", spacingClasses.tight)}">
+            <div class="${getSkeletonClasses("h-4 w-3/4 mb-1")}"></div>
+            <div class="${getSkeletonClasses("h-3 w-1/2")}"></div>
+          </div>
+        </div>
+      `
+      ).join("");
+
+    case "profile":
+      return `
+        <div class="flex items-start space-x-4">
+          <!-- Avatar -->
+          <div class="w-16 h-16 ${baseClasses} ${roundedClasses.full} ${animatedClasses} flex-shrink-0"></div>
+          <!-- Content -->
+          <div class="flex-1 ${spacingClasses[spacing]}">
+            <div class="h-5 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses} w-1/3 mb-2"></div>
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses} w-1/4 mb-3"></div>
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses} w-full mb-2"></div>
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses} w-4/5"></div>
+          </div>
+        </div>
+      `;
+
+    case "image":
+      return null; // Handle in template
+
+    case "table":
+      return `
+        <!-- Table Header -->
+        <div class="grid grid-cols-4 gap-4 p-4 border-b border-border">
+          <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+          <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+          <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+          <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+        </div>
+        <!-- Table Rows -->
+        ${Array.from(
+          { length: lines || 5 },
+          () => `
+          <div class="grid grid-cols-4 gap-4 p-4 border-b border-muted">
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+            <div class="h-4 ${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"></div>
+          </div>
+        `
+        ).join("")}
+      `;
+
+    case "custom":
+      return `
+        <div 
+          class="${baseClasses} ${roundedClasses[rounded]} ${animatedClasses}"
+          style="${height ? `height: ${height};` : ""}${width ? `width: ${width};` : ""}"
+        ></div>
+      `;
+
+    default: // text
+      return `<div class="${getSpacingClasses(spacing)}">${generateTextLines(lines)}</div>`;
+  }
+};
+
+const skeletonContent = getVariantContent(variant);
+---
+
+<div
+  class={cn(className)}
+  role="status"
+  aria-live="polite"
+  aria-label="Loading content"
+  {...rest}
+>
+  {
+    variant === "image" ? (
+      <div
+        class={cn(
+          "aspect-video flex items-center justify-center",
+          baseClasses,
+          roundedClasses[rounded],
+          animatedClasses
+        )}
+      >
+        <ImageIcon className="w-12 h-12 text-muted-foreground" />
+      </div>
+    ) : (
+      <Fragment set:html={skeletonContent} />
+    )
+  }
+
+  <!-- Screen reader text -->
+  <span class="sr-only">Loading content...</span>
+</div>
+
+<style>
+  /* Enhanced pulse animation */
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Shimmer effect */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--background) / 0.4),
+      transparent
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .bg-muted {
+      background-color: hsl(var(--muted));
+    }
+
+    .border-border {
+      border-color: hsl(var(--border));
+    }
+
+    .border-muted {
+      border-color: hsl(var(--muted));
+    }
+
+    .text-muted-foreground {
+      color: hsl(var(--muted-foreground));
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .bg-muted {
+      background-color: hsl(var(--muted));
+      border: 1px solid hsl(var(--foreground));
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-pulse {
+      animation: none;
+    }
+
+    .skeleton-shimmer {
+      animation: none;
+    }
+  }
+
+  /* Focus styles for interactive skeletons */
+  [role="status"]:focus {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Enhanced skeleton functionality
+  function setupSkeletons() {
+    const skeletons = document.querySelectorAll('[role="status"]');
+
+    skeletons.forEach((skeleton: Element) => {
+      const skeletonEl = skeleton as HTMLElement;
+
+      // Add shimmer effect option
+      if (skeletonEl.hasAttribute("data-shimmer")) {
+        const shimmerElements = skeletonEl.querySelectorAll(".bg-muted");
+        shimmerElements.forEach((el) => {
+          el.classList.add("skeleton-shimmer");
+        });
+      }
+
+      // Auto-remove skeleton when content loads
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === "childList") {
+            const hasContent = Array.from(skeletonEl.children).some(
+              (child) =>
+                !child.classList.contains("sr-only") &&
+                child.textContent?.trim() !== ""
+            );
+
+            if (hasContent) {
+              skeletonEl.style.display = "none";
+            }
+          }
+        });
+      });
+
+      observer.observe(skeletonEl, { childList: true, subtree: true });
+
+      // Clean up observer when skeleton is removed
+      const parentObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.removedNodes.forEach((node) => {
+            if (node === skeletonEl) {
+              observer.disconnect();
+              parentObserver.disconnect();
+            }
+          });
+        });
+      });
+
+      if (skeletonEl.parentNode) {
+        parentObserver.observe(skeletonEl.parentNode, { childList: true });
+      }
+    });
+  }
+
+  // Setup shimmer effects for skeleton elements
+  setupSkeletons();
+</script>

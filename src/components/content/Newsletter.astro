@@ -1,0 +1,390 @@
+---
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  placeholder?: string;
+  buttonText?: string;
+  variant?: "inline" | "card" | "minimal" | "sidebar";
+  showPrivacyNote?: boolean;
+  privacyText?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  class?: string;
+  locale?: Locale;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  placeholder,
+  buttonText,
+  variant = "inline",
+  showPrivacyNote = true,
+  privacyText,
+  successMessage,
+  errorMessage,
+  class: className = "",
+  locale = "en",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["newsletter", "common"]);
+
+// Use translations with fallbacks
+const resolvedTitle =
+  title || t("newsletter.title", "Subscribe to our newsletter");
+const resolvedDescription =
+  description ||
+  t(
+    "newsletter.description",
+    "Get the latest updates and news delivered to your inbox."
+  );
+const resolvedPlaceholder =
+  placeholder || t("newsletter.placeholder", "Enter your email address");
+const resolvedButtonText = buttonText || t("newsletter.button", "Subscribe");
+const resolvedPrivacyText =
+  privacyText ||
+  t("newsletter.privacy", "We respect your privacy. Unsubscribe at any time.");
+const resolvedSuccessMessage =
+  successMessage ||
+  t(
+    "newsletter.success",
+    "Thank you for subscribing! Please check your email for confirmation."
+  );
+const resolvedErrorMessage =
+  errorMessage || t("newsletter.error", "Please enter a valid email address.");
+
+const getVariantClasses = (variant: string) => {
+  switch (variant) {
+    case "card":
+      return "bg-background border border-border rounded-lg p-6 md:p-8";
+    case "minimal":
+      return "text-center";
+    case "sidebar":
+      return "bg-surface-1 rounded-lg p-6";
+    default:
+      return "bg-primary text-primary-foreground rounded-lg p-8 md:p-12";
+  }
+};
+
+const sectionClasses = cn(variant === "inline" && "py-16 md:py-20", className);
+
+const isLight =
+  variant === "card" || variant === "minimal" || variant === "sidebar";
+---
+
+<section class={sectionClasses}>
+  <div class="container mx-auto px-4">
+    <div class={cn("max-w-2xl mx-auto", getVariantClasses(variant))}>
+      <!-- Header -->
+      <div
+        class={cn(
+          "mb-8",
+          (variant === "minimal" || variant === "inline") && "text-center"
+        )}
+      >
+        {
+          subtitle && (
+            <div
+              class={cn(
+                "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-4",
+                isLight
+                  ? "bg-primary/10 text-primary"
+                  : "bg-primary-foreground/10 text-primary-foreground"
+              )}
+            >
+              {subtitle}
+            </div>
+          )
+        }
+
+        <h2
+          class={cn(
+            "text-2xl md:text-3xl lg:text-4xl font-bold mb-4",
+            isLight ? "text-foreground" : "text-primary-foreground"
+          )}
+        >
+          {resolvedTitle}
+        </h2>
+
+        {
+          resolvedDescription && (
+            <p
+              class={cn(
+                "text-lg leading-relaxed",
+                isLight ? "text-muted-foreground" : "text-primary-foreground/90"
+              )}
+            >
+              {resolvedDescription}
+            </p>
+          )
+        }
+      </div>
+
+      <!-- Newsletter Form -->
+      <form
+        class="newsletter-form space-y-4"
+        data-newsletter-form="true"
+        novalidate
+      >
+        <div
+          class={cn(
+            "flex flex-col",
+            variant === "sidebar"
+              ? "space-y-3"
+              : "sm:flex-row sm:space-y-0 sm:space-x-3"
+          )}
+        >
+          <!-- Email Input -->
+          <div class="flex-1">
+            <label for="newsletter-email" class="sr-only">
+              {t("newsletter.email_label", "Email address")}
+            </label>
+            <input
+              type="email"
+              id="newsletter-email"
+              name="email"
+              placeholder={resolvedPlaceholder}
+              required
+              class={cn(
+                "w-full px-4 py-3 rounded-lg text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                isLight
+                  ? "bg-background border border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+                  : "bg-primary-foreground text-foreground placeholder:text-muted-foreground focus:ring-primary-foreground focus:border-transparent"
+              )}
+              aria-describedby={showPrivacyNote ? "privacy-note" : undefined}
+            />
+
+            <!-- Inline Error Message -->
+            <div
+              class="mt-2 text-sm text-error hidden"
+              role="alert"
+              aria-live="polite"
+              data-error-message="true"
+            >
+              {resolvedErrorMessage}
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class={cn(
+              "inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+              isLight
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary"
+                : "bg-primary-foreground text-primary hover:bg-primary-foreground/90 focus:ring-primary-foreground"
+            )}
+            data-submit-button="true"
+          >
+            <span data-button-text="default">{resolvedButtonText}</span>
+            <span data-button-text="loading" class="hidden">
+              <Loader2 className="animate-spin -ml-1 mr-3 h-4 w-4" />
+              {t("newsletter.subscribing", "Subscribing...")}
+            </span>
+          </button>
+        </div>
+
+        {/* Privacy Note */}
+        {
+          showPrivacyNote && (
+            <p
+              id="privacy-note"
+              class={cn(
+                "text-xs",
+                isLight ? "text-muted-foreground" : "text-primary-foreground/70"
+              )}
+            >
+              {resolvedPrivacyText}
+            </p>
+          )
+        }
+
+        <!-- Success Message -->
+        <div
+          class="mt-4 p-4 rounded-lg border border-success/20 bg-success/10 text-success hidden"
+          role="alert"
+          aria-live="polite"
+          data-success-message="true"
+        >
+          <div class="flex">
+            <span class="text-success mr-2" aria-hidden="true">✓</span>
+            <span>{resolvedSuccessMessage}</span>
+          </div>
+        </div>
+      </form>
+
+      <!-- Additional Content Slot -->
+      <div class="mt-8">
+        <slot name="content" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Component-specific styles only - animations handled by centralized animations.css */
+
+  /* Input focus states */
+  input[type="email"]:focus {
+    outline: none;
+  }
+
+  /* Button states */
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Error state for input */
+  .input-error {
+    border-color: rgb(var(--color-error)) !important;
+  }
+</style>
+
+<script>
+  // Newsletter form functionality
+  function initNewsletterForm() {
+    const forms = document.querySelectorAll('[data-newsletter-form="true"]');
+
+    forms.forEach((form) => {
+      const emailInput = form.querySelector(
+        'input[type="email"]'
+      ) as HTMLInputElement;
+      const submitButton = form.querySelector(
+        '[data-submit-button="true"]'
+      ) as HTMLButtonElement;
+      const errorMessage = form.querySelector(
+        '[data-error-message="true"]'
+      ) as HTMLElement;
+      const successMessage = form.querySelector(
+        '[data-success-message="true"]'
+      ) as HTMLElement;
+      const defaultButtonText = form.querySelector(
+        '[data-button-text="default"]'
+      ) as HTMLElement;
+      const loadingButtonText = form.querySelector(
+        '[data-button-text="loading"]'
+      ) as HTMLElement;
+
+      if (!emailInput || !submitButton) return;
+
+      // Email validation
+      function validateEmail(email: string): boolean {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      // Show error
+      function showError(message: string) {
+        if (errorMessage) {
+          errorMessage.textContent = message;
+          errorMessage.classList.remove("hidden");
+        }
+        emailInput.classList.add("input-error");
+        emailInput.focus();
+      }
+
+      // Hide error
+      function hideError() {
+        if (errorMessage) {
+          errorMessage.classList.add("hidden");
+        }
+        emailInput.classList.remove("input-error");
+      }
+
+      // Show success
+      function showSuccess() {
+        if (successMessage) {
+          successMessage.classList.remove("hidden");
+        }
+        emailInput.value = "";
+        hideError();
+      }
+
+      // Set loading state
+      function setLoading(loading: boolean) {
+        submitButton.disabled = loading;
+
+        if (loading) {
+          defaultButtonText?.classList.add("hidden");
+          loadingButtonText?.classList.remove("hidden");
+        } else {
+          defaultButtonText?.classList.remove("hidden");
+          loadingButtonText?.classList.add("hidden");
+        }
+      }
+
+      // Handle form submission
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = emailInput.value.trim();
+
+        // Reset previous states
+        hideError();
+        if (successMessage) {
+          successMessage.classList.add("hidden");
+        }
+
+        // Validate email
+        if (!email) {
+          showError("Please enter your email address.");
+          return;
+        }
+
+        if (!validateEmail(email)) {
+          showError("Please enter a valid email address.");
+          return;
+        }
+
+        // Set loading state
+        setLoading(true);
+
+        try {
+          // Simulate API call (replace with actual implementation)
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          // Here you would typically make an API call to your newsletter service
+          // const response = await fetch('/api/newsletter/subscribe', {
+          //   method: 'POST',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify({ email })
+          // });
+
+          // if (!response.ok) throw new Error('Subscription failed');
+
+          showSuccess();
+
+          // Dispatch custom event
+          window.dispatchEvent(
+            new CustomEvent("newsletterSubscribed", {
+              detail: { email },
+            })
+          );
+        } catch {
+          showError("Something went wrong. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      // Clear error on input
+      emailInput.addEventListener("input", hideError);
+    });
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initNewsletterForm);
+  } else {
+    initNewsletterForm();
+  }
+</script>

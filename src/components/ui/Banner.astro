@@ -1,0 +1,454 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import {
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  Info,
+  Megaphone,
+  X,
+} from "lucide-react";
+import { cn } from "../../lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  variant?: "info" | "success" | "warning" | "error" | "announcement";
+  position?: "top" | "bottom" | "inline";
+  dismissible?: boolean;
+  sticky?: boolean;
+  centered?: boolean;
+  icon?: boolean;
+  action?: { label: string; href?: string; onclick?: string };
+}
+
+const {
+  variant = "info",
+  position = "inline",
+  dismissible = false,
+  sticky = false,
+  centered = false,
+  icon = true,
+  action,
+  class: className = "",
+  ...rest
+} = Astro.props;
+
+const bannerId = `banner-${Math.random().toString(36).substr(2, 9)}`;
+
+// Position classes
+const getPositionClasses = (position: string, sticky: boolean) => {
+  const baseClasses = "w-full z-40";
+
+  if (position === "top") {
+    return `${baseClasses} ${sticky ? "sticky top-0" : ""} border-b`;
+  } else if (position === "bottom") {
+    return `${baseClasses} ${sticky ? "sticky bottom-0" : ""} border-t`;
+  }
+
+  return baseClasses;
+};
+
+// Variant classes using CSS variables for consistent theming
+const getVariantClasses = (variant: string) => {
+  switch (variant) {
+    case "success":
+      return "bg-success text-success-foreground";
+    case "warning":
+      return "bg-warning text-warning-foreground";
+    case "error":
+      return "bg-destructive text-destructive-foreground";
+    case "announcement":
+      return "bg-violet-600 text-white"; // Keep vibrant for announcements
+    default: // info
+      return "bg-info text-info-foreground";
+  }
+};
+
+// Icon classes using current color
+const getIconClasses = (variant: string) => {
+  return "text-current opacity-90";
+};
+
+// Icon selection logic
+const showIcon = icon !== false;
+---
+
+<div
+  id={bannerId}
+  class={cn(
+    getPositionClasses(position, sticky),
+    getVariantClasses(variant),
+    className
+  )}
+  role="banner"
+  aria-live="polite"
+  data-banner-variant={variant}
+  data-banner-position={position}
+  {...rest}
+>
+  <div
+    class={cn("px-4 py-3 sm:px-6 lg:px-8", centered && "flex justify-center")}
+  >
+    <div
+      class={cn(
+        "flex items-center justify-between w-full",
+        centered && "max-w-4xl"
+      )}
+    >
+      <!-- Content -->
+      <div class="flex items-center space-x-3 min-w-0 flex-1">
+        <!-- Icon -->
+        {
+          showIcon && (
+            <div class="flex-shrink-0">
+              {variant === "success" && (
+                <CheckCircle
+                  size={20}
+                  className={cn(getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "warning" && (
+                <AlertTriangle
+                  size={20}
+                  className={cn(getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "error" && (
+                <XCircle
+                  size={20}
+                  className={cn(getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "announcement" && (
+                <Megaphone
+                  size={20}
+                  className={cn(getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "info" && (
+                <Info
+                  size={20}
+                  className={cn(getIconClasses(variant))}
+                  client:load
+                />
+              )}
+            </div>
+          )
+        }
+
+        <!-- Message -->
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium">
+            <slot />
+          </div>
+        </div>
+      </div>
+
+      <!-- Action and Dismiss -->
+      <div class="flex items-center space-x-3 flex-shrink-0">
+        <!-- Action Button -->
+        {
+          action &&
+            (action.href ? (
+              <a
+                href={action.href}
+                class={cn(
+                  "inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md",
+                  "bg-current/20 text-current hover:bg-current/30",
+                  "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
+                  "focus:ring-offset-transparent transition-all duration-200"
+                )}
+              >
+                {action.label}
+              </a>
+            ) : (
+              <button
+                type="button"
+                class={cn(
+                  "inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md",
+                  "bg-current/20 text-current hover:bg-current/30",
+                  "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
+                  "focus:ring-offset-transparent transition-all duration-200"
+                )}
+                onclick={action.onclick}
+                data-banner-action
+              >
+                {action.label}
+              </button>
+            ))
+        }
+
+        <!-- Dismiss Button -->
+        {
+          dismissible && (
+            <button
+              type="button"
+              class={cn(
+                "inline-flex rounded-md p-1.5 text-current opacity-70",
+                "hover:opacity-100 hover:bg-current/20",
+                "focus:outline-none focus:ring-2 focus:ring-current",
+                "focus:ring-offset-2 focus:ring-offset-transparent",
+                "transition-all duration-200"
+              )}
+              aria-label="Dismiss banner"
+              data-banner-dismiss
+            >
+              <X size={16} client:load />
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Banner animations - using centralized animations.css */
+  [role="banner"] {
+    animation: slideDown 0.3s ease-out;
+  }
+
+  [data-banner-position="bottom"] {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .banner-dismissing[data-banner-position="top"],
+  .banner-dismissing[data-banner-position="inline"] {
+    animation: slideOutUp 0.3s ease-in forwards;
+  }
+
+  .banner-dismissing[data-banner-position="bottom"] {
+    animation: slideOutDown 0.3s ease-in forwards;
+  }
+
+  /* Sticky positioning adjustments */
+  [data-banner-position="top"].sticky {
+    top: 0;
+  }
+
+  [data-banner-position="bottom"].sticky {
+    bottom: 0;
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [role="banner"] {
+      border: 2px solid currentColor;
+    }
+
+    [role="banner"] button,
+    [role="banner"] a {
+      border: 1px solid currentColor;
+      font-weight: 600;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [role="banner"],
+    .banner-dismissing {
+      animation: none;
+    }
+  }
+
+  /* Focus styles */
+  [role="banner"]:focus-within {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+
+  /* Responsive text */
+  @media (max-width: 640px) {
+    [role="banner"] .text-sm {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+
+    [role="banner"] .space-x-3 > * + * {
+      margin-left: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Banner functionality
+  function setupBanners() {
+    // Handle dismiss buttons
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const dismissBtn = target.closest("[data-banner-dismiss]");
+
+      if (dismissBtn) {
+        const banner = dismissBtn.closest('[role="banner"]') as HTMLElement;
+        if (banner) {
+          dismissBanner(banner);
+        }
+      }
+    });
+
+    // Handle action buttons
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const actionBtn = target.closest("[data-banner-action]");
+
+      if (actionBtn) {
+        const banner = actionBtn.closest('[role="banner"]') as HTMLElement;
+
+        // Custom event for action handling
+        if (banner) {
+          const event = new CustomEvent("bannerAction", {
+            detail: { banner, button: actionBtn },
+          });
+          banner.dispatchEvent(event);
+        }
+      }
+    });
+
+    // Auto-dismiss functionality
+    const autoDismissBanners = document.querySelectorAll("[data-auto-dismiss]");
+    autoDismissBanners.forEach((banner: Element) => {
+      const bannerEl = banner as HTMLElement;
+      const delay = parseInt(
+        bannerEl.getAttribute("data-auto-dismiss") || "5000"
+      );
+
+      setTimeout(() => {
+        if (bannerEl.parentNode) {
+          dismissBanner(bannerEl);
+        }
+      }, delay);
+    });
+  }
+
+  function dismissBanner(banner: HTMLElement) {
+    // Custom event before dismissal
+    const beforeDismissEvent = new CustomEvent("bannerBeforeDismiss", {
+      detail: { banner },
+      cancelable: true,
+    });
+
+    banner.dispatchEvent(beforeDismissEvent);
+
+    if (!beforeDismissEvent.defaultPrevented) {
+      banner.classList.add("banner-dismissing");
+
+      // Remove from DOM after animation
+      setTimeout(() => {
+        if (banner.parentNode) {
+          banner.parentNode.removeChild(banner);
+
+          // Custom event after dismissal
+          document.dispatchEvent(
+            new CustomEvent("bannerDismissed", {
+              detail: { banner },
+            })
+          );
+        }
+      }, 300);
+    }
+  }
+
+  // Banner utilities interface
+  interface BannerUtilsInterface {
+    show: (options: {
+      variant?: string;
+      message: string;
+      position?: string;
+      dismissible?: boolean;
+      action?: { label: string; onclick?: () => void };
+      duration?: number;
+    }) => HTMLElement | null;
+    dismissAll: () => void;
+  }
+
+  // Banner utilities
+  (
+    globalThis as typeof globalThis & { BannerUtils: BannerUtilsInterface }
+  ).BannerUtils = {
+    // Show banner
+    show(options: {
+      variant?: string;
+      message: string;
+      position?: string;
+      dismissible?: boolean;
+      action?: { label: string; onclick?: () => void };
+      duration?: number;
+    }) {
+      const banner = document.createElement("div");
+      banner.setAttribute("role", "banner");
+      banner.setAttribute("aria-live", "polite");
+      banner.className = `banner-dynamic ${options.variant || "info"}`;
+
+      // Build banner content
+      let content = `<div class="px-4 py-3 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between w-full">
+          <div class="flex items-center space-x-3 min-w-0 flex-1">
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium">${options.message}</div>
+            </div>
+          </div>`;
+
+      // Add action and dismiss buttons
+      content += `<div class="flex items-center space-x-3 flex-shrink-0">`;
+
+      if (options.action) {
+        content += `<button type="button" class="banner-action">${options.action.label}</button>`;
+      }
+
+      if (options.dismissible) {
+        content += `<button type="button" class="banner-dismiss" aria-label="Dismiss banner">×</button>`;
+      }
+
+      content += `</div></div></div>`;
+      banner.innerHTML = content;
+
+      // Add event listeners
+      if (options.action && options.action.onclick) {
+        const actionBtn = banner.querySelector(".banner-action");
+        if (actionBtn) {
+          actionBtn.addEventListener("click", options.action.onclick);
+        }
+      }
+
+      if (options.dismissible) {
+        const dismissBtn = banner.querySelector(".banner-dismiss");
+        if (dismissBtn) {
+          dismissBtn.addEventListener("click", () => dismissBanner(banner));
+        }
+      }
+
+      // Insert based on position
+      if (options.position === "top") {
+        document.body.insertBefore(banner, document.body.firstChild);
+      } else if (options.position === "bottom") {
+        document.body.appendChild(banner);
+      } else {
+        // Default to top of main content
+        const main = document.querySelector("main") || document.body;
+        main.insertBefore(banner, main.firstChild);
+      }
+
+      // Auto-dismiss
+      if (options.duration && options.duration > 0) {
+        setTimeout(() => dismissBanner(banner), options.duration);
+      }
+
+      return banner;
+    },
+
+    // Dismiss all banners
+    dismissAll() {
+      const banners = document.querySelectorAll('[role="banner"]');
+      banners.forEach((banner) => dismissBanner(banner as HTMLElement));
+    },
+  };
+
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", setupBanners);
+
+  // Re-initialize on navigation
+  document.addEventListener("astro:page-load", setupBanners);
+</script>

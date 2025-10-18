@@ -1,0 +1,109 @@
+---
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+// Reusable 404 content component
+export interface Props {
+  locale?: Locale;
+  homeHref?: string;
+  // Optional props for client-side functionality
+  dataAttributes?: boolean;
+  onBackClick?: string;
+}
+
+const {
+  locale = "en",
+  homeHref = `/${locale}`,
+  dataAttributes = false,
+  onBackClick = "history.back()",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["errors", "common"]);
+
+// Get translated messages from JSON using correct key structure
+const title = t("404.title", "Page Not Found");
+const heading = t("404.heading", "Page Not Found");
+const message = t(
+  "404.message",
+  "Sorry, the page you are looking for doesn't exist or has been moved."
+);
+const suggestions = t("404.suggestions", "What can you do?");
+const checkUrl = t("404.checkUrl", "Check if the URL is spelled correctly");
+const useNav = t(
+  "404.useNav",
+  "Use the navigation menu to find what you're looking for"
+);
+const contact = t("404.contact", "Contact us if you think this is an error");
+const homeText = t("404.home", "Go to Homepage");
+const backText = t("404.back", "Go Back");
+---
+
+<main class="min-h-screen flex items-center justify-center px-4">
+  <div class="max-w-md w-full text-center">
+    <!-- Large 404 display using text utilities -->
+    <div class="text-8xl font-bold text-destructive mb-8 leading-none">404</div>
+
+    <!-- Error heading using existing heading styles -->
+    <h1 class="mb-4" data-heading={dataAttributes ? "" : undefined}>
+      {heading}
+    </h1>
+
+    <!-- Error message using text utilities -->
+    <p
+      class="text-muted-foreground mb-6 leading-relaxed"
+      data-message={dataAttributes ? "" : undefined}
+    >
+      {message}
+    </p>
+
+    <!-- Help suggestions using card-like styling -->
+    <div class="bg-muted rounded-lg p-6 mb-8 text-left border">
+      <h3
+        class="font-semibold mb-3"
+        data-suggestions={dataAttributes ? "" : undefined}
+      >
+        {suggestions}
+      </h3>
+      <ul class="space-y-2 text-sm text-muted-foreground">
+        <li class="flex items-start">
+          <span class="text-primary mr-2">•</span>
+          <span data-check-url={dataAttributes ? "" : undefined}>
+            {checkUrl}
+          </span>
+        </li>
+        <li class="flex items-start">
+          <span class="text-primary mr-2">•</span>
+          <span data-use-nav={dataAttributes ? "" : undefined}>
+            {useNav}
+          </span>
+        </li>
+        <li class="flex items-start">
+          <span class="text-primary mr-2">•</span>
+          <span data-contact={dataAttributes ? "" : undefined}>
+            {contact}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Action buttons using existing btn classes -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href={homeHref}
+        class="btn btn-primary btn-md"
+        data-home={dataAttributes ? "" : undefined}
+      >
+        {homeText}
+      </a>
+
+      <button
+        onclick={onBackClick}
+        class="btn btn-secondary btn-md"
+        data-back={dataAttributes ? "" : undefined}
+      >
+        {backText}
+      </button>
+    </div>
+  </div>
+</main>

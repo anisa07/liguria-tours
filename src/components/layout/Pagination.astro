@@ -1,0 +1,219 @@
+---
+import { createT } from "@/i18n/t";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  locale?: Locale;
+  translations?: Record<string, any>[];
+  class?: string;
+  showFirstLast?: boolean;
+  showPrevNext?: boolean;
+  maxVisiblePages?: number;
+  prevText?: string;
+  nextText?: string;
+  firstText?: string;
+  lastText?: string;
+}
+
+const {
+  currentPage,
+  totalPages,
+  baseUrl,
+  locale = "en",
+  translations = [],
+  class: className = "",
+  showFirstLast = true,
+  showPrevNext = true,
+  maxVisiblePages = 5,
+  prevText,
+  nextText,
+  firstText,
+  lastText,
+} = Astro.props;
+
+// Create translation function
+const t = createT(translations);
+
+// Set default text with translations
+const defaultPrevText = prevText || t("pagination.previous", "Previous");
+const defaultNextText = nextText || t("pagination.next", "Next");
+const defaultFirstText = firstText || t("pagination.first", "First");
+const defaultLastText = lastText || t("pagination.last", "Last");
+
+// Calculate visible page numbers
+function getVisiblePages(current: number, total: number, maxVisible: number) {
+  if (total <= maxVisible) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const half = Math.floor(maxVisible / 2);
+  let start = Math.max(1, current - half);
+  let end = Math.min(total, start + maxVisible - 1);
+
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+const visiblePages = getVisiblePages(currentPage, totalPages, maxVisiblePages);
+const hasMoreBefore = visiblePages[0] > 1;
+const hasMoreAfter = visiblePages[visiblePages.length - 1] < totalPages;
+
+function getPageUrl(page: number) {
+  return `${baseUrl}${baseUrl.includes("?") ? "&" : "?"}page=${page}`;
+}
+---
+
+<nav
+  class={`flex items-center justify-center space-x-1 ${className}`}
+  aria-label="Pagination Navigation"
+  role="navigation"
+>
+  <!-- First Page -->
+  {
+    showFirstLast && currentPage > 1 && (
+      <a
+        href={getPageUrl(1)}
+        class="px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-surface-1 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        aria-label={t(
+          "pagination.go_to_first",
+          `Go to ${defaultFirstText} page`,
+          { text: defaultFirstText }
+        )}
+      >
+        {defaultFirstText}
+      </a>
+    )
+  }
+
+  <!-- Previous Page -->
+  {
+    showPrevNext && currentPage > 1 && (
+      <a
+        href={getPageUrl(currentPage - 1)}
+        class="px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-surface-1 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        aria-label={t(
+          "pagination.go_to_previous",
+          `Go to ${defaultPrevText} page`,
+          { text: defaultPrevText }
+        )}
+      >
+        {defaultPrevText}
+      </a>
+    )
+  }
+
+  <!-- Page Numbers with Ellipsis -->
+  {
+    hasMoreBefore && (
+      <span class="px-3 py-2 text-sm text-muted-foreground">...</span>
+    )
+  }
+
+  {
+    visiblePages.map((pageNum) => {
+      const isCurrentPage = pageNum === currentPage;
+
+      return isCurrentPage ? (
+        <span
+          class="px-3 py-2 text-sm font-medium text-primary-foreground bg-primary border border-primary rounded-md"
+          aria-current="page"
+          aria-label={t("pagination.current_page", `Current page ${pageNum}`, {
+            page: pageNum,
+          })}
+        >
+          {pageNum}
+        </span>
+      ) : (
+        <a
+          href={getPageUrl(pageNum)}
+          class="px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-surface-1 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          aria-label={t("pagination.go_to_page", `Go to page ${pageNum}`, {
+            page: pageNum,
+          })}
+        >
+          {pageNum}
+        </a>
+      );
+    })
+  }
+
+  {
+    hasMoreAfter && (
+      <span class="px-3 py-2 text-sm text-muted-foreground">...</span>
+    )
+  }
+
+  <!-- Next Page -->
+  {
+    showPrevNext && currentPage < totalPages && (
+      <a
+        href={getPageUrl(currentPage + 1)}
+        class="px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-surface-1 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        aria-label={t(
+          "pagination.go_to_next",
+          `Go to ${defaultNextText} page`,
+          { text: defaultNextText }
+        )}
+      >
+        {defaultNextText}
+      </a>
+    )
+  }
+
+  <!-- Last Page -->
+  {
+    showFirstLast && currentPage < totalPages && (
+      <a
+        href={getPageUrl(totalPages)}
+        class="px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-surface-1 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        aria-label={t(
+          "pagination.go_to_last",
+          `Go to ${defaultLastText} page`,
+          { text: defaultLastText }
+        )}
+      >
+        {defaultLastText}
+      </a>
+    )
+  }
+</nav>
+
+<!-- Page Info -->
+<div
+  class="flex items-center justify-center mt-4 text-sm text-muted-foreground"
+>
+  {
+    t("pagination.page_info", `Page ${currentPage} of ${totalPages}`, {
+      current: currentPage,
+      total: totalPages,
+    })
+  }
+</div>
+
+<style>
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    nav {
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    nav a,
+    nav span {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    /* Hide first/last on very small screens */
+    nav a[aria-label*="First"],
+    nav a[aria-label*="Last"] {
+      display: none;
+    }
+  }
+</style>

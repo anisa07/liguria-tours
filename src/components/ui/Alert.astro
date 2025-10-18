@@ -1,0 +1,478 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { CheckCircle, AlertTriangle, XCircle, Info, X } from "lucide-react";
+import { cn } from "../../lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  variant?: "info" | "success" | "warning" | "error";
+  size?: "sm" | "md" | "lg";
+  dismissible?: boolean;
+  title?: string;
+  icon?: boolean | string;
+  actions?: { label: string; href?: string; onclick?: string }[];
+  rounded?: boolean;
+  border?: boolean;
+}
+
+const {
+  variant = "info",
+  size = "md",
+  dismissible = false,
+  title,
+  icon = true,
+  actions = [],
+  rounded = true,
+  border = false,
+  class: className = "",
+  ...rest
+} = Astro.props;
+
+const alertId = `alert-${Math.random().toString(36).substr(2, 9)}`;
+
+// Size classes
+const sizeClasses = {
+  sm: "p-3 text-sm",
+  md: "p-4 text-base",
+  lg: "p-6 text-lg",
+};
+
+// Variant classes
+const getVariantClasses = (variant: string, hasBorder: boolean) => {
+  const borderClass = hasBorder ? "border-l-4" : "";
+
+  switch (variant) {
+    case "success":
+      return `bg-success/10 text-success ${hasBorder ? "border-success" : ""} ${borderClass}`;
+    case "warning":
+      return `bg-warning/10 text-warning ${hasBorder ? "border-warning" : ""} ${borderClass}`;
+    case "error":
+      return `bg-destructive/10 text-destructive ${hasBorder ? "border-destructive" : ""} ${borderClass}`;
+    default: // info
+      return `bg-primary/10 text-primary ${hasBorder ? "border-primary" : ""} ${borderClass}`;
+  }
+};
+
+// Icon classes
+const getIconClasses = (variant: string) => {
+  switch (variant) {
+    case "success":
+      return "text-success";
+    case "warning":
+      return "text-warning";
+    case "error":
+      return "text-destructive";
+    default: // info
+      return "text-primary";
+  }
+};
+
+// Icon selection logic
+const showIcon = icon !== false;
+const useCustomIcon = typeof icon === "string";
+const customIconContent = typeof icon === "string" ? icon : null;
+---
+
+<div
+  id={alertId}
+  class={cn(
+    getVariantClasses(variant, border),
+    sizeClasses[size],
+    rounded && "rounded-lg",
+    className
+  )}
+  role="alert"
+  aria-live="polite"
+  data-alert-variant={variant}
+  {...rest}
+>
+  <div class="flex items-start">
+    <!-- Icon -->
+    {
+      showIcon && (
+        <div class="flex-shrink-0 mr-3">
+          {useCustomIcon ? (
+            <svg
+              class={cn("w-5 h-5 mt-0.5", getIconClasses(variant))}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <Fragment set:html={customIconContent} />
+            </svg>
+          ) : (
+            <>
+              {variant === "success" && (
+                <CheckCircle
+                  size={20}
+                  className={cn("mt-0.5", getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "warning" && (
+                <AlertTriangle
+                  size={20}
+                  className={cn("mt-0.5", getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "error" && (
+                <XCircle
+                  size={20}
+                  className={cn("mt-0.5", getIconClasses(variant))}
+                  client:load
+                />
+              )}
+              {variant === "info" && (
+                <Info
+                  size={20}
+                  className={cn("mt-0.5", getIconClasses(variant))}
+                  client:load
+                />
+              )}
+            </>
+          )}
+        </div>
+      )
+    }
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <!-- Title -->
+      {
+        title && (
+          <h3
+            class={cn(
+              "font-medium mb-1",
+              size === "sm"
+                ? "text-sm"
+                : size === "lg"
+                  ? "text-lg"
+                  : "text-base"
+            )}
+          >
+            {title}
+          </h3>
+        )
+      }
+
+      <!-- Message Content -->
+      <div class={title ? "mt-1" : ""}>
+        <slot />
+      </div>
+
+      <!-- Actions -->
+      {
+        actions.length > 0 && (
+          <div class="mt-3 flex flex-wrap gap-2">
+            {actions.map((action, index) =>
+              action.href ? (
+                <a
+                  href={action.href}
+                  class={cn(
+                    "inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md",
+                    "transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                    variant === "success"
+                      ? "bg-success/20 text-success hover:bg-success/30 focus:ring-success"
+                      : variant === "warning"
+                        ? "bg-warning/20 text-warning hover:bg-warning/30 focus:ring-warning"
+                        : variant === "error"
+                          ? "bg-destructive/20 text-destructive hover:bg-destructive/30 focus:ring-destructive"
+                          : "bg-primary/20 text-primary hover:bg-primary/30 focus:ring-primary"
+                  )}
+                >
+                  {action.label}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  class={cn(
+                    "inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md",
+                    "transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                    variant === "success"
+                      ? "bg-success/20 text-success hover:bg-success/30 focus:ring-success"
+                      : variant === "warning"
+                        ? "bg-warning/20 text-warning hover:bg-warning/30 focus:ring-warning"
+                        : variant === "error"
+                          ? "bg-destructive/20 text-destructive hover:bg-destructive/30 focus:ring-destructive"
+                          : "bg-primary/20 text-primary hover:bg-primary/30 focus:ring-primary"
+                  )}
+                  onclick={action.onclick}
+                  data-alert-action={index}
+                >
+                  {action.label}
+                </button>
+              )
+            )}
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Dismiss Button -->
+    {
+      dismissible && (
+        <div class="ml-3 flex-shrink-0">
+          <button
+            type="button"
+            class={cn(
+              "inline-flex rounded-md p-1.5 transition-colors duration-200",
+              "focus:outline-none focus:ring-2 focus:ring-offset-2",
+              variant === "success"
+                ? "text-success hover:bg-success/10 focus:ring-success"
+                : variant === "warning"
+                  ? "text-warning hover:bg-warning/10 focus:ring-warning"
+                  : variant === "error"
+                    ? "text-destructive hover:bg-destructive/10 focus:ring-destructive"
+                    : "text-primary hover:bg-primary/10 focus:ring-primary"
+            )}
+            aria-label="Dismiss alert"
+            data-alert-dismiss
+          >
+            <X size={16} client:load />
+          </button>
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* Alert animations - using centralized animations.css */
+  [role="alert"] {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .alert-dismissing {
+    animation: slideOutUp 0.3s ease-in forwards;
+  }
+
+  /* Dark mode support - CSS variables automatically handle theme switching */
+  @media (prefers-color-scheme: dark) {
+    /* CSS variables will automatically provide appropriate dark mode colors */
+    /* No manual color overrides needed when using design system variables */
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    [role="alert"] {
+      border: 2px solid currentColor;
+    }
+
+    /* Ensure all variant colors use high contrast */
+    .text-primary,
+    .text-success,
+    .text-warning,
+    .text-destructive {
+      color: currentColor;
+      font-weight: 600;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    [role="alert"],
+    .alert-dismissing {
+      animation: none;
+    }
+  }
+
+  /* Focus styles */
+  [role="alert"]:focus-within {
+    outline: 2px solid rgb(var(--color-primary));
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Alert functionality
+  function setupAlerts() {
+    // Handle dismiss buttons
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const dismissBtn = target.closest("[data-alert-dismiss]");
+
+      if (dismissBtn) {
+        const alert = dismissBtn.closest('[role="alert"]') as HTMLElement;
+        if (alert) {
+          dismissAlert(alert);
+        }
+      }
+    });
+
+    // Handle action buttons
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const actionBtn = target.closest("[data-alert-action]");
+
+      if (actionBtn) {
+        const actionIndex = actionBtn.getAttribute("data-alert-action");
+        const alert = actionBtn.closest('[role="alert"]') as HTMLElement;
+
+        // Custom event for action handling
+        if (alert) {
+          const event = new CustomEvent("alertAction", {
+            detail: { actionIndex, alert, button: actionBtn },
+          });
+          alert.dispatchEvent(event);
+        }
+      }
+    });
+  }
+
+  function dismissAlert(alert: HTMLElement) {
+    // Custom event before dismissal
+    const beforeDismissEvent = new CustomEvent("alertBeforeDismiss", {
+      detail: { alert },
+      cancelable: true,
+    });
+
+    alert.dispatchEvent(beforeDismissEvent);
+
+    if (!beforeDismissEvent.defaultPrevented) {
+      alert.classList.add("alert-dismissing");
+
+      // Remove from DOM after animation
+      setTimeout(() => {
+        if (alert.parentNode) {
+          alert.parentNode.removeChild(alert);
+
+          // Custom event after dismissal
+          document.dispatchEvent(
+            new CustomEvent("alertDismissed", {
+              detail: { alert },
+            })
+          );
+        }
+      }, 300);
+    }
+  }
+
+  // Alert utilities interface
+  interface AlertUtilsInterface {
+    show: (
+      container: HTMLElement | string,
+      options: {
+        variant?: string;
+        title?: string;
+        message: string;
+        dismissible?: boolean;
+        actions?: Array<{ label: string; onclick?: () => void }>;
+        duration?: number;
+      }
+    ) => HTMLElement | null;
+    dismissAll: (container: HTMLElement | string) => void;
+  }
+
+  // Alert utilities
+  (
+    globalThis as typeof globalThis & { AlertUtils: AlertUtilsInterface }
+  ).AlertUtils = {
+    // Show alert
+    show(
+      container: HTMLElement | string,
+      options: {
+        variant?: string;
+        title?: string;
+        message: string;
+        dismissible?: boolean;
+        actions?: Array<{ label: string; onclick?: () => void }>;
+        duration?: number;
+      }
+    ) {
+      const containerEl =
+        typeof container === "string"
+          ? document.querySelector(container)
+          : container;
+
+      if (!containerEl) return null;
+
+      const alert = document.createElement("div");
+      alert.setAttribute("role", "alert");
+      alert.setAttribute("aria-live", "polite");
+      alert.className = `alert-dynamic ${options.variant || "info"}`;
+
+      // Build alert content
+      let content = `<div class="flex items-start">`;
+
+      // Add icon placeholder (use Alert component for Lucide icons)
+      content += `<div class="flex-shrink-0 mr-3">
+        <div class="w-5 h-5 mt-0.5 rounded-full bg-current opacity-20 flex-shrink-0"></div>
+      </div>`;
+
+      // Add content
+      content += `<div class="flex-1 min-w-0">`;
+      if (options.title) {
+        content += `<h3 class="font-medium mb-1">${options.title}</h3>`;
+      }
+      content += `<div>${options.message}</div>`;
+
+      // Add actions
+      if (options.actions && options.actions.length > 0) {
+        content += `<div class="mt-3 flex flex-wrap gap-2">`;
+        options.actions.forEach((action, index) => {
+          content += `<button type="button" class="alert-action" data-action-index="${index}">${action.label}</button>`;
+        });
+        content += `</div>`;
+      }
+
+      content += `</div>`;
+
+      // Add dismiss button
+      if (options.dismissible) {
+        content += `<div class="ml-3 flex-shrink-0">
+          <button type="button" class="alert-dismiss inline-flex p-1 rounded-md hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Dismiss alert">
+            <span class="w-4 h-4 flex items-center justify-center text-current">×</span>
+          </button>
+        </div>`;
+      }
+
+      content += `</div>`;
+      alert.innerHTML = content;
+
+      // Add event listeners
+      if (options.actions) {
+        options.actions.forEach((action, index) => {
+          const btn = alert.querySelector(`[data-action-index="${index}"]`);
+          if (btn && action.onclick) {
+            btn.addEventListener("click", action.onclick);
+          }
+        });
+      }
+
+      if (options.dismissible) {
+        const dismissBtn = alert.querySelector(".alert-dismiss");
+        if (dismissBtn) {
+          dismissBtn.addEventListener("click", () => dismissAlert(alert));
+        }
+      }
+
+      containerEl.appendChild(alert);
+
+      // Auto-dismiss
+      if (options.duration && options.duration > 0) {
+        setTimeout(() => dismissAlert(alert), options.duration);
+      }
+
+      return alert;
+    },
+
+    // Dismiss all alerts in container
+    dismissAll(container: HTMLElement | string) {
+      const containerEl =
+        typeof container === "string"
+          ? document.querySelector(container)
+          : container;
+
+      if (containerEl) {
+        const alerts = containerEl.querySelectorAll('[role="alert"]');
+        alerts.forEach((alert) => dismissAlert(alert as HTMLElement));
+      }
+    },
+  };
+
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", setupAlerts);
+
+  // Re-initialize on navigation
+  document.addEventListener("astro:page-load", setupAlerts);
+</script>

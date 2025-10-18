@@ -1,0 +1,689 @@
+---
+import type { Props } from "./ToastNotification.types";
+import { CheckCircle, XCircle, AlertTriangle, Info, X } from "lucide-react";
+
+const {
+  type = "info",
+  title,
+  message,
+  duration = 5000,
+  position = "top-right",
+  showClose = true,
+  showIcon = true,
+  actionText,
+  actionHandler,
+  onClose,
+  className = "",
+  id,
+  persistent = false,
+  progress = false,
+  ...rest
+} = Astro.props as Props;
+
+// Type styling using CSS variables
+// Type styling using CSS variables
+const typeClasses = {
+  success: {
+    container: "bg-success/10 border-success/20",
+    icon: "text-success",
+    title: "text-success-foreground",
+    message: "text-success-foreground/90",
+    action: "text-success hover:text-success/80",
+    progress: "bg-success",
+  },
+  error: {
+    container: "bg-destructive/10 border-destructive/20",
+    icon: "text-destructive",
+    title: "text-destructive-foreground",
+    message: "text-destructive-foreground/90",
+    action: "text-destructive hover:text-destructive/80",
+    progress: "bg-destructive",
+  },
+  warning: {
+    container: "bg-warning/10 border-warning/20",
+    icon: "text-warning",
+    title: "text-warning-foreground",
+    message: "text-warning-foreground/90",
+    action: "text-warning hover:text-warning/80",
+    progress: "bg-warning",
+  },
+  info: {
+    container: "bg-info/10 border-info/20",
+    icon: "text-info",
+    title: "text-info-foreground",
+    message: "text-info-foreground/90",
+    action: "text-info hover:text-info/80",
+    progress: "bg-info",
+  },
+};
+
+// Position classes
+const positionClasses = {
+  "top-left": "top-0 left-0",
+  "top-center": "top-0 left-1/2 transform -translate-x-1/2",
+  "top-right": "top-0 right-0",
+  "bottom-left": "bottom-0 left-0",
+  "bottom-center": "bottom-0 left-1/2 transform -translate-x-1/2",
+  "bottom-right": "bottom-0 right-0",
+};
+
+const toastId = id || `toast-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div
+  class={`toast-notification ${typeClasses[type].container} ${className} max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden`}
+  id={toastId}
+  data-type={type}
+  data-duration={duration}
+  data-position={position}
+  data-persistent={persistent}
+  role="alert"
+  aria-live={type === "error" ? "assertive" : "polite"}
+  aria-atomic="true"
+  {...rest}
+>
+  {/* Progress Bar */}
+  {
+    progress && !persistent && (
+      <div class="toast-progress-container w-full h-1 bg-muted">
+        <div
+          class={`toast-progress h-full transition-all ease-linear ${typeClasses[type].progress}`}
+          style={{ width: "100%", transitionDuration: `${duration}ms` }}
+        />
+      </div>
+    )
+  }
+
+  <div class="p-4">
+    <div class="flex items-start">
+      {/* Icon */}
+      {
+        showIcon && (
+          <div class="flex-shrink-0">
+            {type === "success" && (
+              <CheckCircle
+                size={24}
+                className={typeClasses[type].icon}
+                client:load
+              />
+            )}
+            {type === "error" && (
+              <XCircle
+                size={24}
+                className={typeClasses[type].icon}
+                client:load
+              />
+            )}
+            {type === "warning" && (
+              <AlertTriangle
+                size={24}
+                className={typeClasses[type].icon}
+                client:load
+              />
+            )}
+            {type === "info" && (
+              <Info size={24} className={typeClasses[type].icon} client:load />
+            )}
+          </div>
+        )
+      }
+
+      {/* Content */}
+      <div class={`${showIcon ? "ml-3" : ""} w-0 flex-1 pt-0.5`}>
+        {
+          title && (
+            <p class={`text-sm font-medium ${typeClasses[type].title}`}>
+              {title}
+            </p>
+          )
+        }
+        {
+          message && (
+            <p
+              class={`${title ? "mt-1" : ""} text-sm ${typeClasses[type].message}`}
+            >
+              {message}
+            </p>
+          )
+        }
+
+        {/* Action Button */}
+        {
+          actionText && actionHandler && (
+            <div class="mt-3 flex space-x-7">
+              <button
+                type="button"
+                class={`bg-background rounded-md text-sm font-medium ${typeClasses[type].action} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
+                onclick={`toastManager.handleAction('${toastId}')`}
+                data-action-handler={actionHandler}
+              >
+                {actionText}
+              </button>
+            </div>
+          )
+        }
+      </div>
+
+      {/* Close Button */}
+      {
+        showClose && (
+          <div class="ml-4 flex-shrink-0 flex">
+            <button
+              type="button"
+              class={`bg-background rounded-md inline-flex text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
+              onclick={`toastManager.dismiss('${toastId}')`}
+              aria-label="Close notification"
+            >
+              <X size={20} client:load />
+            </button>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container (only rendered once) -->
+<div
+  id="toast-container-top-left"
+  class={`toast-container fixed ${positionClasses["top-left"]} p-6 space-y-4 z-50 pointer-events-none`}
+>
+</div>
+<div
+  id="toast-container-top-center"
+  class={`toast-container fixed ${positionClasses["top-center"]} p-6 space-y-4 z-50 pointer-events-none`}
+>
+</div>
+<div
+  id="toast-container-top-right"
+  class={`toast-container fixed ${positionClasses["top-right"]} p-6 space-y-4 z-50 pointer-events-none`}
+>
+</div>
+<div
+  id="toast-container-bottom-left"
+  class={`toast-container fixed ${positionClasses["bottom-left"]} p-6 space-y-4 z-50 pointer-events-none`}
+>
+</div>
+<div
+  id="toast-container-bottom-center"
+  class={`toast-container fixed ${positionClasses["bottom-center"]} p-6 space-y-4 z-50 pointer-events-none`}
+>
+</div>
+<div
+  id="toast-container-bottom-right"
+  class={`toast-container fixed ${positionClasses["bottom-right"]} p-6 space-y-4 z-50 pointer-events-none`}
+>
+</div>
+
+<style>
+  /* Toast animations - using centralized animations.css */
+  .toast-notification {
+    animation: slideInRight 0.3s ease-out;
+    transform-origin: top;
+  }
+
+  .toast-notification.removing {
+    animation: slideOutRight 0.3s ease-in forwards;
+  }
+
+  /* Position-specific animations */
+  .toast-container[id*="left"] .toast-notification {
+    animation: slideInLeft 0.3s ease-out;
+  }
+
+  .toast-container[id*="left"] .toast-notification.removing {
+    animation: slideOutLeft 0.3s ease-in forwards;
+  }
+
+  /* Center position animations */
+  .toast-container[id*="center"] .toast-notification {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .toast-container[id*="center"] .toast-notification.removing {
+    animation: fadeOut 0.3s ease-in forwards;
+  }
+
+  /* Progress bar animation - using centralized animation */
+  .toast-progress {
+    transform-origin: left center;
+    animation: progressCountdown var(--duration, 5000ms) linear forwards;
+  }
+
+  /* Hover pause */
+  .toast-notification:hover .toast-progress {
+    animation-play-state: paused;
+  }
+
+  /* Dark Mode */
+  @media (prefers-color-scheme: dark) {
+    .toast-notification {
+      background-color: hsl(var(--card));
+      border-color: hsl(var(--border));
+      color: hsl(var(--card-foreground));
+    }
+
+    .bg-background {
+      background-color: hsl(var(--background));
+    }
+
+    .text-muted-foreground {
+      color: hsl(var(--muted-foreground));
+    }
+
+    .hover\:text-foreground:hover {
+      color: hsl(var(--foreground));
+    }
+  } /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    .toast-notification {
+      border-width: 2px;
+    }
+
+    button {
+      border: 1px solid currentColor;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .toast-notification,
+    .toast-notification.removing {
+      animation: none;
+    }
+
+    .toast-progress {
+      animation: none;
+      transition: none;
+    }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .toast-container {
+      left: 1rem !important;
+      right: 1rem !important;
+      transform: none !important;
+    }
+
+    .toast-notification {
+      max-width: none;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  interface ToastOptions {
+    id?: string;
+    type?: "success" | "error" | "warning" | "info";
+    title?: string;
+    message: string;
+    duration?: number;
+    position?:
+      | "top-left"
+      | "top-center"
+      | "top-right"
+      | "bottom-left"
+      | "bottom-center"
+      | "bottom-right";
+    showClose?: boolean;
+    showIcon?: boolean;
+    actionText?: string;
+    actionHandler?: () => void;
+    onClose?: () => void;
+    persistent?: boolean;
+    progress?: boolean;
+  }
+
+  class ToastManager {
+    private toasts: Map<string, HTMLElement> = new Map();
+    private timeouts: Map<string, ReturnType<typeof setTimeout>> = new Map();
+    private actionHandlers: Map<string, () => void> = new Map();
+    private maxToasts = 5;
+
+    constructor() {
+      this.init();
+    }
+
+    private init() {
+      document.addEventListener("DOMContentLoaded", () => {
+        this.setupContainers();
+        this.observeExistingToasts();
+      });
+    }
+
+    private setupContainers() {
+      const positions = [
+        "top-left",
+        "top-center",
+        "top-right",
+        "bottom-left",
+        "bottom-center",
+        "bottom-right",
+      ];
+
+      positions.forEach((position) => {
+        let container = document.getElementById(`toast-container-${position}`);
+        if (!container) {
+          container = document.createElement("div");
+          container.id = `toast-container-${position}`;
+          container.className = `toast-container fixed p-6 space-y-4 z-50 pointer-events-none`;
+
+          // Apply position classes
+          const positionClasses = {
+            "top-left": "top-0 left-0",
+            "top-center": "top-0 left-1/2 transform -translate-x-1/2",
+            "top-right": "top-0 right-0",
+            "bottom-left": "bottom-0 left-0",
+            "bottom-center": "bottom-0 left-1/2 transform -translate-x-1/2",
+            "bottom-right": "bottom-0 right-0",
+          };
+
+          container.className += ` ${positionClasses[position as keyof typeof positionClasses]}`;
+          document.body.appendChild(container);
+        }
+      });
+    }
+
+    private observeExistingToasts() {
+      const existingToasts = document.querySelectorAll(".toast-notification");
+      existingToasts.forEach((toast) => {
+        this.registerToast(toast as HTMLElement);
+      });
+    }
+
+    private registerToast(toastElement: HTMLElement) {
+      const id = toastElement.id;
+      const duration = parseInt(toastElement.dataset.duration || "5000");
+      const persistent = toastElement.dataset.persistent === "true";
+
+      this.toasts.set(id, toastElement);
+
+      if (!persistent && duration > 0) {
+        const timeout = setTimeout(() => {
+          this.dismiss(id);
+        }, duration);
+
+        this.timeouts.set(id, timeout);
+
+        // Pause on hover
+        toastElement.addEventListener("mouseenter", () => {
+          clearTimeout(timeout);
+        });
+
+        toastElement.addEventListener("mouseleave", () => {
+          const remainingTime = this.getRemainingTime(toastElement);
+          const newTimeout = setTimeout(() => {
+            this.dismiss(id);
+          }, remainingTime);
+          this.timeouts.set(id, newTimeout);
+        });
+      }
+    }
+
+    private getRemainingTime(toastElement: HTMLElement): number {
+      const progressBar = toastElement.querySelector(
+        ".toast-progress"
+      ) as HTMLElement;
+      if (progressBar) {
+        const computedStyle = window.getComputedStyle(progressBar);
+        const transform = computedStyle.transform;
+        const matrix = new DOMMatrix(transform);
+        const scaleX = matrix.a;
+        const duration = parseInt(toastElement.dataset.duration || "5000");
+        return duration * scaleX;
+      }
+      return 1000; // Default fallback
+    }
+
+    // Public API
+    show(options: ToastOptions): string {
+      const id = options.id || this.generateId();
+      const position = options.position || "top-right";
+      const container = document.getElementById(`toast-container-${position}`);
+
+      if (!container) {
+        // Toast container not found for position
+        return id;
+      }
+
+      // Limit number of toasts
+      this.enforceMaxToasts(container);
+
+      // Create toast element
+      const toast = this.createToastElement(id, options);
+      container.appendChild(toast);
+
+      this.registerToast(toast);
+
+      // Trigger entrance animation
+      requestAnimationFrame(() => {
+        toast.style.opacity = "1";
+        toast.style.transform = "translateX(0)";
+      });
+
+      return id;
+    }
+
+    private generateId(): string {
+      return `toast-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    }
+
+    private enforceMaxToasts(container: HTMLElement) {
+      const toasts = container.querySelectorAll(".toast-notification");
+      if (toasts.length >= this.maxToasts) {
+        const oldestToast = toasts[0] as HTMLElement;
+        this.dismiss(oldestToast.id);
+      }
+    }
+
+    private createToastElement(id: string, options: ToastOptions): HTMLElement {
+      const toast = document.createElement("div");
+      toast.id = id;
+      toast.className =
+        "toast-notification max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden";
+      toast.setAttribute("role", "alert");
+      toast.setAttribute(
+        "aria-live",
+        options.type === "error" ? "assertive" : "polite"
+      );
+      toast.setAttribute("aria-atomic", "true");
+      toast.dataset.type = options.type || "info";
+      toast.dataset.duration = (options.duration || 5000).toString();
+      toast.dataset.persistent = (options.persistent || false).toString();
+
+      // Add type-specific classes using CSS variables
+      const typeClasses = {
+        success: "bg-success/10 border-success/20",
+        error: "bg-destructive/10 border-destructive/20",
+        warning: "bg-warning/10 border-warning/20",
+        info: "bg-info/10 border-info/20",
+      };
+
+      toast.className += ` ${typeClasses[options.type || "info"]}`;
+
+      toast.innerHTML = this.generateToastHTML(id, options);
+
+      // Store action handler if provided
+      if (options.actionHandler) {
+        this.actionHandlers.set(id, options.actionHandler);
+      }
+
+      return toast;
+    }
+
+    private generateToastHTML(id: string, options: ToastOptions): string {
+      const typeClasses = {
+        success: {
+          icon: "text-success",
+          title: "text-success-foreground",
+          message: "text-success-foreground/90",
+        },
+        error: {
+          icon: "text-destructive",
+          title: "text-destructive-foreground",
+          message: "text-destructive-foreground/90",
+        },
+        warning: {
+          icon: "text-warning",
+          title: "text-warning-foreground",
+          message: "text-warning-foreground/90",
+        },
+        info: {
+          icon: "text-info",
+          title: "text-info-foreground",
+          message: "text-info-foreground/90",
+        },
+      };
+
+      // Simple icon symbols for dynamic toasts
+      const iconSymbols = {
+        success: "✓",
+        error: "✕",
+        warning: "⚠",
+        info: "ℹ",
+      };
+
+      const type = options.type || "info";
+      const classes = typeClasses[type];
+
+      return `
+        ${
+          options.progress && !options.persistent
+            ? `
+          <div class="toast-progress-container w-full h-1 bg-muted">
+            <div class="toast-progress h-full bg-${type} transition-all ease-linear" 
+                 style="width: 100%; transition-duration: ${options.duration || 5000}ms; --duration: ${options.duration || 5000}ms;"></div>
+          </div>
+        `
+            : ""
+        }
+        <div class="p-4">
+          <div class="flex items-start">
+            ${
+              options.showIcon !== false
+                ? `
+              <div class="flex-shrink-0">
+                <div class="w-6 h-6 flex items-center justify-center text-lg font-bold ${classes.icon}">
+                  ${iconSymbols[type]}
+                </div>
+              </div>
+            `
+                : ""
+            }
+            <div class="${options.showIcon !== false ? "ml-3" : ""} w-0 flex-1 pt-0.5">
+              ${options.title ? `<p class="text-sm font-medium ${classes.title}">${options.title}</p>` : ""}
+              <p class="${options.title ? "mt-1" : ""} text-sm ${classes.message}">${options.message}</p>
+              ${
+                options.actionText
+                  ? `
+                <div class="mt-3 flex space-x-7">
+                  <button type="button" class="bg-background rounded-md text-sm font-medium text-${type} hover:text-${type}/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                          onclick="toastManager.handleAction('${id}')">
+                    ${options.actionText}
+                  </button>
+                </div>
+              `
+                  : ""
+              }
+            </div>
+            ${
+              options.showClose !== false
+                ? `
+              <div class="ml-4 flex-shrink-0 flex">
+                <button type="button" class="bg-background rounded-md inline-flex items-center justify-center w-6 h-6 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                        onclick="toastManager.dismiss('${id}')" aria-label="Close notification">
+                  ×
+                </button>
+              </div>
+            `
+                : ""
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    handleAction(id: string) {
+      const handler = this.actionHandlers.get(id);
+      if (handler) {
+        handler();
+        this.dismiss(id); // Dismiss after action
+      }
+    }
+
+    dismiss(id: string) {
+      const toast = this.toasts.get(id);
+      if (!toast) return;
+
+      // Clear timeout
+      const timeout = this.timeouts.get(id);
+      if (timeout) {
+        clearTimeout(timeout);
+        this.timeouts.delete(id);
+      }
+
+      // Add removing class for animation
+      toast.classList.add("removing");
+
+      // Remove after animation
+      setTimeout(() => {
+        toast.remove();
+        this.toasts.delete(id);
+        this.actionHandlers.delete(id);
+      }, 300);
+    }
+
+    dismissAll(position?: string) {
+      if (position) {
+        const container = document.getElementById(
+          `toast-container-${position}`
+        );
+        if (container) {
+          const toasts = container.querySelectorAll(".toast-notification");
+          toasts.forEach((toast) => this.dismiss((toast as HTMLElement).id));
+        }
+      } else {
+        this.toasts.forEach((_, id) => this.dismiss(id));
+      }
+    }
+
+    // Convenience methods
+    success(message: string, options?: Partial<ToastOptions>): string {
+      return this.show({ ...options, type: "success", message });
+    }
+
+    error(message: string, options?: Partial<ToastOptions>): string {
+      return this.show({ ...options, type: "error", message });
+    }
+
+    warning(message: string, options?: Partial<ToastOptions>): string {
+      return this.show({ ...options, type: "warning", message });
+    }
+
+    info(message: string, options?: Partial<ToastOptions>): string {
+      return this.show({ ...options, type: "info", message });
+    }
+  }
+
+  // Initialize global toast manager
+  if (typeof window !== "undefined") {
+    const toastManager = new ToastManager();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).toastManager = toastManager;
+
+    // Make convenience methods available globally
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).showToast = {
+      success: (message: string, options?: Partial<ToastOptions>) =>
+        toastManager.success(message, options),
+      error: (message: string, options?: Partial<ToastOptions>) =>
+        toastManager.error(message, options),
+      warning: (message: string, options?: Partial<ToastOptions>) =>
+        toastManager.warning(message, options),
+      info: (message: string, options?: Partial<ToastOptions>) =>
+        toastManager.info(message, options),
+    };
+  }
+</script>

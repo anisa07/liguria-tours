@@ -1,0 +1,346 @@
+---
+/**
+ * Accessibility Auditor Component
+ * 
+ * This component integrates axe-core for automated accessibility testing
+ * and provides visual indicators for accessibility issues during development.
+ */
+import type { Props } from "./AccessibilityAuditor.types";
+import { CheckCircle } from "lucide-react";
+
+const {
+  enabled = import.meta.env.DEV,
+  showViolations = true,
+  showBestPractices = false,
+  tags = ["wcag2a", "wcag2aa", "wcag21aa"],
+  className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+{enabled && (
+  <div
+    id="accessibility-auditor"
+    class={`accessibility-auditor ${className}`}
+    {...rest}
+  >
+    <!-- Accessibility Status Indicator -->
+    <div id="a11y-status" class="a11y-status" role="status" aria-live="polite">
+      <span class="sr-only">Accessibility status:</span>
+      <div class="a11y-indicator">
+        <CheckCircle size={24} aria-hidden="true" />
+      </div>
+    </div>
+
+    <!-- Violations Panel -->
+    {showViolations && (
+      <div
+        id="a11y-violations"
+        class="a11y-violations"
+        role="region"
+        aria-labelledby="violations-heading"
+        hidden
+      >
+        <h3 id="violations-heading">Accessibility Issues</h3>
+        <div id="violations-list" role="list"></div>
+      </div>
+    )}
+  </div>
+)}
+
+<style>
+  .accessibility-auditor {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  .a11y-status {
+    background: #4ade80;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .a11y-status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .a11y-status.has-violations {
+    background: #ef4444;
+  }
+
+  .a11y-status.has-warnings {
+    background: #f59e0b;
+  }
+
+  .a11y-indicator {
+    color: white;
+  }
+
+  .a11y-violations {
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    min-width: 300px;
+    max-width: 400px;
+    max-height: 400px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+  }
+
+  .a11y-violations h3 {
+    margin: 0;
+    padding: 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .a11y-violations [role="list"] {
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  .violation-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 13px;
+  }
+
+  .violation-item:last-child {
+    border-bottom: none;
+  }
+
+  .violation-title {
+    font-weight: 600;
+    color: #dc2626;
+    margin-bottom: 4px;
+  }
+
+  .violation-description {
+    color: #6b7280;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .violation-help {
+    font-size: 12px;
+    color: #4f46e5;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .violation-element {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 11px;
+    background: #f3f4f6;
+    padding: 4px 6px;
+    border-radius: 3px;
+    margin-top: 8px;
+    color: #374151;
+    word-break: break-all;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Focus styles */
+  .a11y-status:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  .violation-help:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+  }
+</style>
+
+<script define:vars={{ enabled, showViolations, tags }}>
+  if (enabled && typeof window !== 'undefined') {
+    // Dynamically import axe-core
+    import('https://cdn.jsdelivr.net/npm/axe-core@4.8.2/axe.min.js').then(() => {
+      const axe = window.axe;
+      
+      if (!axe) {
+        // axe-core not loaded - silently return
+        return;
+      }
+
+      const statusIndicator = document.getElementById('a11y-status');
+      const violationsPanel = document.getElementById('a11y-violations');
+      const violationsList = document.getElementById('violations-list');
+      
+      let isViolationsPanelOpen = false;
+
+      // Configure axe
+      axe.configure({
+        tags: tags,
+        rules: {
+          'color-contrast': { enabled: true },
+          'keyboard-navigation': { enabled: true },
+          'focus-management': { enabled: true }
+        }
+      });
+
+      // Run accessibility audit
+      async function runAudit() {
+        try {
+          const results = await axe.run();
+          updateStatus(results);
+          updateViolationsPanel(results);
+        } catch {
+          // Accessibility audit failed - silently return
+        }
+      }
+
+      // Update status indicator
+      function updateStatus(results) {
+        const { violations, incomplete } = results;
+        
+        statusIndicator.className = 'a11y-status';
+        
+        if (violations.length > 0) {
+          statusIndicator.classList.add('has-violations');
+          statusIndicator.setAttribute('aria-label', `${violations.length} accessibility violations found`);
+        } else if (incomplete.length > 0) {
+          statusIndicator.classList.add('has-warnings');
+          statusIndicator.setAttribute('aria-label', `${incomplete.length} accessibility warnings found`);
+        } else {
+          statusIndicator.setAttribute('aria-label', 'No accessibility issues found');
+        }
+      }
+
+      // Update violations panel
+      function updateViolationsPanel(results) {
+        if (!showViolations || !violationsList) return;
+        
+        const { violations, incomplete } = results;
+        const allIssues = [...violations, ...incomplete];
+        
+        violationsList.innerHTML = '';
+        
+        if (allIssues.length === 0) {
+          const noIssues = document.createElement('div');
+          noIssues.className = 'violation-item';
+          noIssues.innerHTML = '<div class="violation-title" style="color: #059669;">✓ No accessibility issues found</div>';
+          violationsList.appendChild(noIssues);
+          return;
+        }
+
+        allIssues.forEach((issue) => {
+          const item = document.createElement('div');
+          item.className = 'violation-item';
+          item.setAttribute('role', 'listitem');
+          
+          const isViolation = violations.includes(issue);
+          const severity = isViolation ? 'Violation' : 'Warning';
+          
+          item.innerHTML = `
+            <div class="violation-title">${severity}: ${issue.description}</div>
+            <div class="violation-description">${issue.help}</div>
+            <button 
+              class="violation-help"
+              onclick="window.open('${issue.helpUrl}', '_blank')"
+              aria-label="Learn more about ${issue.id}"
+            >
+              Learn more
+            </button>
+            ${issue.nodes.length > 0 ? `
+              <div class="violation-element">
+                Element: ${issue.nodes[0].target[0]}
+              </div>
+            ` : ''}
+          `;
+          
+          violationsList.appendChild(item);
+        });
+      }
+
+      // Toggle violations panel
+      function toggleViolationsPanel() {
+        if (!violationsPanel) return;
+        
+        isViolationsPanelOpen = !isViolationsPanelOpen;
+        violationsPanel.hidden = !isViolationsPanelOpen;
+        
+        if (isViolationsPanelOpen) {
+          violationsPanel.querySelector('button, [tabindex="0"]')?.focus();
+        }
+      }
+
+      // Event listeners
+      statusIndicator?.addEventListener('click', toggleViolationsPanel);
+      statusIndicator?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleViolationsPanel();
+        }
+      });
+
+      // Close panel when clicking outside
+      document.addEventListener('click', (e) => {
+        if (isViolationsPanelOpen && 
+            !violationsPanel?.contains(e.target) && 
+            !statusIndicator?.contains(e.target)) {
+          isViolationsPanelOpen = false;
+          violationsPanel.hidden = true;
+        }
+      });
+
+      // Run initial audit
+      runAudit();
+
+      // Re-run audit when DOM changes
+      const observer = new MutationObserver(() => {
+        clearTimeout(observer.debounceTimer);
+        observer.debounceTimer = setTimeout(runAudit, 1000);
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['aria-label', 'aria-labelledby', 'aria-describedby', 'role']
+      });
+
+      // Keyboard navigation for violations panel
+      violationsPanel?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          isViolationsPanelOpen = false;
+          violationsPanel.hidden = true;
+          statusIndicator?.focus();
+        }
+      });
+
+      // Expose audit function globally for manual testing
+      window.runAccessibilityAudit = runAudit;
+    });
+  }
+</script>

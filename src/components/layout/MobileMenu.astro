@@ -1,0 +1,282 @@
+---
+import { createT } from "@/i18n/t";
+import type { Locale } from "@/i18n/config";
+import LanguageSwitcher from "../LanguageSwitcher.astro";
+
+export interface MenuItem {
+  label: string;
+  href?: string;
+  icon?: string;
+  active?: boolean;
+  children?: MenuItem[];
+  disabled?: boolean;
+}
+
+export interface Props {
+  items: MenuItem[];
+  locale?: Locale;
+  translations?: Record<string, any>[];
+  class?: string;
+  trigger?: string;
+  closeText?: string;
+  menuId?: string;
+  showLanguageSwitcher?: boolean;
+  currentLocale?: Locale;
+}
+
+const {
+  items,
+  locale = "en",
+  translations = [],
+  class: className = "",
+  trigger = "☰",
+  closeText = "✕",
+  menuId = "mobile-menu",
+  showLanguageSwitcher = false,
+  currentLocale,
+} = Astro.props;
+
+// Create translation function
+const t = createT(translations);
+---
+
+<!-- Mobile Menu Button -->
+<div class={`lg:hidden ${className}`}>
+  <button
+    type="button"
+    class="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-subtle"
+    aria-controls={menuId}
+    aria-expanded="false"
+    aria-label={t("mobile_menu.toggle", "Toggle mobile menu")}
+    id={`${menuId}-button`}
+  >
+    <span class="sr-only">{t("mobile_menu.open", "Open main menu")}</span>
+    <span class="menu-icon text-xl" aria-hidden="true">{trigger}</span>
+    <span class="close-icon text-xl hidden" aria-hidden="true">{closeText}</span
+    >
+  </button>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div
+  class="fixed inset-0 z-40 lg:hidden hidden bg-background backdrop-blur-sm"
+  id={`${menuId}-overlay`}
+  aria-hidden="true"
+>
+</div>
+
+<!-- Mobile Menu Panel -->
+<div
+  class="fixed top-0 left-0 right-0 z-50 w-full h-dvh bg-background backdrop-blur-md border-l border-border shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden hidden"
+  id={menuId}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={`${menuId}-title`}
+  aria-hidden="true"
+>
+  <!-- Menu Header -->
+  <div
+    class="flex items-center justify-between p-6 pb-0 border-b border-border"
+  >
+    <h2 id={`${menuId}-title`} class="text-xl font-bold text-foreground">
+      {t("mobile_menu.title", "Menu")}
+    </h2>
+    <button
+      type="button"
+      class="inline-flex items-center justify-center w-10 h-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+      aria-label={t("mobile_menu.close", "Close menu")}
+      id={`${menuId}-close`}
+    >
+      <span class="text-2xl" aria-hidden="true">{closeText}</span>
+    </button>
+  </div>
+
+  <!-- Menu Content -->
+  <div class="flex-1 flex flex-col overflow-y-auto bg-background">
+    <nav class="px-4 py-6 space-y-2" role="navigation">
+      {
+        items.map((item) => (
+          <div class="space-y-1">
+            {item.href ? (
+              <a
+                href={item.href}
+                class={`flex items-center w-full px-6 py-4 text-lg font-medium rounded-xl transition-all duration-200 ${
+                  item.active
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-foreground hover:text-primary hover:bg-muted"
+                } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                tabindex={item.disabled ? -1 : undefined}
+                aria-disabled={item.disabled ? "true" : undefined}
+                aria-current={item.active ? "page" : undefined}
+              >
+                {item.icon && (
+                  <span class="mr-4 text-xl" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+              </a>
+            ) : (
+              <div class="flex items-center w-full px-6 py-4 text-lg font-medium text-foreground">
+                {item.icon && (
+                  <span class="mr-4 text-xl" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+              </div>
+            )}
+
+            {item.children && item.children.length > 0 && (
+              <div class="ml-6 space-y-1">
+                {item.children.map((child) => (
+                  <div>
+                    {child.href ? (
+                      <a
+                        href={child.href}
+                        class={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                          child.active
+                            ? "bg-surface-2 text-foreground font-medium"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                        } ${child.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                        tabindex={child.disabled ? -1 : undefined}
+                        aria-disabled={child.disabled ? "true" : undefined}
+                        aria-current={child.active ? "page" : undefined}
+                      >
+                        {child.icon && (
+                          <span class="mr-2" aria-hidden="true">
+                            {child.icon}
+                          </span>
+                        )}
+                        {child.label}
+                      </a>
+                    ) : (
+                      <div class="flex items-center w-full px-3 py-2 text-sm text-muted-foreground">
+                        {child.icon && (
+                          <span class="mr-2" aria-hidden="true">
+                            {child.icon}
+                          </span>
+                        )}
+                        {child.label}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+</div>
+
+<script define:vars={{ menuId }}>
+  // Mobile menu functionality
+  const menuButton = document.getElementById(`${menuId}-button`);
+  const menuPanel = document.getElementById(menuId);
+  const menuOverlay = document.getElementById(`${menuId}-overlay`);
+  const menuClose = document.getElementById(`${menuId}-close`);
+  const menuIcon = menuButton?.querySelector(".menu-icon");
+  const closeIcon = menuButton?.querySelector(".close-icon");
+
+  function openMenu() {
+    if (menuPanel && menuOverlay) {
+      menuPanel.classList.remove("hidden");
+      menuPanel.classList.remove("translate-x-full");
+      menuPanel.setAttribute("aria-hidden", "false");
+      menuOverlay.classList.remove("hidden");
+      menuButton?.setAttribute("aria-expanded", "true");
+
+      // Toggle icons
+      menuIcon?.classList.add("hidden");
+      closeIcon?.classList.remove("hidden");
+
+      // Focus management
+      menuClose?.focus();
+
+      // Prevent body scroll
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeMenu() {
+    if (menuPanel && menuOverlay) {
+      menuPanel.classList.add("translate-x-full");
+      menuPanel.setAttribute("aria-hidden", "true");
+      menuOverlay.classList.add("hidden");
+      menuButton?.setAttribute("aria-expanded", "false");
+
+      // Toggle icons
+      menuIcon?.classList.remove("hidden");
+      closeIcon?.classList.add("hidden");
+
+      // Restore body scroll
+      document.body.style.overflow = "";
+
+      // Return focus to menu button
+      menuButton?.focus();
+
+      // Hide panel after animation
+      setTimeout(() => {
+        if (menuPanel?.getAttribute("aria-hidden") === "true") {
+          menuPanel.classList.add("hidden");
+        }
+      }, 300);
+    }
+  }
+
+  // Event listeners
+  menuButton?.addEventListener("click", () => {
+    const isOpen = menuPanel?.getAttribute("aria-hidden") === "false";
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  menuClose?.addEventListener("click", closeMenu);
+  menuOverlay?.addEventListener("click", closeMenu);
+
+  // Close menu on escape key
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      menuPanel?.getAttribute("aria-hidden") === "false"
+    ) {
+      closeMenu();
+    }
+  });
+
+  // Close menu when clicking on links
+  menuPanel?.addEventListener("click", (e) => {
+    if (e.target && e.target.tagName === "A") {
+      closeMenu();
+    }
+  });
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768) {
+      closeMenu();
+    }
+  });
+</script>
+
+<style>
+  /* Ensure smooth transitions */
+  #mobile-menu {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* Focus trap styles */
+  #mobile-menu a:focus,
+  #mobile-menu button:focus {
+    outline: 2px solid rgb(var(--color-ring));
+    outline-offset: 2px;
+  }
+
+  /* Backdrop blur support */
+  @supports (backdrop-filter: blur(4px)) {
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+  }
+</style>

@@ -1,0 +1,535 @@
+---
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import { cn } from "@/lib/utils";
+
+export interface PricingFeature {
+  name: string;
+  included: boolean;
+  description?: string;
+}
+
+export interface PricingPlan {
+  name: string;
+  description?: string;
+  price: {
+    amount: number;
+    currency?: string;
+    period?: string;
+    originalAmount?: number; // For showing discounts
+  };
+  features: PricingFeature[];
+  ctaText?: string;
+  ctaHref?: string;
+  popular?: boolean;
+  badge?: string;
+  highlight?: boolean;
+}
+
+export interface Props {
+  plan?: PricingPlan;
+  plans?: PricingPlan[];
+  variant?: "card" | "table" | "comparison";
+  showBillingToggle?: boolean;
+  annualDiscount?: number;
+  class?: string;
+  locale?: Locale;
+}
+
+const {
+  plan,
+  plans = [],
+  variant = "card",
+  showBillingToggle = false,
+  annualDiscount = 20,
+  class: className = "",
+  locale = "en",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["pricing", "common"]);
+
+// Use single plan or process multiple plans
+const singlePlan = plan || plans[0];
+const isMultiplePlans = variant !== "card" && plans.length > 0;
+
+const formatPrice = (amount: number, currency: string = "$") => {
+  if (amount === 0) return t("pricing.free", "Free");
+  return `${currency}${amount}`;
+};
+
+const getCardClasses = (plan: PricingPlan) => {
+  return cn(
+    "relative bg-background border rounded-xl p-8 transition-all duration-300 hover:shadow-lg",
+    plan.popular || plan.highlight
+      ? "border-primary ring-2 ring-primary/10 scale-105"
+      : "border-border hover:border-primary/20"
+  );
+};
+
+const sectionClasses = cn("py-16 md:py-20", className);
+---
+
+{
+  isMultiplePlans ? (
+    <section class={sectionClasses}>
+      <div class="container mx-auto px-4">
+        {/* Billing Toggle */}
+        {showBillingToggle && (
+          <div class="flex justify-center mb-12">
+            <div class="inline-flex items-center bg-surface-1 rounded-lg p-1">
+              <button
+                type="button"
+                class="px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring billing-toggle"
+                data-billing="monthly"
+              >
+                {t("pricing.monthly", "Monthly")}
+              </button>
+              <button
+                type="button"
+                class="px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring billing-toggle"
+                data-billing="annual"
+              >
+                {t("pricing.annual", "Annual")}
+                <span class="ml-1 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                  {t("pricing.save_percent", "Save {percent}%", {
+                    percent: annualDiscount,
+                  })}
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {variant === "comparison" ? (
+          // Comparison Table Layout
+          <div class="overflow-x-auto">
+            <table class="w-full border border-border rounded-xl overflow-hidden">
+              <thead class="bg-surface-1">
+                <tr>
+                  <th class="px-6 py-4 text-left font-semibold text-foreground">
+                    {t("pricing.features", "Features")}
+                  </th>
+                  {plans.map((planItem) => (
+                    <th class="px-6 py-4 text-center font-semibold text-foreground min-w-[200px]">
+                      <div class="space-y-2">
+                        <div class="text-lg">{planItem.name}</div>
+                        <div class="text-2xl font-bold text-primary">
+                          {formatPrice(
+                            planItem.price.amount,
+                            planItem.price.currency
+                          )}
+                          {planItem.price.period && (
+                            <span class="text-sm font-normal text-muted-foreground">
+                              /{planItem.price.period}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {/* Get all unique features */}
+                {(() => {
+                  const allFeatures = new Set();
+                  plans.forEach((p) =>
+                    p.features.forEach((f) => allFeatures.add(f.name))
+                  );
+                  return Array.from(allFeatures);
+                })().map((featureName) => (
+                  <tr class="border-t border-border">
+                    <td class="px-6 py-4 font-medium text-foreground">
+                      {featureName}
+                    </td>
+                    {plans.map((planItem) => {
+                      const feature = planItem.features.find(
+                        (f) => f.name === featureName
+                      );
+                      return (
+                        <td class="px-6 py-4 text-center">
+                          {feature ? (
+                            feature.included ? (
+                              <span
+                                class="text-success text-lg"
+                                aria-label={t("pricing.included", "Included")}
+                              >
+                                ✓
+                              </span>
+                            ) : (
+                              <span
+                                class="text-muted-foreground text-lg"
+                                aria-label={t(
+                                  "pricing.not_included",
+                                  "Not included"
+                                )}
+                              >
+                                -
+                              </span>
+                            )
+                          ) : (
+                            <span
+                              class="text-muted-foreground text-lg"
+                              aria-label={t(
+                                "pricing.not_available",
+                                "Not available"
+                              )}
+                            >
+                              -
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+
+                {/* CTA Row */}
+                <tr class="border-t border-border bg-surface-1/50">
+                  <td class="px-6 py-4 font-medium text-foreground">
+                    {t("pricing.get_started", "Get Started")}
+                  </td>
+                  {plans.map((planItem) => (
+                    <td class="px-6 py-4 text-center">
+                      <a
+                        href={planItem.ctaHref || "#"}
+                        class={cn(
+                          "inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
+                          planItem.popular || planItem.highlight
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary"
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
+                        )}
+                      >
+                        {planItem.ctaText ||
+                          t("pricing.choose_plan", "Choose Plan")}
+                      </a>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          // Grid Layout
+          <div
+            class={cn(
+              "grid gap-8",
+              plans.length === 2
+                ? "md:grid-cols-2 max-w-4xl mx-auto"
+                : plans.length === 3
+                  ? "md:grid-cols-3 max-w-6xl mx-auto"
+                  : "md:grid-cols-2 lg:grid-cols-4"
+            )}
+          >
+            {plans.map((planItem, index) => (
+              <article
+                class={`${getCardClasses(planItem)} animate-fade-up ${index > 0 ? `animate-delay-${Math.min(index, 5)}` : ""}`}
+              >
+                {/* Popular Badge */}
+                {(planItem.popular || planItem.badge) && (
+                  <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span class="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                      {planItem.badge ||
+                        t("pricing.most_popular", "Most Popular")}
+                    </span>
+                  </div>
+                )}
+
+                {/* Plan Header */}
+                <div class="text-center mb-8">
+                  <h3 class="text-xl font-bold text-foreground mb-2">
+                    {planItem.name}
+                  </h3>
+
+                  {planItem.description && (
+                    <p class="text-muted-foreground text-sm mb-4">
+                      {planItem.description}
+                    </p>
+                  )}
+
+                  <div class="mb-4">
+                    {planItem.price.originalAmount &&
+                      planItem.price.originalAmount > planItem.price.amount && (
+                        <div class="text-sm text-muted-foreground line-through">
+                          {formatPrice(
+                            planItem.price.originalAmount,
+                            planItem.price.currency
+                          )}
+                        </div>
+                      )}
+
+                    <div class="text-4xl font-bold text-primary">
+                      {formatPrice(
+                        planItem.price.amount,
+                        planItem.price.currency
+                      )}
+                    </div>
+
+                    {planItem.price.period && (
+                      <div class="text-muted-foreground text-sm">
+                        {t("pricing.per_period", "per {period}", {
+                          period: planItem.price.period,
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  <a
+                    href={planItem.ctaHref || "#"}
+                    class={cn(
+                      "inline-flex items-center justify-center w-full px-6 py-3 rounded-lg font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
+                      planItem.popular || planItem.highlight
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
+                    )}
+                  >
+                    {planItem.ctaText ||
+                      t("pricing.get_started", "Get Started")}
+                  </a>
+                </div>
+
+                {/* Features List */}
+                <div class="space-y-4">
+                  <h4 class="font-semibold text-foreground text-sm uppercase tracking-wide">
+                    {t("pricing.whats_included", "What's Included")}
+                  </h4>
+
+                  <ul class="space-y-3">
+                    {planItem.features.map((feature) => (
+                      <li class="flex items-start">
+                        <span
+                          class={cn(
+                            "mr-3 mt-0.5 text-sm",
+                            feature.included
+                              ? "text-success"
+                              : "text-muted-foreground"
+                          )}
+                          aria-hidden="true"
+                        >
+                          {feature.included ? "✓" : "✗"}
+                        </span>
+
+                        <div class="flex-1">
+                          <span
+                            class={cn(
+                              "text-sm",
+                              feature.included
+                                ? "text-foreground"
+                                : "text-muted-foreground line-through"
+                            )}
+                          >
+                            {feature.name}
+                          </span>
+
+                          {feature.description && (
+                            <p class="text-xs text-muted-foreground mt-1">
+                              {feature.description}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  ) : singlePlan ? (
+    // Single Plan Card
+    <section class={sectionClasses}>
+      <div class="container mx-auto px-4">
+        <div class="max-w-md mx-auto">
+          <article class={getCardClasses(singlePlan)}>
+            {/* Popular Badge */}
+            {(singlePlan.popular || singlePlan.badge) && (
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span class="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                  {singlePlan.badge ||
+                    t("pricing.popular_choice", "Popular Choice")}
+                </span>
+              </div>
+            )}
+
+            {/* Plan Header */}
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-bold text-foreground mb-2">
+                {singlePlan.name}
+              </h3>
+
+              {singlePlan.description && (
+                <p class="text-muted-foreground mb-6">
+                  {singlePlan.description}
+                </p>
+              )}
+
+              <div class="mb-6">
+                {singlePlan.price.originalAmount &&
+                  singlePlan.price.originalAmount > singlePlan.price.amount && (
+                    <div class="text-muted-foreground line-through mb-2">
+                      {formatPrice(
+                        singlePlan.price.originalAmount,
+                        singlePlan.price.currency
+                      )}
+                    </div>
+                  )}
+
+                <div class="text-5xl font-bold text-primary mb-2">
+                  {formatPrice(
+                    singlePlan.price.amount,
+                    singlePlan.price.currency
+                  )}
+                </div>
+
+                {singlePlan.price.period && (
+                  <div class="text-muted-foreground">
+                    {t("pricing.per_period", "per {period}", {
+                      period: singlePlan.price.period,
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <a
+                href={singlePlan.ctaHref || "#"}
+                class="inline-flex items-center justify-center w-full px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                {singlePlan.ctaText || t("pricing.get_started", "Get Started")}
+              </a>
+            </div>
+
+            {/* Features List */}
+            <div class="space-y-6">
+              <h4 class="font-semibold text-foreground text-center">
+                {t("pricing.everything_you_need", "Everything You Need")}
+              </h4>
+
+              <ul class="space-y-4">
+                {singlePlan.features.map((feature) => (
+                  <li class="flex items-start">
+                    <span
+                      class={cn(
+                        "mr-3 mt-1",
+                        feature.included
+                          ? "text-success"
+                          : "text-muted-foreground"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {feature.included ? "✓" : "✗"}
+                    </span>
+
+                    <div class="flex-1">
+                      <span
+                        class={cn(
+                          feature.included
+                            ? "text-foreground"
+                            : "text-muted-foreground line-through"
+                        )}
+                      >
+                        {feature.name}
+                      </span>
+
+                      {feature.description && (
+                        <p class="text-sm text-muted-foreground mt-1">
+                          {feature.description}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  ) : (
+    // Placeholder
+    <section class={sectionClasses}>
+      <div class="container mx-auto px-4 text-center">
+        <div class="max-w-lg mx-auto bg-surface-1 border-2 border-dashed border-border rounded-lg p-8">
+          <div class="text-4xl mb-4" aria-hidden="true">
+            💰
+          </div>
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            {t("pricing.no_plan_available", "No Pricing Plan Available")}
+          </h3>
+          <p class="text-muted-foreground">
+            {t(
+              "pricing.add_plan_message",
+              "Add a plan or plans prop to display pricing information."
+            )}
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* Animations are now handled via global animations.css */
+
+  /* Billing toggle styles */
+  .billing-toggle[data-billing="monthly"].active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  .billing-toggle[data-billing="annual"].active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  /* Table responsive styles */
+  @media (max-width: 768px) {
+    table {
+      font-size: 0.875rem;
+    }
+
+    th,
+    td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Simple billing toggle for static pricing display
+  function initBillingToggle() {
+    const toggleButtons = document.querySelectorAll(".billing-toggle");
+    if (toggleButtons.length === 0) return;
+
+    // Set initial state to monthly
+    document.querySelector('[data-billing="monthly"]')?.classList.add("active");
+
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        // Update active state
+        toggleButtons.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+
+        // Update pricing display based on billing type
+        const isAnnual = button.getAttribute("data-billing") === "annual";
+        const priceElements = document.querySelectorAll("[data-price]");
+
+        priceElements.forEach((el) => {
+          const monthlyPrice = el.getAttribute("data-monthly-price");
+          const annualPrice = el.getAttribute("data-annual-price");
+
+          if (monthlyPrice && annualPrice) {
+            el.textContent = isAnnual ? annualPrice : monthlyPrice;
+          }
+        });
+      });
+    });
+  }
+
+  // Initialize immediately - DOM is ready in Astro
+  initBillingToggle();
+</script>
+
+<!-- AOS is handled globally, no need for component-specific initialization -->

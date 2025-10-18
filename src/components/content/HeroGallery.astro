@@ -1,0 +1,402 @@
+---
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  galleryImages: Array<{
+    src: string;
+    alt: string;
+    title?: string;
+  }>;
+  locale?: Locale;
+}
+
+const {
+  galleryImages = [],
+  locale = "ru",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["hero", "common"]);
+---
+
+{
+  galleryImages.length > 0 && (
+    <div id="gallery-container">
+      <!-- Mobile Layout: Single Column -->
+      <div class="flex flex-col gap-4 sm:hidden">
+                <!-- Main image info -->
+        <div class="bg-background/80 text-foreground rounded-2xl p-4 shadow-md" id="main-image-info">
+          <div class="text-foreground/60 font-semibold text-base mb-1" id="main-title">
+            {galleryImages[0]?.title || "Sunrise View Point"}
+          </div>
+          <div class="text-foreground/60 text-sm" id="main-description">
+            {t("hero.arrive_description", "Arrive at Sukapura Village and head to Sunrise View Point by using 4WD Jeep")}
+          </div>
+        </div>
+        <!-- Main image -->
+        <div class="mobile-image-container" id="main-image">
+          <img
+            id="main-img"
+            src={galleryImages[0]?.src}
+            alt={galleryImages[0]?.alt}
+            class="mobile-main-image"
+            loading="lazy"
+          />
+        </div>
+        
+        <!-- Thumbnail row -->
+        <div class="flex gap-2 overflow-x-auto">
+          {galleryImages.slice(1,  galleryImages.length).map((image, index) => (
+            <div 
+              class="flex-none w-20 h-20 relative overflow-hidden rounded-xl backdrop-blur-sm bg-primary-foreground/10 shadow-md cursor-pointer hover:scale-105 transition-all duration-200" 
+              data-index={index + 1}
+              data-src={image.src}
+              data-alt={image.alt}
+              data-title={image.title || "Gallery Image"}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div class="absolute top-1 right-1 w-2 h-2 bg-primary-foreground/30 rounded-full opacity-0 transition-opacity duration-200" data-active-indicator></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Tablet/Desktop Layout: Vertical Stack -->
+      <div class="hidden sm:flex flex-col gap-4">
+        <!-- Row 1: Main image (top) -->
+        <div class="w-full max-w-2xl">
+          <div class="desktop-image-container" id="main-image-desktop">
+            <img
+              id="main-img-desktop"
+              src={galleryImages[0]?.src}
+              alt={galleryImages[0]?.alt}
+              class="desktop-main-image"
+              loading="lazy"
+            />
+          </div>
+        </div>
+        
+        <!-- Row 2: Description (middle) -->
+        <div class="w-full max-w-2xl">
+          <div class="bg-background text-foreground rounded-2xl p-6 shadow-md" id="main-image-info-desktop">
+            <div class="font-semibold text-xl mb-1" id="main-title-desktop">
+              {galleryImages[0]?.title || "Sunrise View Point"}
+            </div>
+            <div class="text-md" id="main-description-desktop">
+              {t("hero.arrive_description", "Arrive at Sukapura Village and head to Sunrise View Point by using 4WD Jeep")}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Row 3: Thumbnails (bottom) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+          {galleryImages.slice(1, galleryImages.length).map((image, index) => (
+            <div 
+              class="relative overflow-hidden rounded-2xl backdrop-blur-sm bg-primary-foreground/10 aspect-square shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary-foreground/50" 
+              data-index={index + 1}
+              data-src={image.src}
+              data-alt={image.alt}
+              data-title={image.title || "Gallery Image"}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                class="w-full h-full object-cover transition-transform duration-200"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
+              <div class="absolute top-2 right-2 w-3 h-3 bg-primary-foreground/30 rounded-full opacity-0 transition-opacity duration-200" data-active-indicator></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    const galleryContainer = document.getElementById('gallery-container');
+    if (!galleryContainer) return;
+
+    // Get elements for both mobile and desktop layouts
+    const mainImg = document.getElementById('main-img') || document.getElementById('main-img-desktop');
+    const mainTitle = document.getElementById('main-title') || document.getElementById('main-title-desktop');
+    const mainDescription = document.getElementById('main-description') || document.getElementById('main-description-desktop');
+    const thumbnails = galleryContainer.querySelectorAll('[data-index]');
+    
+    if (!mainImg || !mainTitle || !mainDescription) return;
+    
+    // Store all images including main and thumbnails
+    const allImages = [
+      {
+        src: mainImg.src,
+        alt: mainImg.alt,
+        title: mainTitle.textContent,
+        description: mainDescription.textContent
+      }
+    ];
+    
+    thumbnails.forEach(function(thumb) {
+      allImages.push({
+        src: thumb.getAttribute('data-src'),
+        alt: thumb.getAttribute('data-alt'),
+        title: thumb.getAttribute('data-title'),
+        description: 'Explore the beautiful landscapes of Liguria'
+      });
+    });
+    
+    const mainImageIndex = 0; // Main image is always at index 0
+    
+    function updateDisplay() {
+      // Update main image (both mobile and desktop versions)
+      const mainImageData = allImages[mainImageIndex];
+      const allMainImgs = [
+        document.getElementById('main-img'),
+        document.getElementById('main-img-desktop')
+      ].filter(Boolean);
+      
+      const allMainTitles = [
+        document.getElementById('main-title'),
+        document.getElementById('main-title-desktop')
+      ].filter(Boolean);
+      
+      const allMainDescriptions = [
+        document.getElementById('main-description'),
+        document.getElementById('main-description-desktop')
+      ].filter(Boolean);
+      
+      // Update all main image versions
+      allMainImgs.forEach(function(img) {
+        img.src = mainImageData.src;
+        img.alt = mainImageData.alt;
+      });
+      
+      allMainTitles.forEach(function(title) {
+        title.textContent = mainImageData.title;
+      });
+      
+      allMainDescriptions.forEach(function(description) {
+        description.textContent = mainImageData.description;
+      });
+      
+      // Update thumbnails to show all other images
+      thumbnails.forEach(function(thumb, i) {
+        const thumbIndex = i < mainImageIndex ? i : i + 1;
+        const thumbData = allImages[thumbIndex];
+        
+        if (thumbData) {
+          thumb.setAttribute('data-src', thumbData.src);
+          thumb.setAttribute('data-alt', thumbData.alt);
+          thumb.setAttribute('data-title', thumbData.title);
+          
+          // Update the actual img element inside the thumbnail
+          const thumbImg = thumb.querySelector('img');
+          if (thumbImg) {
+            thumbImg.src = thumbData.src;
+            thumbImg.alt = thumbData.alt;
+          }
+        }
+        
+        // Reset active indicators since main image is always "active"
+        const indicator = thumb.querySelector('[data-active-indicator]');
+        if (indicator) {
+          indicator.style.opacity = '0';
+        }
+        thumb.style.transform = 'scale(1)';
+      });
+    }
+    
+    function swapToIndex(targetIndex) {
+      if (targetIndex !== mainImageIndex && targetIndex < allImages.length) {
+        // Swap the target image with the current main image
+        const temp = allImages[mainImageIndex];
+        allImages[mainImageIndex] = allImages[targetIndex];
+        allImages[targetIndex] = temp;
+        updateDisplay();
+      }
+    }
+    
+    function cycleToNext() {
+      // Swap with the first thumbnail (index 1)
+      if (allImages.length > 1) {
+        const temp = allImages[mainImageIndex];
+        allImages[mainImageIndex] = allImages[1];
+        allImages[1] = temp;
+        updateDisplay();
+      }
+    }
+    
+    function cycleToPrev() {
+      // Swap with the last thumbnail
+      if (allImages.length > 1) {
+        const lastIndex = allImages.length - 1;
+        const temp = allImages[mainImageIndex];
+        allImages[mainImageIndex] = allImages[lastIndex];
+        allImages[lastIndex] = temp;
+        updateDisplay();
+      }
+    }
+
+    thumbnails.forEach(function(thumbnail, i) {
+      thumbnail.addEventListener('click', function() {
+        // Swap clicked thumbnail with main image
+        const thumbIndex = i < mainImageIndex ? i : i + 1;
+        swapToIndex(thumbIndex);
+      });
+    });
+    
+    // Add click handlers to both mobile and desktop main images
+    const allMainImgs = [
+      document.getElementById('main-img'),
+      document.getElementById('main-img-desktop')
+    ].filter(Boolean);
+    
+    allMainImgs.forEach(function(img) {
+      img.addEventListener('click', function() {
+        cycleToNext();
+      });
+    });
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft') {
+        cycleToPrev();
+      } else if (e.key === 'ArrowRight') {
+        cycleToNext();
+      }
+    });
+    
+    // Initialize the gallery
+    updateDisplay();
+  });
+</script>
+
+<style>
+  /* Mobile Image Container */
+  .mobile-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 300px;
+    width: 100%;
+  }
+
+  .mobile-image-container:hover {
+    box-shadow: 0 25px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Mobile Main Image */
+  .mobile-main-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-image-container:hover .mobile-main-image {
+    transform: scale(1.05);
+  }
+
+  /* Desktop Image Container */
+  .desktop-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .desktop-image-container:hover {
+    box-shadow: 0 25px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Desktop Main Image */
+  .desktop-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .desktop-image-container:hover .desktop-main-image {
+    transform: scale(1.05);
+  }
+
+  /* Vertical Layout Styles for Desktop */
+  @media (min-width: 640px) {
+    .desktop-image-container {
+      width: 100%;
+      height: 300px;
+    }
+    
+    .desktop-main-image {
+      height: 300px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .desktop-image-container {
+      height: 350px;
+    }
+    
+    .desktop-main-image {
+      height: 350px;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    /* Hide thumbnails on medium screens */
+    .grid.grid-cols-2 {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .desktop-image-container {
+      height: 400px;
+    }
+    
+    .desktop-main-image {
+      height: 400px;
+    }
+    
+    /* Show thumbnails on large screens */
+    .grid.grid-cols-2 {
+      display: grid;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .desktop-image-container {
+      height: 450px;
+    }
+    
+    .desktop-main-image {
+      height: 450px;
+    }
+  }
+
+  /* Gallery container stability */
+  #gallery-container {
+    contain: layout;
+  }
+</style>

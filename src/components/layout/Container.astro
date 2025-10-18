@@ -1,0 +1,245 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+// Type definitions for Container component
+type ContainerSize =
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "full"
+  | "prose"
+  | "reading"
+  | "xs"
+  | "3xl"
+  | "4xl";
+
+type ContainerPadding =
+  | "none"
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "responsive";
+
+export interface Props extends HTMLAttributes<"div"> {
+  size?: ContainerSize;
+  padding?: ContainerPadding;
+  center?: boolean;
+  centerContent?: boolean; // Legacy support
+  as?:
+    | "div"
+    | "main"
+    | "section"
+    | "article"
+    | "header"
+    | "footer"
+    | "aside"
+    | "nav";
+  fluid?: boolean;
+  breakout?: boolean;
+  prose?: boolean;
+  containerType?: "standard" | "container" | "custom";
+}
+
+const {
+  size = "xl",
+  padding = "responsive",
+  center = true,
+  centerContent = false, // Legacy fallback
+  as: Element = "div",
+  fluid = false,
+  breakout = false,
+  prose = false,
+  containerType = "custom",
+  class: className = "",
+  ...rest
+} = Astro.props;
+
+// Use center or centerContent for backward compatibility
+const shouldCenter = center || centerContent;
+
+// Container size variants
+const getSizeClasses = (
+  size: string,
+  fluid: boolean,
+  containerType: string
+) => {
+  if (fluid) return "w-full";
+
+  // Use Tailwind's built-in container class for standard behavior
+  if (containerType === "container") {
+    return "container";
+  }
+
+  switch (size) {
+    // Legacy sizes (Tailwind defaults)
+    case "xs":
+      return "max-w-xs";
+    case "3xl":
+      return "max-w-3xl";
+    case "4xl":
+      return "max-w-4xl";
+    // New container-specific sizes
+    case "sm":
+      return "max-w-container-sm";
+    case "md":
+      return "max-w-container-md";
+    case "lg":
+      return "max-w-container-lg";
+    case "xl":
+      return "max-w-container-xl";
+    case "2xl":
+      return "max-w-container-2xl";
+    case "full":
+      return "max-w-container-full w-full";
+    case "prose":
+      return "max-w-prose-base";
+    case "reading":
+      return "max-w-reading";
+    default:
+      return "max-w-container-xl";
+  }
+};
+
+// Enhanced padding system
+const getPaddingClasses = (padding: string) => {
+  switch (padding) {
+    case "none":
+      return "";
+    case "xs":
+      return "px-4";
+    case "sm":
+      return "px-4 sm:px-6";
+    case "md":
+      return "px-4 sm:px-6 md:px-8";
+    case "lg":
+      return "px-4 sm:px-6 md:px-8 lg:px-10";
+    case "xl":
+      return "px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12";
+    case "responsive":
+      return "px-4 sm:px-6 lg:px-8";
+    default:
+      return "px-4 sm:px-6 lg:px-8";
+  }
+};
+
+// Breakout classes for content that extends beyond container
+const getBreakoutClasses = (breakout: boolean) => {
+  if (!breakout) return "";
+  return "xl:mx-[-200px] 2xl:mx-[-400px]";
+};
+
+// Prose-specific classes
+const getProseClasses = (prose: boolean) => {
+  if (!prose) return "";
+  return "prose dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:no-underline hover:prose-a:underline";
+};
+
+// Combine all classes
+const containerClasses = [
+  getSizeClasses(size, fluid, containerType),
+  getPaddingClasses(padding),
+  shouldCenter ? "mx-auto" : "",
+  getBreakoutClasses(breakout),
+  getProseClasses(prose),
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<Element class={containerClasses} {...rest}>
+  <slot />
+</Element>
+
+<style>
+  /* Enhanced container system styles */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Container breakout styles for full-bleed content */
+  .container-breakout {
+    width: 100vw;
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Fluid container behavior */
+  .container-fluid {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Reading-optimized containers */
+  .max-w-reading {
+    max-width: 65ch; /* Optimal reading length */
+  }
+
+  /* Container size utilities - defined in tailwind.config.js */
+  .max-w-container-sm {
+    max-width: 576px;
+  }
+  .max-w-container-md {
+    max-width: 768px;
+  }
+  .max-w-container-lg {
+    max-width: 992px;
+  }
+  .max-w-container-xl {
+    max-width: 1200px;
+  }
+  .max-w-container-2xl {
+    max-width: 1400px;
+  }
+  .max-w-container-full {
+    max-width: 100%;
+  }
+
+  /* Prose size utilities */
+  .max-w-prose-sm {
+    max-width: 65ch;
+  }
+  .max-w-prose-base {
+    max-width: 75ch;
+  }
+  .max-w-prose-lg {
+    max-width: 85ch;
+  }
+
+  /* Legacy support for existing classes */
+  .max-w-xs {
+    max-width: 20rem;
+  }
+  .max-w-sm {
+    max-width: 24rem;
+  }
+  .max-w-md {
+    max-width: 28rem;
+  }
+  .max-w-lg {
+    max-width: 32rem;
+  }
+  .max-w-xl {
+    max-width: 36rem;
+  }
+  .max-w-2xl {
+    max-width: 42rem;
+  }
+  .max-w-3xl {
+    max-width: 48rem;
+  }
+  .max-w-4xl {
+    max-width: 56rem;
+  }
+  .max-w-full {
+    max-width: 100%;
+  }
+</style>
+
+<!-- No client-side JavaScript needed for static Astro containers -->

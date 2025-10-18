@@ -1,0 +1,250 @@
+---
+import ThemeToggle from "../ThemeToggle.astro";
+import LanguageSwitcher from "../LanguageSwitcher.astro";
+import MobileMenu from "./MobileMenu.astro";
+import NavBar from "./NavBar.astro";
+import type { Locale } from "@/i18n/config";
+import { getPageTranslations } from "@/i18n/i18n";
+import { cn } from "@/lib/utils";
+
+// Import types from NavBar to avoid duplication
+import type { NavItem } from "./NavBar.astro";
+
+export interface Props {
+  fixed?: boolean;
+  transparent?: boolean;
+  navItems?: NavItem[];
+  logoText?: string;
+  logoHref?: string;
+  logoImage?: string;
+  logoAlt?: string;
+  showMobileMenu?: boolean;
+  showThemeToggle?: boolean;
+  showSearch?: boolean;
+  showLanguageSwitcher?: boolean;
+  currentLocale?: Locale;
+  class?: string;
+}
+
+const {
+  fixed = false,
+  transparent = false,
+  navItems = [],
+  logoText,
+  logoHref = "/",
+  logoImage,
+  logoAlt = "Logo",
+  showMobileMenu = true,
+  showThemeToggle = false,
+  showSearch = false,
+  showLanguageSwitcher = false,
+  currentLocale,
+  class: className = "",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(currentLocale || "ru", [
+  "common",
+  "hero",
+]);
+
+// Action button styling function
+const getActionButtonClasses = (actionVariant: string = "primary") => {
+  const baseClasses =
+    "inline-flex items-center justify-center px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm shadow-md";
+
+  switch (actionVariant) {
+    case "secondary":
+      return cn(
+        baseClasses,
+        "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
+      );
+    case "outline":
+      return cn(
+        baseClasses,
+        "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary"
+      );
+    default:
+      return cn(
+        baseClasses,
+        "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-foreground/75 focus:ring-primary"
+      );
+  }
+};
+
+const headerClasses = [
+  "w-full",
+  fixed ? "fixed top-0 left-0 right-0 z-50" : "",
+  transparent ? "bg-transparent" : "bg-background border-b border-border",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<header class={headerClasses} id="main-header" role="banner">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      <!-- Navigation using NavBar component -->
+      <NavBar
+        items={navItems}
+        logo={logoImage}
+        logoHref={logoHref}
+        logoAlt={logoAlt || logoText}
+        class="w-full !p-0 !border-0 !bg-transparent"
+      >
+        <span slot="logo">
+          {logoText}
+        </span>
+        <div slot="actions">
+          <!-- Search Button -->
+          {
+            showSearch && (
+              <button
+                type="button"
+                class="inline-flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                aria-label="Search"
+                data-search-trigger="true"
+              >
+                <span class="text-lg" aria-hidden="true">
+                  🔍
+                </span>
+              </button>
+            )
+          }
+
+          <!-- Book Now Button -->
+          <a
+            href="#book-tour"
+            class={getActionButtonClasses("primary")}
+            target={undefined}
+            rel={undefined}
+          >
+            {t("common.book_now", "Забронировать")}
+          </a>
+
+          <!-- Additional action slot -->
+          <slot name="actions" />
+        </div>
+      </NavBar>
+
+      <!-- Mobile Menu -->
+      <div class="lg:hidden flex items-center">
+        {
+          showMobileMenu && (
+            <MobileMenu
+              items={navItems.map((item) => ({
+                label: item.label,
+                href: item.href,
+                icon: item.icon,
+                active: item.active,
+                disabled: item.disabled,
+                children: item.dropdown?.map((dropdownItem) => ({
+                  label: dropdownItem.label,
+                  href: dropdownItem.href,
+                  icon: dropdownItem.icon,
+                  disabled: dropdownItem.disabled,
+                })),
+              }))}
+              showLanguageSwitcher={showLanguageSwitcher}
+              currentLocale={currentLocale}
+            />
+          )
+        }
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Simple header background on scroll for static Astro sites
+  function initHeader() {
+    const header = document.getElementById("main-header");
+    const desktopNav = document.getElementById("desktop-nav");
+    const navItems = document.getElementsByClassName("nav-item");
+    if (!header || !header.classList.contains("bg-transparent")) return;
+
+    function handleScroll() {
+      if (window.scrollY > 50) {
+        header!.classList.remove("bg-transparent");
+        header!.classList.add("bg-background", "border-b", "border-border");
+        desktopNav?.classList?.remove("bg-primary/75");
+        navItems &&
+          [...navItems].forEach((element) => {
+            element.classList.remove("text-background");
+            element.classList.add("text-foreground");
+          });
+      } else {
+        desktopNav?.classList?.add("bg-primary/75");
+        header!.classList.add("bg-transparent");
+        header!.classList.remove("bg-background", "border-b", "border-border");
+        navItems &&
+          [...navItems].forEach((element) => {
+            element.classList.remove("text-foreground");
+            element.classList.add("text-background");
+          });
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll);
+  }
+
+  // Initialize immediately - DOM is ready in Astro
+  initHeader();
+</script>
+
+<style>
+  /* Anti-jumping header styles */
+  #main-header {
+    /* Remove all transitions to prevent jumping */
+    transition: none !important;
+    transform: none !important;
+    backface-visibility: hidden;
+    will-change: auto;
+  }
+
+  /* Force stable navigation */
+  #main-header nav,
+  #main-header nav * {
+    transform: none !important;
+    transition: none !important;
+    backface-visibility: hidden;
+  }
+
+  /* Prevent any interactive element jumping */
+  #main-header button,
+  #main-header a,
+  #main-header [role="button"] {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  #main-header button:hover,
+  #main-header button:focus,
+  #main-header a:hover,
+  #main-header a:focus {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* Static mobile menu - no transitions */
+  [data-mobile-menu="true"] {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* Stable container */
+  .container {
+    transform: none !important;
+    contain: layout;
+  }
+
+  /* Remove scroll behavior transitions */
+  #main-header.bg-transparent {
+    transition: none !important;
+  }
+
+  #main-header.bg-background {
+    transition: none !important;
+  }
+</style>

@@ -1,0 +1,138 @@
+---
+export interface SidebarItem {
+  label: string;
+  href?: string;
+  icon?: string;
+  active?: boolean;
+  children?: SidebarItem[];
+  disabled?: boolean;
+}
+
+export interface Props {
+  items: SidebarItem[];
+  class?: string;
+  title?: string;
+  collapsible?: boolean;
+  defaultExpanded?: boolean;
+}
+
+const {
+  items,
+  class: className = "",
+  title,
+  collapsible = false,
+  defaultExpanded = true,
+} = Astro.props;
+---
+
+<aside
+  class={`w-64 bg-background border-r border-border ${className}`}
+  aria-label="Sidebar navigation"
+>
+  {
+    title && (
+      <div class="p-4 border-b border-border">
+        <h2 class="text-lg font-semibold text-foreground">{title}</h2>
+      </div>
+    )
+  }
+
+  <nav class="p-4" role="navigation">
+    <ul class="space-y-1" role="list">
+      {
+        items.map((item) => (
+          <li class="mb-1">
+            {item.href ? (
+              <a
+                href={item.href}
+                class={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                  item.active
+                    ? "bg-surface-2 text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                tabindex={item.disabled ? -1 : undefined}
+                aria-disabled={item.disabled ? "true" : undefined}
+                aria-current={item.active ? "page" : undefined}
+              >
+                {item.icon && (
+                  <span class="mr-2" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+              </a>
+            ) : (
+              <div class="flex items-center w-full px-3 py-2 text-sm font-medium text-foreground">
+                {item.icon && (
+                  <span class="mr-2" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                {item.label}
+              </div>
+            )}
+
+            {item.children && item.children.length > 0 && (
+              <ul class="ml-4 mt-1 space-y-1" role="list">
+                {item.children.map((child) => (
+                  <li>
+                    {child.href ? (
+                      <a
+                        href={child.href}
+                        class={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                          child.active
+                            ? "bg-surface-2 text-foreground font-medium"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                        } ${child.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                        tabindex={child.disabled ? -1 : undefined}
+                        aria-disabled={child.disabled ? "true" : undefined}
+                        aria-current={child.active ? "page" : undefined}
+                      >
+                        {child.icon && (
+                          <span class="mr-2" aria-hidden="true">
+                            {child.icon}
+                          </span>
+                        )}
+                        {child.label}
+                      </a>
+                    ) : (
+                      <div class="flex items-center w-full px-3 py-2 text-sm text-muted-foreground">
+                        {child.icon && (
+                          <span class="mr-2" aria-hidden="true">
+                            {child.icon}
+                          </span>
+                        )}
+                        {child.label}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</aside>
+
+<style>
+  /* Responsive sidebar */
+  @media (max-width: 768px) {
+    aside {
+      width: 100%;
+      max-width: 16rem;
+    }
+  }
+
+  /* Smooth transitions */
+  aside a {
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Focus styles */
+  aside a:focus {
+    outline: 2px solid rgb(var(--color-ring));
+    outline-offset: 2px;
+  }
+</style>

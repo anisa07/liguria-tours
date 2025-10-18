@@ -1,0 +1,579 @@
+---
+export interface Props {
+  direction?: "row" | "row-reverse" | "col" | "col-reverse";
+  wrap?: boolean | "reverse";
+  align?: "start" | "center" | "end" | "baseline" | "stretch";
+  justify?: "start" | "center" | "end" | "between" | "around" | "evenly";
+  gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  gapX?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  gapY?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  grow?: boolean;
+  shrink?: boolean;
+  responsive?: {
+    sm?: {
+      direction?: Props["direction"];
+      wrap?: Props["wrap"];
+      align?: Props["align"];
+      justify?: Props["justify"];
+    };
+    md?: {
+      direction?: Props["direction"];
+      wrap?: Props["wrap"];
+      align?: Props["align"];
+      justify?: Props["justify"];
+    };
+    lg?: {
+      direction?: Props["direction"];
+      wrap?: Props["wrap"];
+      align?: Props["align"];
+      justify?: Props["justify"];
+    };
+    xl?: {
+      direction?: Props["direction"];
+      wrap?: Props["wrap"];
+      align?: Props["align"];
+      justify?: Props["justify"];
+    };
+  };
+  as?:
+    | "div"
+    | "section"
+    | "main"
+    | "article"
+    | "aside"
+    | "ul"
+    | "ol"
+    | "nav"
+    | "header"
+    | "footer"
+    | "span";
+  class?: string;
+}
+
+const {
+  direction = "row",
+  wrap = false,
+  align = "start",
+  justify = "start",
+  gap,
+  gapX,
+  gapY,
+  grow = false,
+  shrink = true,
+  responsive,
+  as: Element = "div",
+  class: className = "",
+} = Astro.props;
+
+const getDirectionClasses = (
+  direction: Props["direction"],
+  responsive?: Props["responsive"]
+) => {
+  let classes: string[] = [];
+
+  // Base direction
+  switch (direction) {
+    case "row":
+      classes.push("flex-row");
+      break;
+    case "row-reverse":
+      classes.push("flex-row-reverse");
+      break;
+    case "col":
+      classes.push("flex-col");
+      break;
+    case "col-reverse":
+      classes.push("flex-col-reverse");
+      break;
+  }
+
+  // Responsive directions
+  if (responsive) {
+    if (responsive.sm?.direction) {
+      switch (responsive.sm.direction) {
+        case "row":
+          classes.push("sm:flex-row");
+          break;
+        case "row-reverse":
+          classes.push("sm:flex-row-reverse");
+          break;
+        case "col":
+          classes.push("sm:flex-col");
+          break;
+        case "col-reverse":
+          classes.push("sm:flex-col-reverse");
+          break;
+      }
+    }
+
+    if (responsive.md?.direction) {
+      switch (responsive.md.direction) {
+        case "row":
+          classes.push("md:flex-row");
+          break;
+        case "row-reverse":
+          classes.push("md:flex-row-reverse");
+          break;
+        case "col":
+          classes.push("md:flex-col");
+          break;
+        case "col-reverse":
+          classes.push("md:flex-col-reverse");
+          break;
+      }
+    }
+
+    if (responsive.lg?.direction) {
+      switch (responsive.lg.direction) {
+        case "row":
+          classes.push("lg:flex-row");
+          break;
+        case "row-reverse":
+          classes.push("lg:flex-row-reverse");
+          break;
+        case "col":
+          classes.push("lg:flex-col");
+          break;
+        case "col-reverse":
+          classes.push("lg:flex-col-reverse");
+          break;
+      }
+    }
+
+    if (responsive.xl?.direction) {
+      switch (responsive.xl.direction) {
+        case "row":
+          classes.push("xl:flex-row");
+          break;
+        case "row-reverse":
+          classes.push("xl:flex-row-reverse");
+          break;
+        case "col":
+          classes.push("xl:flex-col");
+          break;
+        case "col-reverse":
+          classes.push("xl:flex-col-reverse");
+          break;
+      }
+    }
+  }
+
+  return classes;
+};
+
+const getWrapClasses = (
+  wrap: Props["wrap"],
+  responsive?: Props["responsive"]
+) => {
+  let classes: string[] = [];
+
+  // Base wrap
+  if (wrap === true) {
+    classes.push("flex-wrap");
+  } else if (wrap === "reverse") {
+    classes.push("flex-wrap-reverse");
+  } else if (wrap === false) {
+    classes.push("flex-nowrap");
+  }
+
+  // Responsive wrap
+  if (responsive) {
+    if (responsive.sm?.wrap !== undefined) {
+      if (responsive.sm.wrap === true) {
+        classes.push("sm:flex-wrap");
+      } else if (responsive.sm.wrap === "reverse") {
+        classes.push("sm:flex-wrap-reverse");
+      } else {
+        classes.push("sm:flex-nowrap");
+      }
+    }
+
+    if (responsive.md?.wrap !== undefined) {
+      if (responsive.md.wrap === true) {
+        classes.push("md:flex-wrap");
+      } else if (responsive.md.wrap === "reverse") {
+        classes.push("md:flex-wrap-reverse");
+      } else {
+        classes.push("md:flex-nowrap");
+      }
+    }
+
+    if (responsive.lg?.wrap !== undefined) {
+      if (responsive.lg.wrap === true) {
+        classes.push("lg:flex-wrap");
+      } else if (responsive.lg.wrap === "reverse") {
+        classes.push("lg:flex-wrap-reverse");
+      } else {
+        classes.push("lg:flex-nowrap");
+      }
+    }
+
+    if (responsive.xl?.wrap !== undefined) {
+      if (responsive.xl.wrap === true) {
+        classes.push("xl:flex-wrap");
+      } else if (responsive.xl.wrap === "reverse") {
+        classes.push("xl:flex-wrap-reverse");
+      } else {
+        classes.push("xl:flex-nowrap");
+      }
+    }
+  }
+
+  return classes;
+};
+
+const getAlignClasses = (
+  align: Props["align"],
+  responsive?: Props["responsive"]
+) => {
+  let classes: string[] = [];
+
+  // Base align
+  switch (align) {
+    case "start":
+      classes.push("items-start");
+      break;
+    case "center":
+      classes.push("items-center");
+      break;
+    case "end":
+      classes.push("items-end");
+      break;
+    case "baseline":
+      classes.push("items-baseline");
+      break;
+    case "stretch":
+      classes.push("items-stretch");
+      break;
+  }
+
+  // Responsive align
+  if (responsive) {
+    if (responsive.sm?.align) {
+      switch (responsive.sm.align) {
+        case "start":
+          classes.push("sm:items-start");
+          break;
+        case "center":
+          classes.push("sm:items-center");
+          break;
+        case "end":
+          classes.push("sm:items-end");
+          break;
+        case "baseline":
+          classes.push("sm:items-baseline");
+          break;
+        case "stretch":
+          classes.push("sm:items-stretch");
+          break;
+      }
+    }
+
+    if (responsive.md?.align) {
+      switch (responsive.md.align) {
+        case "start":
+          classes.push("md:items-start");
+          break;
+        case "center":
+          classes.push("md:items-center");
+          break;
+        case "end":
+          classes.push("md:items-end");
+          break;
+        case "baseline":
+          classes.push("md:items-baseline");
+          break;
+        case "stretch":
+          classes.push("md:items-stretch");
+          break;
+      }
+    }
+
+    if (responsive.lg?.align) {
+      switch (responsive.lg.align) {
+        case "start":
+          classes.push("lg:items-start");
+          break;
+        case "center":
+          classes.push("lg:items-center");
+          break;
+        case "end":
+          classes.push("lg:items-end");
+          break;
+        case "baseline":
+          classes.push("lg:items-baseline");
+          break;
+        case "stretch":
+          classes.push("lg:items-stretch");
+          break;
+      }
+    }
+
+    if (responsive.xl?.align) {
+      switch (responsive.xl.align) {
+        case "start":
+          classes.push("xl:items-start");
+          break;
+        case "center":
+          classes.push("xl:items-center");
+          break;
+        case "end":
+          classes.push("xl:items-end");
+          break;
+        case "baseline":
+          classes.push("xl:items-baseline");
+          break;
+        case "stretch":
+          classes.push("xl:items-stretch");
+          break;
+      }
+    }
+  }
+
+  return classes;
+};
+
+const getJustifyClasses = (
+  justify: Props["justify"],
+  responsive?: Props["responsive"]
+) => {
+  let classes: string[] = [];
+
+  // Base justify
+  switch (justify) {
+    case "start":
+      classes.push("justify-start");
+      break;
+    case "center":
+      classes.push("justify-center");
+      break;
+    case "end":
+      classes.push("justify-end");
+      break;
+    case "between":
+      classes.push("justify-between");
+      break;
+    case "around":
+      classes.push("justify-around");
+      break;
+    case "evenly":
+      classes.push("justify-evenly");
+      break;
+  }
+
+  // Responsive justify
+  if (responsive) {
+    if (responsive.sm?.justify) {
+      switch (responsive.sm.justify) {
+        case "start":
+          classes.push("sm:justify-start");
+          break;
+        case "center":
+          classes.push("sm:justify-center");
+          break;
+        case "end":
+          classes.push("sm:justify-end");
+          break;
+        case "between":
+          classes.push("sm:justify-between");
+          break;
+        case "around":
+          classes.push("sm:justify-around");
+          break;
+        case "evenly":
+          classes.push("sm:justify-evenly");
+          break;
+      }
+    }
+
+    if (responsive.md?.justify) {
+      switch (responsive.md.justify) {
+        case "start":
+          classes.push("md:justify-start");
+          break;
+        case "center":
+          classes.push("md:justify-center");
+          break;
+        case "end":
+          classes.push("md:justify-end");
+          break;
+        case "between":
+          classes.push("md:justify-between");
+          break;
+        case "around":
+          classes.push("md:justify-around");
+          break;
+        case "evenly":
+          classes.push("md:justify-evenly");
+          break;
+      }
+    }
+
+    if (responsive.lg?.justify) {
+      switch (responsive.lg.justify) {
+        case "start":
+          classes.push("lg:justify-start");
+          break;
+        case "center":
+          classes.push("lg:justify-center");
+          break;
+        case "end":
+          classes.push("lg:justify-end");
+          break;
+        case "between":
+          classes.push("lg:justify-between");
+          break;
+        case "around":
+          classes.push("lg:justify-around");
+          break;
+        case "evenly":
+          classes.push("lg:justify-evenly");
+          break;
+      }
+    }
+
+    if (responsive.xl?.justify) {
+      switch (responsive.xl.justify) {
+        case "start":
+          classes.push("xl:justify-start");
+          break;
+        case "center":
+          classes.push("xl:justify-center");
+          break;
+        case "end":
+          classes.push("xl:justify-end");
+          break;
+        case "between":
+          classes.push("xl:justify-between");
+          break;
+        case "around":
+          classes.push("xl:justify-around");
+          break;
+        case "evenly":
+          classes.push("xl:justify-evenly");
+          break;
+      }
+    }
+  }
+
+  return classes;
+};
+
+const getGapClasses = (gap?: string, gapX?: string, gapY?: string) => {
+  let classes: string[] = [];
+
+  // General gap
+  if (gap && !gapX && !gapY) {
+    switch (gap) {
+      case "none":
+        classes.push("gap-0");
+        break;
+      case "xs":
+        classes.push("gap-1");
+        break;
+      case "sm":
+        classes.push("gap-2");
+        break;
+      case "md":
+        classes.push("gap-4");
+        break;
+      case "lg":
+        classes.push("gap-6");
+        break;
+      case "xl":
+        classes.push("gap-8");
+        break;
+      case "2xl":
+        classes.push("gap-12");
+        break;
+    }
+  }
+
+  // X gap
+  if (gapX) {
+    switch (gapX) {
+      case "none":
+        classes.push("gap-x-0");
+        break;
+      case "xs":
+        classes.push("gap-x-1");
+        break;
+      case "sm":
+        classes.push("gap-x-2");
+        break;
+      case "md":
+        classes.push("gap-x-4");
+        break;
+      case "lg":
+        classes.push("gap-x-6");
+        break;
+      case "xl":
+        classes.push("gap-x-8");
+        break;
+      case "2xl":
+        classes.push("gap-x-12");
+        break;
+    }
+  }
+
+  // Y gap
+  if (gapY) {
+    switch (gapY) {
+      case "none":
+        classes.push("gap-y-0");
+        break;
+      case "xs":
+        classes.push("gap-y-1");
+        break;
+      case "sm":
+        classes.push("gap-y-2");
+        break;
+      case "md":
+        classes.push("gap-y-4");
+        break;
+      case "lg":
+        classes.push("gap-y-6");
+        break;
+      case "xl":
+        classes.push("gap-y-8");
+        break;
+      case "2xl":
+        classes.push("gap-y-12");
+        break;
+    }
+  }
+
+  return classes;
+};
+
+const getFlexClasses = (grow: boolean, shrink: boolean) => {
+  let classes: string[] = [];
+
+  if (grow) {
+    classes.push("flex-grow");
+  }
+
+  if (!shrink) {
+    classes.push("flex-shrink-0");
+  }
+
+  return classes;
+};
+
+const flexClasses = [
+  "flex",
+  ...getDirectionClasses(direction, responsive),
+  ...getWrapClasses(wrap, responsive),
+  ...getAlignClasses(align, responsive),
+  ...getJustifyClasses(justify, responsive),
+  ...getGapClasses(gap, gapX, gapY),
+  ...getFlexClasses(grow, shrink),
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<Element class={flexClasses}>
+  <slot />
+</Element>

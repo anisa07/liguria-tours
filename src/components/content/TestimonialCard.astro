@@ -1,0 +1,360 @@
+---
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import { Image } from "astro:assets";
+
+export interface Testimonial {
+  quote: string;
+  author: {
+    name: string;
+    title?: string;
+    company?: string;
+    avatar?: string;
+  };
+  rating?: number;
+  featured?: boolean;
+}
+
+export interface Props {
+  testimonial?: Testimonial;
+  testimonials?: Testimonial[];
+  variant?: "card" | "minimal" | "featured" | "grid";
+  showRating?: boolean;
+  showQuotes?: boolean;
+  columns?: 1 | 2 | 3;
+  class?: string;
+  locale?: Locale;
+}
+
+const {
+  testimonial,
+  testimonials = [],
+  variant = "card",
+  showRating = true,
+  showQuotes = true,
+  columns = 1,
+  class: className = "",
+  locale = "en",
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["testimonial", "common"]);
+
+// Use single testimonial or first from array if provided
+const singleTestimonial = testimonial || testimonials[0];
+const isGrid = variant === "grid" && testimonials.length > 0;
+
+const getGridClasses = (cols: number) => {
+  switch (cols) {
+    case 2:
+      return "grid-cols-1 md:grid-cols-2";
+    case 3:
+      return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+    default:
+      return "grid-cols-1";
+  }
+};
+
+const getCardClasses = (variant: string, featured: boolean = false) => {
+  const baseClasses = "relative";
+
+  switch (variant) {
+    case "minimal":
+      return `${baseClasses} text-center space-y-4`;
+    case "featured":
+      return `${baseClasses} bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-8 lg:p-10`;
+    case "grid":
+      return `${baseClasses} bg-background border border-border rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-primary/20 ${featured ? "ring-2 ring-primary/10" : ""}`;
+    default:
+      return `${baseClasses} bg-background border border-border rounded-lg p-6 md:p-8`;
+  }
+};
+
+const renderStars = (rating: number) => {
+  return Array.from(
+    { length: 5 },
+    (_, i) =>
+      `<span class="text-sm ${i < rating ? "text-yellow-400" : "text-muted-foreground"}" aria-hidden="true">★</span>`
+  ).join("");
+};
+
+const sectionClasses = [
+  variant === "grid" ? "" : "flex items-center justify-center min-h-[300px]",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{
+  isGrid ? (
+    // Grid Layout
+    <section class={`py-16 md:py-20 ${className}`}>
+      <div class="container mx-auto px-4">
+        <div class={`grid ${getGridClasses(columns)} gap-6 md:gap-8`}>
+          {testimonials.map((testimonialItem, index) => (
+            <article
+              class={`${getCardClasses(variant, testimonialItem.featured)} animate-fade-up ${index > 0 ? `animate-delay-${Math.min(index, 5)}` : ""}`}
+            >
+              {/* Quote */}
+              <div class="mb-6">
+                {showQuotes && (
+                  <div
+                    class="text-primary/20 text-4xl leading-none mb-4"
+                    aria-hidden="true"
+                  >
+                    "
+                  </div>
+                )}
+
+                <blockquote class="text-foreground leading-relaxed">
+                  {testimonialItem.quote}
+                </blockquote>
+
+                {showQuotes && (
+                  <div
+                    class="text-primary/20 text-4xl leading-none text-right mt-4"
+                    aria-hidden="true"
+                  >
+                    "
+                  </div>
+                )}
+              </div>
+
+              {/* Rating */}
+              {showRating && testimonialItem.rating && (
+                <div class="flex items-center mb-4">
+                  <div
+                    class="flex"
+                    role="img"
+                    aria-label={t(
+                      "testimonial.rating_aria",
+                      "{{rating}} out of 5 stars"
+                    ).replace("{{rating}}", testimonialItem.rating.toString())}
+                    set:html={renderStars(testimonialItem.rating)}
+                  />
+                  <span class="ml-2 text-sm text-muted-foreground">
+                    {testimonialItem.rating}/5
+                  </span>
+                </div>
+              )}
+
+              {/* Author */}
+              <div class="flex items-center">
+                {testimonialItem.author.avatar && (
+                  <Image
+                    src={testimonialItem.author.avatar}
+                    alt={testimonialItem.author.name}
+                    width={48}
+                    height={48}
+                    class="w-12 h-12 rounded-full object-cover mr-4"
+                    loading="lazy"
+                  />
+                )}
+
+                <div>
+                  <div class="font-semibold text-foreground">
+                    {testimonialItem.author.name}
+                  </div>
+
+                  {testimonialItem.author.title && (
+                    <div class="text-sm text-muted-foreground">
+                      {testimonialItem.author.title}
+                      {testimonialItem.author.company && (
+                        <span>
+                          {" "}
+                          {t("testimonial.at", "at")}{" "}
+                          {testimonialItem.author.company}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Featured Badge */}
+              {testimonialItem.featured && (
+                <div class="absolute top-4 right-4">
+                  <span class="inline-flex items-center px-2 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium">
+                    {t("testimonial.featured", "Featured")}
+                  </span>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : singleTestimonial ? (
+    // Single Testimonial
+    <section class={sectionClasses}>
+      <div class="container mx-auto px-4">
+        <article
+          class={`max-w-4xl mx-auto ${getCardClasses(variant, singleTestimonial.featured)}`}
+        >
+          {/* Quote */}
+          <div class={`mb-8 ${variant === "minimal" ? "text-center" : ""}`}>
+            {showQuotes && (
+              <div
+                class={`text-primary/20 leading-none mb-6 ${
+                  variant === "featured" || variant === "minimal"
+                    ? "text-6xl lg:text-7xl text-center"
+                    : "text-5xl"
+                }`}
+                aria-hidden="true"
+              >
+                "
+              </div>
+            )}
+
+            <blockquote
+              class={`text-foreground leading-relaxed ${
+                variant === "featured"
+                  ? "text-xl lg:text-2xl text-center"
+                  : variant === "minimal"
+                    ? "text-lg text-center"
+                    : "text-lg md:text-xl"
+              }`}
+            >
+              {singleTestimonial.quote}
+            </blockquote>
+
+            {showQuotes && (
+              <div
+                class={`text-primary/20 leading-none mt-6 ${
+                  variant === "featured" || variant === "minimal"
+                    ? "text-6xl lg:text-7xl text-right"
+                    : "text-5xl text-right"
+                }`}
+                aria-hidden="true"
+              >
+                "
+              </div>
+            )}
+          </div>
+
+          {/* Rating */}
+          {showRating && singleTestimonial.rating && (
+            <div
+              class={`flex items-center mb-6 ${variant === "minimal" ? "justify-center" : ""}`}
+            >
+              <div
+                class="flex"
+                role="img"
+                aria-label={t(
+                  "testimonial.rating_aria",
+                  "{{rating}} out of 5 stars"
+                ).replace("{{rating}}", singleTestimonial.rating.toString())}
+                set:html={renderStars(singleTestimonial.rating)}
+              />
+              <span class="ml-2 text-sm text-muted-foreground">
+                {singleTestimonial.rating}/5
+              </span>
+            </div>
+          )}
+
+          {/* Author */}
+          <div
+            class={`flex items-center ${variant === "minimal" ? "justify-center" : ""}`}
+          >
+            {singleTestimonial.author.avatar && (
+              <Image
+                src={singleTestimonial.author.avatar}
+                alt={singleTestimonial.author.name}
+                width={variant === "featured" ? 64 : 48}
+                height={variant === "featured" ? 64 : 48}
+                class={`rounded-full object-cover mr-4 ${
+                  variant === "featured" ? "w-16 h-16" : "w-12 h-12"
+                }`}
+                loading="lazy"
+              />
+            )}
+
+            <div class={variant === "minimal" ? "text-center" : ""}>
+              <div
+                class={`font-semibold text-foreground ${
+                  variant === "featured" ? "text-lg" : ""
+                }`}
+              >
+                {singleTestimonial.author.name}
+              </div>
+
+              {singleTestimonial.author.title && (
+                <div class="text-sm text-muted-foreground">
+                  {singleTestimonial.author.title}
+                  {singleTestimonial.author.company && (
+                    <span>
+                      {" "}
+                      {t("testimonial.at", "at")}{" "}
+                      {singleTestimonial.author.company}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Featured Badge */}
+          {singleTestimonial.featured && variant !== "minimal" && (
+            <div class="absolute top-6 right-6">
+              <span class="inline-flex items-center px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium">
+                {t("testimonial.featured_review", "Featured Review")}
+              </span>
+            </div>
+          )}
+        </article>
+      </div>
+    </section>
+  ) : (
+    // Placeholder when no testimonial provided
+    <section class={sectionClasses}>
+      <div class="container mx-auto px-4 text-center">
+        <div class="max-w-lg mx-auto bg-surface-1 border-2 border-dashed border-border rounded-lg p-8">
+          <div class="text-4xl mb-4" aria-hidden="true">
+            💬
+          </div>
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            {t(
+              "testimonial.no_testimonial_available",
+              "No Testimonial Available"
+            )}
+          </h3>
+          <p class="text-muted-foreground">
+            {t(
+              "testimonial.add_testimonial_message",
+              "Add a testimonial prop to display customer feedback here."
+            )}
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* Animations are now handled via global animations.css */
+
+  /* Blockquote styling */
+  blockquote {
+    quotes: none;
+  }
+
+  blockquote:before,
+  blockquote:after {
+    content: "";
+  }
+
+  /* Hover effects */
+  .hover\:shadow-lg:hover {
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -2px rgb(0 0 0 / 0.1);
+  }
+
+  /* Rating stars */
+  .text-yellow-400 {
+    color: #fbbf24;
+  }
+</style>
+
+<!-- Animations are now handled via global animations.css -->

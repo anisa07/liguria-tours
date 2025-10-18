@@ -1,0 +1,196 @@
+---
+export interface Props {
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
+  paddingY?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+  paddingX?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  background?:
+    | "transparent"
+    | "white"
+    | "muted"
+    | "primary"
+    | "secondary"
+    | "accent";
+  bordered?: boolean;
+  centered?: boolean;
+  fullHeight?: boolean;
+  id?: string;
+  role?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+  "data-section"?: string;
+  class?: string;
+}
+
+const {
+  size = "md",
+  paddingY = "lg",
+  paddingX = "md",
+  background = "transparent",
+  bordered = false,
+  centered = false,
+  fullHeight = false,
+  id,
+  role,
+  "aria-labelledby": ariaLabelledby,
+  "aria-describedby": ariaDescribedby,
+  "data-section": dataSection,
+  class: className = "",
+} = Astro.props;
+
+const getSizeClasses = (size: Props["size"]) => {
+  switch (size) {
+    case "sm":
+      return ["max-w-2xl", "mx-auto"];
+    case "md":
+      return ["max-w-4xl", "mx-auto"];
+    case "lg":
+      return ["max-w-6xl", "mx-auto"];
+    case "xl":
+      return ["max-w-7xl", "mx-auto"];
+    case "2xl":
+      return ["max-w-screen-2xl", "mx-auto"];
+    default:
+      return ["max-w-4xl", "mx-auto"];
+  }
+};
+
+const getPaddingYClasses = (paddingY: Props["paddingY"]) => {
+  switch (paddingY) {
+    case "none":
+      return ["py-0"];
+    case "xs":
+      return ["py-2"];
+    case "sm":
+      return ["py-4"];
+    case "md":
+      return ["py-8"];
+    case "lg":
+      return ["py-12", "md:py-16"];
+    case "xl":
+      return ["py-16", "md:py-20"];
+    case "2xl":
+      return ["py-20", "md:py-24"];
+    case "3xl":
+      return ["py-24", "md:py-32"];
+    case "4xl":
+      return ["py-32", "md:py-40"];
+    default:
+      return ["py-12", "md:py-16"];
+  }
+};
+
+const getPaddingXClasses = (paddingX: Props["paddingX"]) => {
+  switch (paddingX) {
+    case "none":
+      return ["px-0"];
+    case "xs":
+      return ["px-2"];
+    case "sm":
+      return ["px-4"];
+    case "md":
+      return ["px-4", "sm:px-6", "lg:px-8"];
+    case "lg":
+      return ["px-6", "sm:px-8", "lg:px-12"];
+    case "xl":
+      return ["px-8", "sm:px-12", "lg:px-16"];
+    case "2xl":
+      return ["px-12", "sm:px-16", "lg:px-24"];
+    default:
+      return ["px-4", "sm:px-6", "lg:px-8"];
+  }
+};
+
+const getBackgroundClasses = (background: Props["background"]) => {
+  switch (background) {
+    case "transparent":
+      return [];
+    case "white":
+      return ["bg-white"];
+    case "muted":
+      return ["bg-neutral-50"];
+    case "primary":
+      return ["bg-primary-50"];
+    case "secondary":
+      return ["bg-secondary-50"];
+    case "accent":
+      return ["bg-accent-50"];
+    default:
+      return [];
+  }
+};
+
+const getBorderClasses = (bordered: boolean) => {
+  return bordered ? ["border-t", "border-b", "border-neutral-200"] : [];
+};
+
+const getCenteredClasses = (centered: boolean) => {
+  return centered ? ["text-center"] : [];
+};
+
+const getFullHeightClasses = (fullHeight: boolean) => {
+  return fullHeight ? ["min-h-screen", "flex", "items-center"] : [];
+};
+
+const sectionClasses = [
+  "section",
+  "relative",
+  ...getSizeClasses(size),
+  ...getPaddingYClasses(paddingY),
+  ...getPaddingXClasses(paddingX),
+  ...getBackgroundClasses(background),
+  ...getBorderClasses(bordered),
+  ...getCenteredClasses(centered),
+  ...getFullHeightClasses(fullHeight),
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+
+// Build attributes object
+const attributes: Record<string, any> = {
+  class: sectionClasses,
+};
+
+if (id) attributes.id = id;
+if (role) attributes.role = role;
+if (ariaLabelledby) attributes["aria-labelledby"] = ariaLabelledby;
+if (ariaDescribedby) attributes["aria-describedby"] = ariaDescribedby;
+if (dataSection) attributes["data-section"] = dataSection;
+---
+
+<section {...attributes}>
+  <slot />
+</section>
+
+<style>
+  .section {
+    /* Base section styles */
+  }
+
+  /* Custom background color utilities */
+  .bg-primary-50 {
+    background-color: rgb(var(--color-primary-50));
+  }
+
+  .bg-secondary-50 {
+    background-color: rgb(var(--color-secondary-50));
+  }
+
+  .bg-accent-50 {
+    background-color: rgb(var(--color-accent-50));
+  }
+
+  .bg-neutral-50 {
+    background-color: rgb(var(--color-neutral-50));
+  }
+
+  /* Border color utilities */
+  .border-neutral-200 {
+    border-color: rgb(var(--color-neutral-200));
+  }
+
+  /* Full height flex support */
+  .min-h-screen.flex.items-center > * {
+    width: 100%;
+  }
+</style>
