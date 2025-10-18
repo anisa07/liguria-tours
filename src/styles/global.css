@@ -30,6 +30,10 @@
     --color-info: 0 156 206; /* ligurian blue */
     --color-info-foreground: 255 255 255;
 
+    /* Custom brand colors */
+    --color-liguria-mint: 181 206 206; /* #B5CECE - soft mint green for backgrounds */
+    --color-liguria-mint-foreground: 15 23 42; /* slate-900 for good contrast */
+
     /* Surface color variations - Light theme */
     --color-surface-1: 250 250 250; /* slate-50 - cards, panels */
     --color-surface-2: 244 244 245; /* slate-100 - elevated cards, dropdowns */

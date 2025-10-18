@@ -1,0 +1,682 @@
+---
+import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
+import Container from "@/components/layout/Container.astro";
+import Section from "@/components/layout/Section.astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  locale: Locale;
+}
+
+// Get params from URL
+const { slug } = Astro.params;
+
+// Get locale from URL
+const pathSegments = Astro.url.pathname.split("/").filter(Boolean);
+const locale = (pathSegments[0] as Locale) || "ru";
+
+// Get the translation function for this page
+const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
+
+// Tours data (in real app, this would come from CMS)
+const allTours = [
+  {
+    id: "cinque-terre",
+    slug: "cinque-terre",
+    title: "Чинкве-Терре",
+    shortDescription: "Живописные деревни на побережье Лигурии",
+    description:
+      "Откройте для себя пять уникальных деревень Чинкве-Терре, расположенных на скалистом побережье Лигурии. Эти древние рыбацкие поселения поражают своей красотой и аутентичностью.",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+    ],
+    price: "от €150",
+    duration: "8 часов",
+    rating: 4.9,
+    reviews: 127,
+    category: "coastal",
+    difficulty: "moderate",
+    type: "walking",
+    priceValue: 150,
+    highlights: [
+      "Посещение всех 5 деревень Чинкве-Терре",
+      "Прогулка по живописным тропам",
+      "Дегустация местных продуктов",
+      "Панорамные виды на Лигурийское море",
+    ],
+    included: [
+      "Профессиональный русскоязычный гид",
+      "Транспорт на комфортабельном автомобиле",
+      "Входные билеты в национальный парк",
+      "Дегустация местного вина",
+    ],
+    notIncluded: ["Обед (по желанию)", "Личные расходы", "Чаевые гиду"],
+    itinerary: [
+      {
+        time: "09:00",
+        title: "Встреча в отеле",
+        description: "Выезд из Генуи в направлении Чинкве-Терре",
+      },
+      {
+        time: "10:30",
+        title: "Монтероссо-аль-Маре",
+        description:
+          "Первая деревня, знаменитая своими пляжами и лимонными террасами",
+      },
+      {
+        time: "12:00",
+        title: "Вернацца",
+        description: "Самая фотогеничная деревня с разноцветными домами",
+      },
+      {
+        time: "14:00",
+        title: "Корнилья",
+        description: "Единственная деревня, расположенная на утесе",
+      },
+      {
+        time: "15:30",
+        title: "Манарола",
+        description: "Древняя деревня с великолепными виноградниками",
+      },
+      {
+        time: "16:30",
+        title: "Риомаджоре",
+        description: "Самая южная деревня с живописной гаванью",
+      },
+      {
+        time: "17:30",
+        title: "Возвращение",
+        description: "Возвращение в Геную с остановками для фотографий",
+      },
+    ],
+  },
+  {
+    id: "portofino",
+    slug: "portofino",
+    title: "Портофино",
+    shortDescription: "Элегантный курорт итальянской Ривьеры",
+    description:
+      "Портофино - жемчужина Лигурийского побережья, известная своими разноцветными домами и роскошными яхтами. Этот небольшой рыбацкий городок стал символом итальянской элегантности.",
+    image:
+      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+    ],
+    price: "от €120",
+    duration: "6 часов",
+    rating: 4.8,
+    reviews: 89,
+    category: "coastal",
+    difficulty: "easy",
+    type: "walking",
+    priceValue: 120,
+    highlights: [
+      "Прогулка по знаменитой набережной",
+      "Посещение замка Кастелло Браун",
+      "Панорамные виды с маяка",
+      "Свободное время для шопинга",
+    ],
+    included: [
+      "Профессиональный русскоязычный гид",
+      "Транспорт на комфортабельном автомобиле",
+      "Входной билет в замок",
+      "Дегустация фокаччи",
+    ],
+    notIncluded: ["Обед (по желанию)", "Личные расходы", "Чаевые гиду"],
+    itinerary: [
+      {
+        time: "10:00",
+        title: "Встреча в отеле",
+        description: "Выезд из Генуи в направлении Портофино",
+      },
+      {
+        time: "11:30",
+        title: "Прибытие в Портофино",
+        description: "Прогулка по знаменитой площади Мартири",
+      },
+      {
+        time: "13:00",
+        title: "Замок Кастелло Браун",
+        description: "Посещение средневекового замка с панорамными видами",
+      },
+      {
+        time: "14:30",
+        title: "Свободное время",
+        description: "Обед и шопинг в бутиках Портофино",
+      },
+      {
+        time: "16:00",
+        title: "Возвращение",
+        description: "Возвращение в Геную через Санта-Маргерита-Лигуре",
+      },
+    ],
+  },
+  {
+    id: "genoa",
+    slug: "genoa",
+    title: "Генуя",
+    shortDescription: "Древний морской город с богатой историей",
+    description:
+      "Генуя - родина Христофора Колумба и один из важнейших портовых городов Средиземноморья. Откройте для себя величественные палаццо, узкие средневековые улочки и один из крупнейших исторических центров Европы.",
+    image:
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=600&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+    ],
+    price: "от €90",
+    duration: "4 часа",
+    rating: 4.7,
+    reviews: 73,
+    category: "city",
+    difficulty: "easy",
+    type: "cultural",
+    priceValue: 90,
+    highlights: [
+      "Дом Христофора Колумба",
+      "Кафедральный собор Сан-Лоренцо",
+      "Дворец дожей и исторический центр",
+      "Старый порт и аквариум",
+    ],
+    included: [
+      "Профессиональный русскоязычный гид",
+      "Пешеходная экскурсия по центру",
+      "Входные билеты в музеи",
+      "Карта города в подарок",
+    ],
+    notIncluded: [
+      "Транспорт (при необходимости)",
+      "Обед (по желанию)",
+      "Личные расходы",
+    ],
+    itinerary: [
+      {
+        time: "10:00",
+        title: "Встреча в центре",
+        description: "Начало экскурсии на площади Де Феррари",
+      },
+      {
+        time: "10:30",
+        title: "Исторический центр",
+        description: "Прогулка по узким улочкам средневекового города",
+      },
+      {
+        time: "11:30",
+        title: "Кафедральный собор",
+        description: "Посещение собора Сан-Лоренцо с его сокровищницей",
+      },
+      {
+        time: "12:30",
+        title: "Дом Колумба",
+        description: "Знакомство с историей великого мореплавателя",
+      },
+      {
+        time: "13:30",
+        title: "Старый порт",
+        description: "Современная реконструкция исторического порта",
+      },
+    ],
+  },
+  {
+    id: "liguria-coast",
+    slug: "liguria-coast",
+    title: "Побережье Лигурии",
+    shortDescription: "Панорамное путешествие по Ривьере",
+    description:
+      "Откройте для себя всю красоту Лигурийского побережья во время комфортного путешествия на автомобиле. Живописные бухты, террасы с оливковыми деревьями и потрясающие панорамы Лигурийского моря.",
+    image:
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&h=600&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
+    ],
+    price: "от €180",
+    duration: "Полный день",
+    rating: 4.9,
+    reviews: 156,
+    category: "coastal",
+    difficulty: "moderate",
+    type: "scenic",
+    priceValue: 180,
+    highlights: [
+      "Панорамная дорога вдоль побережья",
+      "Остановки в живописных городках",
+      "Дегустация местных деликатесов",
+      "Фотосессии на смотровых площадках",
+    ],
+    included: [
+      "Профессиональный русскоязычный гид-водитель",
+      "Комфортабельный автомобиль",
+      "Топливо и парковки",
+      "Дегустация местных продуктов",
+    ],
+    notIncluded: [
+      "Обед в ресторане",
+      "Входные билеты в музеи",
+      "Личные расходы",
+    ],
+    itinerary: [
+      {
+        time: "09:00",
+        title: "Отправление",
+        description: "Выезд из Генуи по панорамной дороге",
+      },
+      {
+        time: "10:30",
+        title: "Камольи",
+        description: "Остановка в живописном рыбацком городке",
+      },
+      {
+        time: "12:00",
+        title: "Сан-Фруттуозо",
+        description: "Древнее аббатство в уединенной бухте",
+      },
+      {
+        time: "14:00",
+        title: "Портофино",
+        description: "Обед и прогулка по элегантному курорту",
+      },
+      {
+        time: "16:00",
+        title: "Санта-Маргерита",
+        description: "Посещение элегантного курортного города",
+      },
+      {
+        time: "17:30",
+        title: "Возвращение",
+        description: "Возвращение в Геную с панорамными остановками",
+      },
+    ],
+  },
+];
+
+// Find the tour by slug
+const tour = allTours.find((t) => t.slug === slug);
+
+// If tour not found, return 404
+if (!tour) {
+  return Astro.redirect("/404");
+}
+
+// Static paths generation for pre-rendering
+export async function getStaticPaths() {
+  const tours = [
+    "cinque-terre",
+    "portofino",
+    "genoa",
+    "liguria-coast",
+    "santa-margherita",
+    "rapallo",
+    "camogli",
+    "la-spezia",
+  ];
+
+  const locales = ["ru", "en", "it"];
+
+  const paths = [];
+
+  for (const locale of locales) {
+    for (const slug of tours) {
+      paths.push({
+        params: { slug },
+        props: { locale },
+      });
+    }
+  }
+
+  return paths;
+}
+---
+
+<IntlBaseLayout
+  title={`${tour.title} - ${t("tours.title", "Туры по Италии")}`}
+  description={tour.shortDescription}
+  locale={locale}
+>
+  <!-- Hero Section -->
+  <Section class="relative">
+    <!-- Back Button -->
+    <Container class="relative z-20 pt-6">
+      <button
+        onclick="history.back()"
+        class="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+        {t("common.back", "Назад")}
+      </button>
+    </Container>
+
+    <!-- Main Content Grid -->
+    <Container class="py-8">
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Left Column - Images -->
+        <div class="lg:col-span-2">
+          <!-- Main Image -->
+          <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4">
+            <img
+              src={tour.image}
+              alt={tour.title}
+              class="w-full h-full object-cover"
+            />
+            <button
+              class="absolute bottom-4 left-4 bg-background/50 backdrop-blur-sm text-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-background/60 transition-colors flex items-center gap-2 border border-border/20"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              {t("tours.show_all_photos", "Показать все фото")}
+            </button>
+          </div>
+
+          <!-- Thumbnail Gallery -->
+          <div class="grid grid-cols-4 gap-2">
+            {
+              tour.gallery.slice(1).map((image, index) => (
+                <div class="aspect-square rounded-lg overflow-hidden">
+                  <img
+                    src={image}
+                    alt={`${tour.title} ${index + 2}`}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Right Column - Booking Card -->
+        <div class="lg:col-span-1">
+          <div
+            class="bg-background border border-border rounded-2xl p-6 sticky top-8 shadow-lg"
+          >
+            <!-- Price -->
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-bold"
+                >{tour.price.replace("от ", "")}</span
+              >
+              <span class="text-muted-foreground"
+                >/ {t("tours.per_person", "человек")}</span
+              >
+            </div>
+
+            <!-- Rating -->
+            <div class="flex items-center gap-2 mb-6">
+              <div class="flex items-center">
+                <span class="text-accent mr-1">★</span>
+                <span class="font-semibold">{tour.rating}</span>
+              </div>
+              <span class="text-muted-foreground"
+                >({tour.reviews} {t("tours.reviews", "отзывов")})</span
+              >
+            </div>
+
+            <!-- Booking Form -->
+            <div class="space-y-4 mb-6">
+              <!-- Check-in/Check-out Dates -->
+              <div class="grid grid-cols-2 gap-2">
+                <div class="border border-border rounded-lg p-3">
+                  <label
+                    class="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  >
+                    {t("tours.check_in", "Дата начала")}
+                  </label>
+                  <input
+                    type="date"
+                    class="w-full mt-1 bg-transparent border-none text-sm font-medium outline-none"
+                    value="2023-12-26"
+                  />
+                </div>
+                <div class="border border-border rounded-lg p-3">
+                  <label
+                    class="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  >
+                    {t("tours.check_out", "Дата окончания")}
+                  </label>
+                  <input
+                    type="date"
+                    class="w-full mt-1 bg-transparent border-none text-sm font-medium outline-none"
+                    value="2023-12-30"
+                  />
+                </div>
+              </div>
+
+              <!-- Guests -->
+              <div class="border border-border rounded-lg p-3">
+                <label
+                  class="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
+                  {t("tours.guests", "Участники")}
+                </label>
+                <select
+                  class="w-full mt-1 bg-transparent border-none text-sm font-medium outline-none"
+                >
+                  <option>1 {t("tours.person", "человек")}</option>
+                  <option>2 {t("tours.people", "человека")}</option>
+                  <option>3 {t("tours.people", "человека")}</option>
+                  <option>4 {t("tours.people", "человека")}</option>
+                  <option>5+ {t("tours.people", "человек")}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Reserve Button -->
+            <button
+              class="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-lg font-semibold text-lg transition-colors mb-4"
+            >
+              {t("tours.reserve", "Забронировать")}
+            </button>
+
+            <!-- Additional Info -->
+            <div class="text-center text-sm text-muted-foreground mb-4">
+              {t("tours.no_charge", "Оплата не взимается")}
+            </div>
+
+            <!-- Tour Details -->
+            <div class="space-y-3 pt-4 border-t border-border">
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground"
+                  >{t("tours.duration", "Продолжительность")}:</span
+                >
+                <span class="font-medium">{tour.duration}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground"
+                  >{t("tours.difficulty", "Сложность")}:</span
+                >
+                <span class="font-medium capitalize">{tour.difficulty}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground"
+                  >{t("tours.type", "Тип тура")}:</span
+                >
+                <span class="font-medium capitalize">{tour.type}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+  <!-- Tour Information -->
+  <Section class="py-12">
+    <Container>
+      <!-- Header with Title and Location -->
+      <div class="mb-8">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">{tour.title}</h1>
+            <div class="flex items-center gap-4 text-muted-foreground">
+              <span
+                >{
+                  tour.category === "coastal" ? "Побережье" : "Городской тур"
+                }</span
+              >
+              <span>•</span>
+              <span
+                >{
+                  tour.type === "walking"
+                    ? "Пешеходный"
+                    : tour.type === "cultural"
+                      ? "Культурный"
+                      : "Панорамный"
+                }</span
+              >
+              <span>•</span>
+              <span>{tour.difficulty === "easy" ? "Легкий" : "Умеренный"}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="p-2 hover:bg-muted rounded-full transition-colors">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                ></path>
+              </svg>
+            </button>
+            <button class="p-2 hover:bg-muted rounded-full transition-colors">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                ></path>
+              </svg>
+            </button>
+            <button class="p-2 hover:bg-muted rounded-full transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">
+          {t("tours.description", "Описание")}
+        </h2>
+        <div class="prose max-w-none">
+          <p class="text-muted-foreground leading-relaxed text-lg mb-6">
+            {tour.description}
+          </p>
+        </div>
+      </div>
+
+      <!-- Hosted by Section -->
+      <div class="mb-12">
+        <h3 class="text-xl font-bold mb-6">
+          {t("tours.hosted_by", "Организует")}
+        </h3>
+        <div class="flex items-center gap-4 p-6 bg-muted/30 rounded-2xl">
+          <div
+            class="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold"
+          >
+            LT
+          </div>
+          <div>
+            <div class="font-semibold text-lg">Liguria Tours</div>
+            <div class="text-muted-foreground">
+              Профессиональные гиды с 2010 года
+            </div>
+            <div
+              class="flex items-center gap-4 mt-2 text-sm text-muted-foreground"
+            >
+              <span>★ 4.9 • 500+ отзывов</span>
+              <span>• Подтвержденная личность</span>
+              <span>• Суперхост</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- What this tour offers -->
+      <div class="mb-12">
+        <h3 class="text-xl font-bold mb-6">
+          {t("tours.what_included", "Что включено в тур")}
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          {
+            tour.highlights.map((highlight) => (
+              <div class="flex items-start gap-3 p-4 rounded-lg hover:bg-muted/30 transition-colors">
+                <svg
+                  class="w-6 h-6 text-primary mt-0.5 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="text-muted-foreground">{highlight}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Itinerary -->
+      <div class="mb-12">
+        <h3 class="text-xl font-bold mb-6">
+          {t("tours.itinerary", "Программа тура")}
+        </h3>
+        <div class="space-y-6">
+          {
+            tour.itinerary.map((item, index) => (
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-muted text-foreground rounded-full flex items-center justify-center font-semibold text-sm">
+                  {item.time}
+                </div>
+                <div class="flex-1 pb-6 border-b border-border last:border-b-0">
+                  <h4 class="font-semibold mb-2">{item.title}</h4>
+                  <p class="text-muted-foreground">{item.description}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </Container>
+  </Section>
+</IntlBaseLayout>

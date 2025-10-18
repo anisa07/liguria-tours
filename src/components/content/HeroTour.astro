@@ -16,23 +16,25 @@ const { tour } = Astro.props;
 
 <a
   href={tour.href}
-  class="bg-background/80 backdrop-blur-md rounded-2xl p-6 w-full lg:max-w-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group block"
+  class="bg-primary/10 rounded-2xl w-full lg:max-w-md shadow-md hover:shadow-lg group flex flex-col h-full"
 >
-  <div class="aspect-video overflow-hidden rounded-xl mb-4">
+  <div class="aspect-video overflow-hidden rounded-t-xl mb-4 flex-shrink-0">
     <img
       src={tour.image}
       alt={tour.title}
-      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+      class="w-full h-full object-cover"
       loading="lazy"
     />
   </div>
   <h3
-    class="text-xl font-semibold mb-3 group-hover:text-primary transition-colors"
+    class="text-xl font-semibold px-3"
+    style="height: 3.5rem; line-height: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.75rem;"
   >
     {tour.title}
   </h3>
+  <div class="flex-grow"></div>
   <div
-    class="flex justify-between items-center text-sm text-foreground/80 mb-4"
+    class="flex justify-between items-center text-sm text-foreground/80 mb-4 px-3"
   >
     <span class="flex items-center gap-1">
       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -49,7 +51,7 @@ const { tour } = Astro.props;
   </div>
   {
     tour.rating && (
-      <div class="flex items-center">
+      <div class="flex items-center px-3 pb-3">
         <div class="flex items-center">
           {Array.from({ length: 5 }).map((_, i) => (
             <svg

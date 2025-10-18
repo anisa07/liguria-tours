@@ -13,7 +13,12 @@ export interface Props {
   description?: string;
   actions?: CTAAction[];
   variant?: "default" | "centered" | "split" | "minimal" | "banner";
-  backgroundColor?: "primary" | "secondary" | "surface" | "gradient";
+  backgroundColor?:
+    | "primary"
+    | "secondary"
+    | "surface"
+    | "gradient"
+    | "neutral";
   backgroundImage?: string;
   overlayOpacity?: number;
   size?: "sm" | "md" | "lg";
@@ -41,6 +46,8 @@ const getBackgroundClasses = (bgType: string) => {
       return "bg-surface-2 text-foreground";
     case "gradient":
       return "bg-gradient-to-r from-primary to-secondary text-primary-foreground";
+    case "neutral":
+      return "";
     default:
       return "bg-primary text-primary-foreground";
   }

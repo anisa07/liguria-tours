@@ -1,0 +1,369 @@
+---
+import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
+import Container from "@/components/layout/Container.astro";
+import Section from "@/components/layout/Section.astro";
+import Header from "@/components/layout/Header.astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+// Set locale to Russian
+const locale: Locale = "ru";
+
+// Get the translation function for this page
+const { t } = await getPageTranslations(locale, ["common", "ui", "about"]);
+
+// Guide's credentials and certifications
+const certifications = [
+  {
+    title: "Официальный гид по Лигурии",
+    organization: "Регион Лигурия",
+    year: "2010",
+    icon: "🏛️",
+  },
+  {
+    title: "Лицензированный гид UNESCO",
+    organization: "Чинкве-Терре и Портовенере",
+    year: "2012",
+    icon: "🌍",
+  },
+  {
+    title: "Сертификат искусствоведа",
+    organization: "Университет Генуи",
+    year: "2008",
+    icon: "🎨",
+  },
+  {
+    title: "Гид-переводчик",
+    organization: "Русский, английский, итальянский",
+    year: "2009",
+    icon: "🗣️",
+  },
+];
+
+// Experience highlights
+const experiences = [
+  {
+    title: "15+ лет опыта",
+    description: "Провела более 3000 экскурсий для туристов со всего мира",
+    icon: "⏰",
+  },
+  {
+    title: "Местная жительница",
+    description: "Родилась и выросла в Генуе, знаю каждый уголок города",
+    icon: "🏠",
+  },
+  {
+    title: "Искусствовед",
+    description: "Специализация по итальянскому Возрождению и барокко",
+    icon: "🎭",
+  },
+  {
+    title: "Фотограф",
+    description: "Помогу сделать незабываемые снимки в самых красивых местах",
+    icon: "📸",
+  },
+];
+
+// Personal interests
+const interests = [
+  "История итальянского искусства",
+  "Лигурийская кухня и винные традиции",
+  "Фотография пейзажей",
+  "Изучение местных легенд и традиций",
+  "Пешие походы по Аппеннинам",
+  "Реставрация старинных зданий",
+];
+
+// Client testimonials
+const testimonials = [
+  {
+    name: "Мария Петрова",
+    location: "Москва",
+    text: "Светлана - настоящий профессионал! Благодаря ей мы открыли для себя скрытые жемчужины Лигурии, о которых не написано ни в одном путеводителе.",
+    rating: 5,
+    tour: "Тур по Чинкве-Терре",
+  },
+  {
+    name: "John Smith",
+    location: "New York",
+    text: "Svetlana's passion for her region is infectious. Her knowledge of art history made every church and palace come alive with stories.",
+    rating: 5,
+    tour: "Genoa Art & Architecture Tour",
+  },
+  {
+    name: "Анна Соколова",
+    location: "Санкт-Петербург",
+    text: "Удивительная экскурсия! Светлана показала нам места, которые туристы обычно не видят. Чувствовалось, что мы путешествуем с другом.",
+    rating: 5,
+    tour: "Портофино и побережье",
+  },
+];
+---
+
+<IntlBaseLayout
+  locale={locale}
+  pageNS={["common", "ui", "about"]}
+  seo={{
+    title: "О гиде Светлане Жуковой - Профессиональные туры по Лигурии",
+    description:
+      "Познакомьтесь со Светланой Жуковой - лицензированным гидом с 15-летним опытом, специалистом по истории и культуре Лигурии. Откройте для себя настоящую Италию!",
+  }}
+>
+  <!-- Navigation Header -->
+  <Header
+    logoText="Туры по Лигурии"
+    logoHref="/"
+    navItems={[
+      {
+        label: "Туры с гидом",
+        href: "/#tours",
+      },
+      {
+        label: "Обо мне",
+        href: "/about-me",
+      },
+      {
+        label: "Контакты",
+        href: "/#contact",
+      },
+    ]}
+    fixed={true}
+    showThemeToggle={true}
+    showLanguageSwitcher={true}
+    showMobileMenu={true}
+    currentLocale={locale}
+  />
+
+  <!-- Hero Section -->
+  <Section class="pt-24 pb-12">
+    <Container class="text-center">
+      <!-- Profile Image -->
+      <div class="mb-8">
+        <div class="relative inline-block">
+          <img
+            src="https://images.unsplash.com/photo-1494790108755-2616b9e91ce2?w=300&h=300&fit=crop&crop=face"
+            alt="Светлана Жукова - Гид по Лигурии"
+            class="w-48 h-48 rounded-full object-cover mx-auto shadow-xl border-4 border-liguria-mint"
+          />
+          <div
+            class="absolute -bottom-2 -right-2 bg-primary text-primary-foreground p-3 rounded-full shadow-lg"
+          >
+            🇮🇹
+          </div>
+        </div>
+      </div>
+
+      <!-- Introduction -->
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Светлана Жукова</h1>
+        <h2 class="text-xl md:text-2xl text-liguria-mint font-semibold mb-6">
+          Ваш персональный гид по душе Лигурии
+        </h2>
+        <p class="text-lg text-muted-foreground leading-relaxed mb-8">
+          Привет! Меня зовут Светлана, и я влюблена в Лигурию уже более 15 лет.
+          Как лицензированный гид и искусствовед, я помогаю путешественникам
+          открыть для себя настоящую душу этого удивительного региона - от
+          скрытых средневековых улочек Генуи до захватывающих видов
+          Чинкве-Терре.
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+          <div class="bg-muted px-4 py-2 rounded-full">
+            <span class="text-sm font-medium">🏆 15+ лет опыта</span>
+          </div>
+          <div class="bg-muted px-4 py-2 rounded-full">
+            <span class="text-sm font-medium">🌟 3000+ экскурсий</span>
+          </div>
+          <div class="bg-muted px-4 py-2 rounded-full">
+            <span class="text-sm font-medium">🗣️ 3 языка</span>
+          </div>
+          <div class="bg-muted px-4 py-2 rounded-full">
+            <span class="text-sm font-medium">⭐ 4.9/5 рейтинг</span>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- My Story -->
+  <Section class="py-16 bg-muted/30">
+    <Container>
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">Моя история</h2>
+
+        <div class="prose prose-lg max-w-none text-muted-foreground">
+          <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
+            <div>
+              <h3 class="text-xl font-semibold text-foreground mb-4">
+                🌊 Рождена в Генуе
+              </h3>
+              <p>
+                Я родилась и выросла в Генуе, в семье, где любовь к истории и
+                искусству передавалась из поколения в поколение. Мой дедушка был
+                моряком торгового флота, а бабушка работала в музее Палаццо
+                Россо. Именно они привили мне страсть к рассказам о прошлом
+                нашего города.
+              </p>
+            </div>
+            <img
+              src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=500&h=400&fit=crop"
+              alt="Порт Генуи"
+              class="rounded-2xl shadow-lg"
+            />
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
+            <img
+              src="https://images.unsplash.com/photo-1481833761820-0509d3217039?w=500&h=400&fit=crop"
+              alt="Университет в Италии"
+              class="rounded-2xl shadow-lg md:order-1"
+            />
+            <div class="md:order-2">
+              <h3 class="text-xl font-semibold text-foreground mb-4">
+                🎓 Образование и призвание
+              </h3>
+              <p>
+                После окончания Университета Генуи по специальности "История
+                искусств" я поняла, что хочу делиться знаниями о родном крае с
+                людьми со всего мира. В 2010 году получила лицензию гида и с тех
+                пор каждый день открываю для путешественников новые грани
+                красоты Лигурии.
+              </p>
+            </div>
+          </div>
+
+          <div class="text-center bg-liguria-mint/20 p-8 rounded-2xl">
+            <blockquote class="text-xl italic text-foreground">
+              "Для меня быть гидом - это не просто работа, это возможность
+              поделиться любовью к родному краю и показать, что Лигурия - это не
+              только туристические маршруты, но и живая история, удивительные
+              люди и неповторимая атмосфера."
+            </blockquote>
+            <cite class="block mt-4 text-muted-foreground"
+              >- Светлана Жукова</cite
+            >
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- Certifications & Experience -->
+  <Section class="py-16">
+    <Container>
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">
+          Образование и сертификаты
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-16">
+          {
+            certifications.map((cert) => (
+              <div class="bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start gap-4">
+                  <div class="text-3xl">{cert.icon}</div>
+                  <div>
+                    <h3 class="text-lg font-semibold mb-2">{cert.title}</h3>
+                    <p class="text-muted-foreground mb-1">
+                      {cert.organization}
+                    </p>
+                    <p class="text-sm text-accent font-medium">{cert.year}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <h3 class="text-2xl font-bold text-center mb-8">Мой опыт</h3>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {
+            experiences.map((exp) => (
+              <div class="text-center p-6 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors">
+                <div class="text-4xl mb-4">{exp.icon}</div>
+                <h4 class="font-semibold mb-2">{exp.title}</h4>
+                <p class="text-sm text-muted-foreground">{exp.description}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- Personal Touch -->
+  <Section class="py-16 bg-muted/30">
+    <Container>
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">
+          Что меня вдохновляет
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-12">
+          <div>
+            <h3 class="text-xl font-semibold mb-6">Мои интересы</h3>
+            <div class="space-y-3">
+              {
+                interests.map((interest) => (
+                  <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 bg-liguria-mint rounded-full" />
+                    <span class="text-muted-foreground">{interest}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold mb-6">Моя философия</h3>
+            <div class="space-y-4 text-muted-foreground">
+              <p>
+                Я верю, что лучший способ познать место - это увидеть его
+                глазами местного жителя. Поэтому мои экскурсии - это не просто
+                перечисление фактов, а живое погружение в атмосферу Лигурии.
+              </p>
+              <p>
+                Каждый тур я адаптирую под интересы группы. Любите искусство?
+                Покажу скрытые фрески и расскажу о местных художниках.
+                Интересуетесь гастрономией? Заглянем в аутентичные остерии и
+                попробуем настоящую фокаччу.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- Call to Action -->
+  <Section class="py-16 bg-liguria-mint/10">
+    <Container>
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">
+          Готовы открыть для себя настоящую Лигурию?
+        </h2>
+        <p class="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Позвольте мне показать вам мою родную Лигурию такой, какой её знают и
+          любят местные жители. Каждая экскурсия - это уникальное путешествие,
+          созданное специально для вас.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="/#tours"
+            class="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+          >
+            Выбрать экскурсию
+          </a>
+          <a
+            href="/#contact"
+            class="bg-background hover:bg-muted text-foreground border border-border px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+          >
+            Связаться со мной
+          </a>
+        </div>
+      </div>
+    </Container>
+  </Section>
+</IntlBaseLayout>

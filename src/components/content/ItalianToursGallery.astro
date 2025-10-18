@@ -1,0 +1,447 @@
+---
+import HeroTour from "./HeroTour.astro";
+import Container from "../layout/Container.astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Get the translation function for this component
+const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
+
+// All tours data from CMS
+const allTours = [
+  {
+    id: "cinque-terre",
+    title: "Чинкве-Терре",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
+    price: "от €150",
+    duration: "8 часов",
+    rating: 4.9,
+    href: "/tour/cinque-terre",
+    category: "coastal",
+    difficulty: "moderate",
+    type: "walking",
+    priceValue: 150,
+    isInitiallyVisible: true,
+  },
+  {
+    id: "portofino",
+    title: "Портофино",
+    image:
+      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&h=400&fit=crop",
+    price: "от €120",
+    duration: "6 часов",
+    rating: 4.8,
+    href: "/tour/portofino",
+    category: "coastal",
+    difficulty: "easy",
+    type: "walking",
+    priceValue: 120,
+    isInitiallyVisible: true,
+  },
+  {
+    id: "genoa",
+    title: "Генуя",
+    image:
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop",
+    price: "от €90",
+    duration: "4 часа",
+    rating: 4.7,
+    href: "/tour/genoa",
+    category: "city",
+    difficulty: "easy",
+    type: "cultural",
+    priceValue: 90,
+    isInitiallyVisible: true,
+  },
+  {
+    id: "liguria-coast",
+    title: "Побережье Лигурии",
+    image:
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=400&fit=crop",
+    price: "от €180",
+    duration: "Полный день",
+    rating: 4.9,
+    href: "/tour/liguria-coast",
+    category: "coastal",
+    difficulty: "moderate",
+    type: "scenic",
+    priceValue: 180,
+    isInitiallyVisible: true,
+  },
+  {
+    id: "santa-margherita",
+    title: "Санта-Маргерита-Лигуре",
+    image:
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=600&h=400&fit=crop",
+    price: "от €100",
+    duration: "5 часов",
+    rating: 4.6,
+    href: "/tour/santa-margherita",
+    category: "coastal",
+    difficulty: "easy",
+    type: "walking",
+    priceValue: 100,
+    isInitiallyVisible: false,
+  },
+  {
+    id: "rapallo",
+    title: "Рапалло",
+    image:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
+    price: "от €80",
+    duration: "4 часа",
+    rating: 4.4,
+    href: "/tour/rapallo",
+    category: "coastal",
+    difficulty: "easy",
+    type: "cultural",
+    priceValue: 80,
+    isInitiallyVisible: false,
+  },
+  {
+    id: "camogli",
+    title: "Камольи",
+    image:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
+    price: "от €110",
+    duration: "6 часов",
+    rating: 4.7,
+    href: "/tour/camogli",
+    category: "coastal",
+    difficulty: "moderate",
+    type: "scenic",
+    priceValue: 110,
+    isInitiallyVisible: false,
+  },
+  {
+    id: "la-spezia",
+    title: "Ла-Специя",
+    image:
+      "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=600&h=400&fit=crop",
+    price: "от €70",
+    duration: "3 часа",
+    rating: 4.3,
+    href: "/tour/la-spezia",
+    category: "city",
+    difficulty: "easy",
+    type: "cultural",
+    priceValue: 70,
+    isInitiallyVisible: false,
+  },
+];
+---
+
+<!-- Italian Tours Gallery -->
+<section class="py-20 bg-gradient-to-b from-muted/30 to-background">
+  <Container size="xl" padding="lg">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        {t("tours.title", "Наши туры по Италии")}
+      </h2>
+      <p class="text-xl text-muted-foreground">
+        {
+          t(
+            "tours.description",
+            "Откройте для себя самые красивые места Италии с персональным русскоязычным гидом"
+          )
+        }
+      </p>
+    </div>
+
+    <!-- Tour Filters -->
+    <div class="mb-12">
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground active bg-primary text-primary-foreground"
+            data-filter="all"
+          >
+            {t("filters.all", "Все туры")}
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="coastal"
+          >
+            {t("filters.coastal", "Побережье")}
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="city"
+          >
+            {t("filters.city", "Городские")}
+          </button>
+        </div>
+
+        <!-- Difficulty Filters -->
+        <div class="w-px bg-border mx-2"></div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="easy"
+          >
+            {t("filters.easy", "Легкие")}
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="moderate"
+          >
+            {t("filters.moderate", "Умеренные")}
+          </button>
+        </div>
+
+        <!-- Price Filters -->
+        <div class="w-px bg-border mx-2"></div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="budget"
+          >
+            {t("filters.budget", "До €100")}
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="premium"
+          >
+            {t("filters.premium", "От €150")}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="tours-grid">
+      {
+        allTours.map((tour, index) => (
+          <div
+            class={`tour-item h-full ${!tour.isInitiallyVisible ? "hidden load-more-item" : ""}`}
+            data-category={tour.category}
+            data-difficulty={tour.difficulty}
+            data-type={tour.type}
+            data-price={tour.priceValue}
+            style={!tour.isInitiallyVisible ? "display: none;" : ""}
+          >
+            <HeroTour tour={tour} />
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Load More Tours -->
+    <div class="text-center mt-12">
+      <button
+        id="load-more-btn"
+        class="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
+      >
+        <span id="load-more-text"
+          >{t("tours.load_more", "Загрузить больше туров")}</span
+        >
+        <span class="ml-2">+</span>
+      </button>
+      <div id="loading-spinner" class="hidden mt-4">
+        <div class="inline-flex items-center gap-2 text-muted-foreground">
+          <div
+            class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
+          >
+          </div>
+          <span>{t("tours.loading", "Загрузка...")}</span>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  // Tour Filter Functionality and Load More
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    let tourItems = document.querySelectorAll(".tour-item");
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    const loadingSpinner = document.getElementById("loading-spinner");
+    const loadMoreText = document.getElementById("load-more-text");
+
+    let additionalToursVisible = false;
+
+    // Load More Tours functionality - toggle visibility of hidden tours
+    loadMoreBtn?.addEventListener("click", function () {
+      if (additionalToursVisible) return;
+
+      // Show loading state briefly for UX feedback
+      loadingSpinner!.classList.remove("hidden");
+      loadMoreBtn!.style.opacity = "0.5";
+      loadMoreBtn!.style.pointerEvents = "none";
+
+      // Get current active filter
+      const currentActiveBtn = document.querySelector(".filter-btn.active");
+      const currentFilter =
+        currentActiveBtn?.getAttribute("data-filter") || "all";
+
+      // Show all hidden tours with staggered animation
+      const hiddenTours = document.querySelectorAll(".load-more-item");
+      const visibleHiddenTours: HTMLElement[] = [];
+
+      hiddenTours.forEach((tourElement) => {
+        const htmlTour = tourElement as HTMLElement;
+        htmlTour.classList.remove("hidden");
+        htmlTour.style.display = "block"; // Override the inline style
+
+        // Apply current filter to newly shown tours
+        const category = htmlTour.getAttribute("data-category");
+        const difficulty = htmlTour.getAttribute("data-difficulty");
+        const priceAttr = htmlTour.getAttribute("data-price");
+        const price = priceAttr ? parseInt(priceAttr) : 0;
+
+        let shouldShow = false;
+        if (currentFilter === "all") {
+          shouldShow = true;
+        } else if (currentFilter === "coastal" || currentFilter === "city") {
+          shouldShow = category === currentFilter;
+        } else if (currentFilter === "easy" || currentFilter === "moderate") {
+          shouldShow = difficulty === currentFilter;
+        } else if (currentFilter === "budget") {
+          shouldShow = price <= 100;
+        } else if (currentFilter === "premium") {
+          shouldShow = price >= 150;
+        }
+
+        if (shouldShow) {
+          // Prepare for animation
+          htmlTour.classList.add("fade-in");
+          visibleHiddenTours.push(htmlTour);
+        } else {
+          htmlTour.style.display = "none";
+        }
+      });
+
+      // Animate visible tours with staggered timing
+      visibleHiddenTours.forEach((tour, index) => {
+        setTimeout(() => {
+          tour.classList.add("fade-in-visible");
+        }, index * 150); // 150ms stagger between each card
+      });
+
+      // Update tour items list for filtering
+      tourItems = document.querySelectorAll(".tour-item");
+      additionalToursVisible = true;
+
+      // Hide loading and update button after animation completes
+      setTimeout(
+        () => {
+          loadingSpinner!.classList.add("hidden");
+          loadMoreText!.textContent = "Все туры загружены";
+          loadMoreBtn!.style.opacity = "1";
+          loadMoreBtn!.style.pointerEvents = "auto";
+          loadMoreBtn!.classList.add("opacity-50", "cursor-not-allowed");
+        },
+        visibleHiddenTours.length * 150 + 300
+      ); // Wait for all animations plus buffer
+    });
+
+    // Filter functionality
+    function applyFilter() {
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", function (this: HTMLElement) {
+          const filter = this.getAttribute("data-filter");
+          const currentActive = document.querySelector(".filter-btn.active");
+
+          // Don't process if same button is clicked
+          if (currentActive === this) return;
+
+          // Update active button
+          filterButtons.forEach((btn) =>
+            btn.classList.remove(
+              "active",
+              "bg-primary",
+              "text-primary-foreground"
+            )
+          );
+          this.classList.add("active", "bg-primary", "text-primary-foreground");
+
+          // Filter and show/hide items instantly
+          tourItems.forEach((item) => {
+            const htmlItem = item as HTMLElement;
+            const category = item.getAttribute("data-category");
+            const difficulty = item.getAttribute("data-difficulty");
+            const priceAttr = item.getAttribute("data-price");
+            const price = priceAttr ? parseInt(priceAttr) : 0;
+
+            let shouldShow = false;
+
+            if (filter === "all") {
+              shouldShow = true;
+            } else if (filter === "coastal" || filter === "city") {
+              shouldShow = category === filter;
+            } else if (filter === "easy" || filter === "moderate") {
+              shouldShow = difficulty === filter;
+            } else if (filter === "budget") {
+              shouldShow = price <= 100;
+            } else if (filter === "premium") {
+              shouldShow = price >= 150;
+            }
+
+            // Clear any inline styles and show/hide instantly
+            htmlItem.style.transition = "";
+            htmlItem.style.opacity = "";
+            htmlItem.style.transform = "";
+
+            if (shouldShow) {
+              htmlItem.style.display = "block";
+            } else {
+              htmlItem.style.display = "none";
+            }
+          });
+        });
+      });
+    }
+
+    // Initialize filter functionality
+    applyFilter();
+  });
+</script>
+
+<style>
+  .filter-btn {
+    transition: all 0.2s ease;
+  }
+  .filter-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .filter-btn.active {
+    transform: none !important;
+  }
+
+  .tour-item {
+    display: flex;
+    height: 100%;
+    transition:
+      opacity 0.6s ease-in-out,
+      transform 0.6s ease-in-out;
+  }
+
+  .tour-item.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .tour-item.fade-in-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>

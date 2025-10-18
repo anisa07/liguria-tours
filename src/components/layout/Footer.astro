@@ -63,7 +63,7 @@ const defaultCopyright =
 ---
 
 <footer
-  class={`bg-background border-t border-border ${className}`}
+  class={`bg-liguria-mint text-foreground ${className}`}
   role="contentinfo"
 >
   <div class="container mx-auto px-4 py-12">
@@ -83,7 +83,7 @@ const defaultCopyright =
         }
 
         <!-- Company description slot -->
-        <div class="text-muted-foreground text-sm leading-relaxed">
+        <div class="text-foreground text-sm leading-relaxed">
           <slot name="description">
             <p>
               {
@@ -140,7 +140,7 @@ const defaultCopyright =
                 <li>
                   <a
                     href={link.href}
-                    class="text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+                    class="text-sm text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
                   >
@@ -166,7 +166,7 @@ const defaultCopyright =
               {newsletterTitle ||
                 t("footer.newsletter.title", "Subscribe to our newsletter")}
             </h3>
-            <p class="text-sm text-muted-foreground mb-4">
+            <p class="text-sm text-foreground mb-4">
               {newsletterDescription ||
                 t(
                   "footer.newsletter.description",
@@ -207,7 +207,7 @@ const defaultCopyright =
                   {t("footer.newsletter.subscribe", "Subscribe")}
                 </button>
               </div>
-              <p class="text-xs text-muted-foreground">
+              <p class="text-xs text-foreground">
                 {t(
                   "footer.newsletter.privacy_notice",
                   "We respect your privacy. Unsubscribe at any time."
@@ -226,7 +226,7 @@ const defaultCopyright =
     <div class="border-t border-border pt-8 mt-8">
       <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
         <!-- Copyright -->
-        <div class="text-sm text-muted-foreground">
+        <div class="text-sm text-foreground">
           {defaultCopyright}
         </div>
 
@@ -235,13 +235,13 @@ const defaultCopyright =
           <slot name="legal">
             <a
               href="/privacy"
-              class="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+              class="text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
             >
               {t("footer.legal.privacy", "Privacy Policy")}
             </a>
             <a
               href="/terms"
-              class="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+              class="text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
             >
               {t("footer.legal.terms", "Terms of Service")}
             </a>

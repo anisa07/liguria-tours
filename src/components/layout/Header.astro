@@ -93,9 +93,21 @@ const headerClasses = [
         logoAlt={logoAlt || logoText}
         class="w-full !p-0 !border-0 !bg-transparent"
       >
-        <span slot="logo">
-          {logoText}
-        </span>
+        <div
+          slot="logo"
+          class="relative flex items-center justify-center w-[200px]"
+        >
+          <img
+            src="/images/flag_map_of_liguria.svg"
+            alt={logoText || "Liguria Tours"}
+            class="h-12 w-auto mt-2.5 opacity-60"
+          />
+          <span
+            class="absolute top-3.5 flex items-center justify-center font-bold text-md text-center text-foreground/85 drop-shadow-lg"
+          >
+            {logoText}
+          </span>
+        </div>
         <div slot="actions">
           <!-- Search Button -->
           {

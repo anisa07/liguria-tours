@@ -98,6 +98,12 @@ export default {
         },
         "scheme-corporate": {
           60: "rgb(var(--scheme-corporate-60) / <alpha-value>)",
+        },
+        // Custom brand colors
+        "liguria-mint": {
+          DEFAULT: "rgb(var(--color-liguria-mint) / <alpha-value>)",
+          foreground:
+            "rgb(var(--color-liguria-mint-foreground) / <alpha-value>)",
           30: "rgb(var(--scheme-corporate-30) / <alpha-value>)",
           10: "rgb(var(--scheme-corporate-10) / <alpha-value>)",
         },
