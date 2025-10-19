@@ -10,6 +10,8 @@ import { Image } from "astro:assets";
 // Content components
 import Hero from "@/components/content/Hero.astro";
 import ItalianToursGallery from "@/components/content/ItalianToursGallery.astro";
+import BoatTour from "@/components/content/BoatTour.astro";
+import CruiseTour from "@/components/content/CruiseTour.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
 import ImageGallery from "@/components/ImageGallery.astro";
 import Header from "@/components/layout/Header.astro";
@@ -250,37 +252,11 @@ const ctaActions = [
     ),
   }}
 >
-  <!-- Navigation Header -->
-  <Header
-    logoText={t("site.name", "Туры по Лигурии")}
-    logoHref={`/`}
-    navItems={[
-      {
-        label: t("nav.tours", "Туры с гидом"),
-        href: `/#tours`,
-      },
-      {
-        label: t("nav.about", "Обо мне"),
-        href: `/about-me`,
-      },
-      {
-        label: t("nav.contact", "Контакты"),
-        href: `/#contact`,
-      },
-    ]}
-    fixed={true}
-    showThemeToggle={true}
-    showLanguageSwitcher={true}
-    showMobileMenu={true}
-    currentLocale={locale}
-    transparent={true}
-  />
-
   <!-- Hero Section -->
   <section class="relative border-none">
     <!-- Gradient Background -->
     <div
-      class="absolute inset-0 bg-gradient-to-b from-liguria-mint to-transparent rounded-b-[250px]"
+      class="absolute inset-0 bg-gradient-to-b from-primary/20 to-transparent rounded-b-[150px]"
     >
     </div>
 
@@ -301,7 +277,6 @@ const ctaActions = [
             label: t("actions.book_now", "Забронировать сейчас"),
             href: "/booking",
             variant: "primary" as const,
-            icon: "🎯",
           },
         ]}
         galleryImages={[
@@ -334,10 +309,16 @@ const ctaActions = [
   <!-- Italian Tours Gallery -->
   <ItalianToursGallery locale={locale} />
 
+  <!-- Sea Tours Section -->
+  <BoatTour locale={locale} />
+
+  <!-- Cruise tour -->
+  <CruiseTour locale={locale} />
+
   <!-- CTA Section -->
   <section class="py-20 relative overflow-hidden">
     <div
-      class="absolute inset-0 bg-gradient-to-b from-transparent to-liguria-mint"
+      class="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
     >
     </div>
     <Container size="lg" padding="lg" class="relative z-10">

@@ -143,13 +143,13 @@ const allTours = [
   <Container size="xl" padding="lg">
     <div class="text-center mb-16">
       <h2 class="text-4xl md:text-5xl font-bold text-foreground mb-6">
-        {t("tours.title", "Наши туры по Италии")}
+        {t("tours.title", "Авторские туры по Лигурии")}
       </h2>
       <p class="text-xl text-muted-foreground">
         {
           t(
             "tours.description",
-            "Откройте для себя самые красивые места Италии с персональным русскоязычным гидом"
+            "Откройте для себя самые красивые места Лигурии с гидом"
           )
         }
       </p>
@@ -179,46 +179,12 @@ const allTours = [
             {t("filters.city", "Городские")}
           </button>
         </div>
-
-        <!-- Difficulty Filters -->
-        <div class="w-px bg-border mx-2"></div>
-        <div class="flex flex-wrap gap-2">
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="easy"
-          >
-            {t("filters.easy", "Легкие")}
-          </button>
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="moderate"
-          >
-            {t("filters.moderate", "Умеренные")}
-          </button>
-        </div>
-
-        <!-- Price Filters -->
-        <div class="w-px bg-border mx-2"></div>
-        <div class="flex flex-wrap gap-2">
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="budget"
-          >
-            {t("filters.budget", "До €100")}
-          </button>
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="premium"
-          >
-            {t("filters.premium", "От €150")}
-          </button>
-        </div>
       </div>
     </div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="tours-grid">
       {
-        allTours.map((tour, index) => (
+        allTours.map((tour) => (
           <div
             class={`tour-item h-full ${!tour.isInitiallyVisible ? "hidden load-more-item" : ""}`}
             data-category={tour.category}
@@ -237,10 +203,10 @@ const allTours = [
     <div class="text-center mt-12">
       <button
         id="load-more-btn"
-        class="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
+        class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
       >
         <span id="load-more-text"
-          >{t("tours.load_more", "Загрузить больше туров")}</span
+          >{t("tours.load_more", "Показать больше туров")}</span
         >
         <span class="ml-2">+</span>
       </button>
@@ -370,6 +336,8 @@ const allTours = [
             const difficulty = item.getAttribute("data-difficulty");
             const priceAttr = item.getAttribute("data-price");
             const price = priceAttr ? parseInt(priceAttr) : 0;
+            const isLoadMoreItem =
+              htmlItem.classList.contains("load-more-item");
 
             let shouldShow = false;
 
@@ -390,8 +358,14 @@ const allTours = [
             htmlItem.style.opacity = "";
             htmlItem.style.transform = "";
 
+            // Only show items that match the filter AND respect the load more state
             if (shouldShow) {
-              htmlItem.style.display = "block";
+              // If it's a load-more item and additional tours haven't been loaded yet, keep it hidden
+              if (isLoadMoreItem && !additionalToursVisible) {
+                htmlItem.style.display = "none";
+              } else {
+                htmlItem.style.display = "block";
+              }
             } else {
               htmlItem.style.display = "none";
             }

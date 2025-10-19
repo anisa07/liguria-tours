@@ -1,0 +1,134 @@
+---
+import Container from "@/components/layout/Container.astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import { cn } from "@/lib/utils";
+
+export interface Props {
+  locale: Locale;
+  contentTitle?: string;
+  contentDescription?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+}
+
+const { locale, contentTitle, contentDescription, imageUrl, imageAlt } =
+  Astro.props;
+
+// Get the translation function for this component
+const { t } = await getPageTranslations(locale, ["common", "ui", "cruise"]);
+
+// Action button styling function
+const getActionButtonClasses = (actionVariant: string = "primary") => {
+  const baseClasses =
+    "inline-flex items-center justify-center px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm shadow-md";
+
+  switch (actionVariant) {
+    case "secondary":
+      return cn(
+        baseClasses,
+        "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
+      );
+    case "outline":
+      return cn(
+        baseClasses,
+        "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary"
+      );
+    default:
+      return cn(
+        baseClasses,
+        "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-foreground/75 focus:ring-primary"
+      );
+  }
+};
+---
+
+<!-- Cruise Tours Section -->
+<section id="cruise-tours" class="py-20 relative overflow-hidden">
+  <!-- Ship Pattern Background -->
+  <div class="absolute inset-0 opacity-5">
+    <svg
+      class="w-full h-full"
+      viewBox="0 0 400 400"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <pattern
+          id="ship-pattern"
+          x="0"
+          y="0"
+          width="60"
+          height="60"
+          patternUnits="userSpaceOnUse"
+        >
+          <circle cx="10" cy="10" r="2" fill="currentColor" opacity="0.2"
+          ></circle>
+          <circle cx="50" cy="30" r="1.5" fill="currentColor" opacity="0.3"
+          ></circle>
+          <circle cx="30" cy="50" r="1" fill="currentColor" opacity="0.2"
+          ></circle>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#ship-pattern)"></rect>
+    </svg>
+  </div>
+
+  <Container size="xl" class="relative z-10">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-6xl font-bold mb-6 text-primary">
+        {t("cruise.title", "Круизные экскурсии")}
+      </h2>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
+      <div class="relative">
+        <div
+          class="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl"
+        >
+          <img
+            src={imageUrl ||
+              "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop"}
+            alt={imageAlt ||
+              t("cruise.image.alt", "Круизный лайнер в порту Генуи")}
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+
+      <div
+        class="bg-primary/10 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-border/20 hover:shadow-xl"
+      >
+        <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          {
+            contentTitle ||
+              t("cruise.content.title", "Экскурсии во время круиза")
+          }
+        </h3>
+        <p
+          class="text-foreground/90 text-base leading-relaxed mb-4 text-justify"
+        >
+          {
+            contentDescription ||
+              t(
+                "cruise.content.description",
+                "Даже короткая остановка в порту может стать ярким приключением. Мы предлагаем индивидуальные и групповые прогулки по Генуе и другим городам Средиземноморья. Успейте почувствовать атмосферу, вкус и ритм Италии — всё продумано для гостей круизных лайнеров."
+              )
+          }
+        </p>
+      </div>
+    </div>
+
+    <div class="flex justify-center">
+      <a
+        href="#book-tour"
+        class="inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm shadow-lg hover:shadow-xl transform hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary hover:text-foreground/90"
+        target={undefined}
+        rel={undefined}
+      >
+        {t("common.book_now", "Связаться с нами")}
+      </a>
+    </div>
+  </Container>
+</section>

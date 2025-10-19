@@ -3,7 +3,7 @@ import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/types";
 import { cn } from "@/lib/utils";
 import type { HeroAction } from "./Hero.astro";
-import { Star, MapPin, Users, Clock } from "@lucide/astro";
+import { MapPin, Users, Clock } from "@lucide/astro";
 
 export interface Props {
   title: string;
@@ -45,27 +45,14 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
   <!-- Header with emotional hook -->
   <div class="mb-6">
     <h2
-      class="text-3xl lg:text-4xl font-bold text-foreground mb-3 leading-tight"
+      class="text-3xl lg:text-4xl font-bold text-foreground/80 mb-3 leading-tight"
     >
       {title}
     </h2>
-    <div class="flex items-center gap-2 text-foreground/90 text-sm mb-4">
-      <div class="flex items-center gap-1">
-        <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
-        <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
-        <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
-        <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
-        <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
-        <span class="ml-2 font-medium">Аккредитованный гид</span>
-      </div>
-    </div>
   </div>
 
   <!-- Key value proposition -->
   <div class="mb-6">
-    <h3 class="text-xl font-semibold text-foreground mb-3">
-      Живые эмоции вместо скучных фактов
-    </h3>
     <p class="text-foreground/90 text-base leading-relaxed mb-4">
       {description}
     </p>
@@ -134,7 +121,7 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
   <!-- Call to action -->
   {
     actions.length > 0 && (
-      <div class="flex flex-wrap gap-3">
+      <div class="flex flex-wrap gap-3 justify-center">
         {actions.map((action) => (
           <a
             href={action.href}
@@ -142,17 +129,7 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
             target={action.external ? "_blank" : undefined}
             rel={action.external ? "noopener noreferrer" : undefined}
           >
-            {action.icon && (
-              <span class="mr-2" aria-hidden="true">
-                {action.icon}
-              </span>
-            )}
             {action.label}
-            {action.external && (
-              <span class="ml-2 text-sm" aria-hidden="true">
-                ↗
-              </span>
-            )}
           </a>
         ))}
       </div>

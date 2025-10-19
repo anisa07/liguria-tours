@@ -1,0 +1,68 @@
+---
+import BoatCarousel from "./BoatCarousel.astro";
+
+interface TourDetails {
+  icon?: string;
+  title: string;
+  description?: string;
+  price?: string;
+  duration?: string;
+  badge?: string;
+  highlight?: string;
+  highlightDescription?: string;
+  tourPoints: CarouselSlide[];
+}
+
+interface CarouselSlide {
+  id: string;
+  image: string;
+  alt: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  tour: TourDetails;
+  carouselId: string;
+  class?: string;
+}
+
+const { tour, carouselId, class: className = "" } = Astro.props;
+---
+
+<div
+  class={`bg-background/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-border/20 hover:shadow-2xl transition-all duration-300 group col-span-full ${className}`}
+>
+  <div class="flex flex-col gap-4">
+    <h3 class="text-2xl font-bold text-primary">
+      {tour.title}
+    </h3>
+    {
+      (tour.price || tour.duration || tour.badge) && (
+        <div class="flex items-center flex-wrap gap-3 mb-3">
+          {tour.price && (
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary/10 text-primary border border-primary/20 shadow-sm">
+              {tour.price}
+            </span>
+          )}
+          {tour.duration && (
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary/10 text-secondary border border-secondary/20 shadow-sm">
+              {tour.duration}
+            </span>
+          )}
+          {tour.badge && (
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-accent/10 text-accent border border-accent/20 shadow-sm">
+              {tour.badge}
+            </span>
+          )}
+        </div>
+      )
+    }
+    {tour.description && <p class="text-md text-justify">{tour.description}</p>}
+  </div>
+  <h4 class="my-4 text-base">Точки маршрута</h4>
+
+  <!-- Carousel -->
+  <BoatCarousel id={carouselId} slides={tour.tourPoints} />
+</div>

@@ -1,0 +1,251 @@
+---
+import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
+import Container from "@/components/layout/Container.astro";
+import BoatTourDetails from "@/components/content/BoatTourDetails.astro";
+import CallToAction from "@/components/content/CallToAction.astro";
+import { getPageTranslations, getLocaleStaticPaths } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+export async function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const { locale } = Astro.params as { locale: Locale };
+
+// Get the translation function for this page
+const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
+
+const pageTitle = t("sea_tours.title", "Морская прогулка");
+const pageDescription = t(
+  "sea_tours.description",
+  "Отправьтесь в морское путешествие из Генуи по живописному побережью Леванте. Прогулка на катере, уютные города и дегустация лёгких вин у моря."
+);
+
+// Tigullio Bay carousel slides
+const tigullioSlides = [
+  {
+    id: "portofino",
+    image:
+      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=300&fit=crop",
+    alt: "Портофино",
+    icon: "🏰",
+    title: "ПОРТОФИНО",
+    description:
+      "Миниатюрная гавань знаменитостей с разноцветными домами и божественными видами.",
+  },
+  {
+    id: "san-fruttuoso",
+    image:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    alt: "Сан-Фрутозо",
+    icon: "⛪",
+    title: "САН-ФРУТОЗО",
+    description:
+      "Оазис спокойствия с аббатством и подводной статуей «Христос из Бездны».",
+  },
+  {
+    id: "santa-margherita",
+    image:
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=300&fit=crop",
+    alt: "Санта-Маргарита",
+    icon: "🌺",
+    title: "САНТА-МАРГАРИТА",
+    description:
+      "Культура «Бэль Эпок» с уютными тратториями и роскошными ресторанами.",
+  },
+  {
+    id: "rapallo",
+    image:
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=300&fit=crop",
+    alt: "Рапалло",
+    icon: "🏌️",
+    title: "РАПАЛЛО",
+    description:
+      "Очаровательный курорт с гольф-парком и фуникулером на гору Монтеаллегро.",
+  },
+  {
+    id: "sestri-levante",
+    image:
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=300&fit=crop",
+    alt: "Сестри Леванте",
+    icon: "📚",
+    title: "СЕСТРИ ЛЕВАНТЕ",
+    description:
+      "Шарм итальянского городка между Бухтой Тишины и Бухтой Сказок.",
+  },
+];
+
+// Cinque Terre carousel slides
+const cinqueSlides = [
+  {
+    id: "monterosso",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+    alt: "Монтероссо",
+    icon: "🏖️",
+    title: "МОНТЕРОССО",
+    description:
+      "Единственная деревня с пляжами и монастырем капуцинов на холме Св. Христофора.",
+  },
+  {
+    id: "vernazza",
+    image:
+      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=300&fit=crop",
+    alt: "Вернацца",
+    icon: "🏰",
+    title: "ВЕРНАЦЦА",
+    description:
+      "Живописная бухта с замком на скале и летними кафе на площади.",
+  },
+  {
+    id: "corniglia",
+    image:
+      "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=400&h=300&fit=crop",
+    alt: "Корнилья",
+    icon: "🧚",
+    title: "КОРНИЛЬЯ",
+    description:
+      "Сказочная деревня на склоне холма среди виноградников, недоступная с моря.",
+  },
+  {
+    id: "manarola",
+    image:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    alt: "Манарола",
+    icon: "💕",
+    title: "МАНАРОЛА",
+    description:
+      "Крохотный городок с видом на тропинку Любви и домиками до самого моря.",
+  },
+  {
+    id: "riomaggiore",
+    image:
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=300&fit=crop",
+    alt: "Риомаджоре",
+    icon: "🌊",
+    title: "РИОМАДЖОРЕ",
+    description:
+      "«Большой ручей» - самый последний многоступенчатый городок из Пяти земель.",
+  },
+  {
+    id: "portovenere",
+    image:
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=300&fit=crop",
+    alt: "Портовенере",
+    icon: "⛪",
+    title: "ПОРТОВЕНЕРЕ",
+    description:
+      "Символ Лигурии с храмом Святого Петра на утесе и крепостью Дориа.",
+  },
+];
+
+// Tour details data
+const tigullioTour = {
+  tourPoints: tigullioSlides,
+  title: "Очарование и стиль Лигурии: путешествие по заливу Тигуллио",
+  description:
+    "Отправьтесь в путешествие по самому изысканному уголку Лигурии — заливу Тигуллио. Вас ждут легендарные курорты Портофино, Сан-Фрутозо, Санта-Маргарита, Рапалло и Сестри-Леванте — города, где история встречается с морским бризом, а итальянский шарм ощущается в каждом мгновении. Насладитесь панорамными видами, атмосферой dolce vita и вкусом настоящей Лигурии.",
+};
+
+const cinqueTour = {
+  tourPoints: cinqueSlides,
+  title: "Пять земель и Портовенере: сердце дикого очарования Лигурии",
+  price: "от €120",
+  duration: "6-8 часов",
+  badge: "Объект ЮНЕСКО",
+  description:
+    "Путешествие по легендарным Чинкве-Терре и Портовенере — там, где горы встречают море, а каждый городок хранит свой характер и тайну. Вы увидите живописные бухты, монастыри, виноградники на склонах и древние церкви у самой воды. Морская прогулка откроет вам Лигурию, какой её видят только избранные — настоящую, неподдельную и вечно прекрасную.",
+};
+
+// CTA actions
+const ctaActions = [
+  {
+    label: t("sea_tours.cta.book", "Забронировать прогулку"),
+    href: "#contact",
+    variant: "primary" as const,
+  },
+  {
+    label: t("sea_tours.cta.details", "Узнать подробности"),
+    href: "#details",
+    variant: "outline" as const,
+  },
+];
+---
+
+<IntlBaseLayout title={pageTitle} description={pageDescription} locale={locale}>
+  <!-- Sea Tours Section -->
+  <section
+    id="sea-tours"
+    class="py-20 relative overflow-hidden bg-gradient-to-br from-muted/30 via-liguria-mint/20 to-liguria-mint/40 dark:from-muted/10 dark:via-liguria-mint/10 dark:to-liguria-mint/20"
+  >
+    <!-- Wave Pattern Background -->
+    <div class="absolute inset-0 opacity-10">
+      <svg
+        class="w-full h-full"
+        viewBox="0 0 1200 800"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <pattern
+            id="wave-pattern"
+            x="0"
+            y="0"
+            width="120"
+            height="40"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M0,20 Q30,0 60,20 T120,20"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              opacity="0.3"></path>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#wave-pattern)"></rect>
+      </svg>
+    </div>
+
+    <Container size="xl" class="relative z-10">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <h1
+          class="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+        >
+          {t("sea_tours.title", "Морская прогулка на катере")}
+        </h1>
+        <div class="max-w-4xl mx-auto space-y-4">
+          <h2 class="text-xl text-muted-foreground leading-relaxed">
+            Совместно с <span class="font-semibold text-primary"
+              >Консорциумом «Тигуллио»</span
+            > — морские маршруты, остановки в прибрежных городках и дегустация вин
+            у моря.
+          </h2>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <BoatTourDetails tour={tigullioTour} carouselId="tigullio" />
+        </div>
+      </div>
+
+      <div class="my-16">
+        <BoatTourDetails tour={cinqueTour} carouselId="cinque" />
+      </div>
+    </Container>
+  </section>
+
+  <!-- Call to Action -->
+  <CallToAction
+    title={t("sea_tours.cta.title", "Готовы к морскому приключению?")}
+    description={t(
+      "sea_tours.cta.description",
+      "Забронируйте морскую прогулку и увидьте Лигурию с совершенно новой стороны"
+    )}
+    actions={ctaActions}
+    variant="centered"
+    backgroundColor="primary"
+    size="sm"
+  />
+</IntlBaseLayout>

@@ -1,0 +1,212 @@
+---
+import Container from "@/components/layout/Container.astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  locale: Locale;
+  title?: string;
+  description?: string;
+  duration?: string;
+  durationLabel?: string;
+  price?: string;
+  priceLabel?: string;
+  ctaText?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  imageTitle?: string;
+  imageDescription?: string;
+  linkUrl?: string;
+}
+
+const {
+  locale,
+  title,
+  description,
+  duration,
+  price,
+  ctaText,
+  imageUrl,
+  imageAlt,
+  imageTitle,
+  imageDescription,
+  linkUrl,
+} = Astro.props;
+
+// Get the translation function for fallback text
+const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
+---
+
+<!-- Sea Tours Section -->
+<section
+  id="sea-tours"
+  class="py-20 relative overflow-hidden bg-gradient-to-br from-muted/30 via-liguria-mint/20 to-liguria-mint/40 dark:from-muted/10 dark:via-liguria-mint/10 dark:to-liguria-mint/20"
+>
+  <!-- Wave Pattern Background -->
+  <div class="absolute inset-0 opacity-10">
+    <svg
+      class="w-full h-full"
+      viewBox="0 0 1200 800"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <pattern
+          id="wave-pattern"
+          x="0"
+          y="0"
+          width="120"
+          height="40"
+          patternUnits="userSpaceOnUse"
+        >
+          <path
+            d="M0,20 Q30,0 60,20 T120,20"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="none"
+            opacity="0.3"></path>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#wave-pattern)"></rect>
+    </svg>
+  </div>
+
+  <Container size="xl" class="relative z-10">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2
+        class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+      >
+        {title || t("sea_tours.title", "Морская прогулка")}
+      </h2>
+      <p
+        class="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+      >
+        {
+          description ||
+            t(
+              "sea_tours.description",
+              "Отправьтесь в морское путешествие из Генуи по живописному побережью Леванте. Прогулка на катере, уютные города и дегустация лёгких вин у моря."
+            )
+        }
+      </p>
+    </div>
+
+    <!-- Sea Tours Content -->
+    <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
+      <!-- Left: Tour Overview -->
+      <div class="space-y-8">
+        <!-- Quick Tour Highlights -->
+        {
+          (duration || price) && (
+            <div
+              class={`grid gap-4 ${duration && price ? "grid-cols-2" : "grid-cols-1"}`}
+            >
+              {duration && (
+                <div class="bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-border/30">
+                  <div class="text-2xl font-bold text-foreground">
+                    {duration}
+                  </div>
+                  <div class="text-muted-foreground text-sm">
+                    {t("sea_tours.duration.label", "Продолжительность")}
+                  </div>
+                </div>
+              )}
+              {price && (
+                <div class="bg-gradient-to-br from-accent/10 to-liguria-mint/30 backdrop-blur-sm rounded-2xl p-6 text-center border border-border/30">
+                  <div class="text-2xl font-bold text-foreground">{price}</div>
+                  <div class="text-muted-foreground text-sm">
+                    {t("sea_tours.price.label", "За человека")}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        }
+
+        <!-- Simple Feature List -->
+        <div
+          class="bg-background/80 backdrop-blur-sm dark:bg-card/80 rounded-3xl p-8 shadow-xl border border-border/20"
+        >
+          <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+            {t("sea_tours.what_includes", "Что включает прогулка")}
+          </h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div
+              class="flex items-center gap-3 p-3 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors"
+            >
+              <span class="font-medium"
+                >{t("sea_tours.yacht.title", "Волшебные виды")}</span
+              >
+            </div>
+            <div
+              class="flex items-center gap-3 p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors"
+            >
+              <span class="font-medium"
+                >{t("sea_tours.history.title", "Увлекательная история")}</span
+              >
+            </div>
+            <div
+              class="flex items-center gap-3 p-3 rounded-lg bg-liguria-mint/20 hover:bg-liguria-mint/30 transition-colors"
+            >
+              <span class="font-medium"
+                >{t("sea_tours.tasting.title", "Дегустация")}</span
+              >
+            </div>
+            <div
+              class="flex items-center gap-3 p-3 rounded-lg bg-secondary/5 hover:bg-secondary/10 transition-colors"
+            >
+              <span class="font-medium"
+                >{t("sea_tours.photos.title", "Незабываемые впечатления")}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Sea Tour Image -->
+      <div class="relative">
+        <div
+          class="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl"
+        >
+          <img
+            src={imageUrl ||
+              "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop"}
+            alt={imageAlt ||
+              t("sea_tours.image.alt", "Морская прогулка по побережью Лигурии")}
+            class="w-full h-full object-cover"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent dark:from-foreground/40"
+          >
+          </div>
+          <div class="absolute bottom-6 left-6 right-6">
+            <h3
+              class="text-foreground dark:text-background text-xl font-bold mb-2"
+            >
+              {imageTitle || t("sea_tours.image.title", "Побережье с моря")}
+            </h3>
+            <p class="text-muted-foreground dark:text-background/90 text-sm">
+              {
+                imageDescription ||
+                  t(
+                    "sea_tours.image.description",
+                    "Уникальный взгляд на Чинкве-Терре и Портофино"
+                  )
+              }
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <a
+        href={linkUrl || `/tour/boat-tour`}
+        class="inline-flex items-center gap-2 bg-primary text-background hover:text-background/90 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:scale-105"
+      >
+        {ctaText || t("sea_tours.cta.details", "Подробнее о турах")}
+        <span class="text-lg">→</span>
+      </a>
+    </div>
+  </Container>
+</section>

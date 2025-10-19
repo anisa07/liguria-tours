@@ -26,14 +26,11 @@ export interface Props {
 
 const {
   items,
-  locale = "en",
   translations = [],
   class: className = "",
   trigger = "☰",
   closeText = "✕",
   menuId = "mobile-menu",
-  showLanguageSwitcher = false,
-  currentLocale,
 } = Astro.props;
 
 // Create translation function
@@ -41,10 +38,10 @@ const t = createT(translations);
 ---
 
 <!-- Mobile Menu Button -->
-<div class={`lg:hidden ${className}`}>
+<div class={`md:hidden ${className}`}>
   <button
     type="button"
-    class="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-subtle"
+    class="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-subtle mr-2"
     aria-controls={menuId}
     aria-expanded="false"
     aria-label={t("mobile_menu.toggle", "Toggle mobile menu")}
@@ -59,7 +56,7 @@ const t = createT(translations);
 
 <!-- Mobile Menu Overlay -->
 <div
-  class="fixed inset-0 z-40 lg:hidden hidden bg-background backdrop-blur-sm"
+  class="fixed inset-0 z-40 md:hidden hidden bg-background backdrop-blur-sm"
   id={`${menuId}-overlay`}
   aria-hidden="true"
 >

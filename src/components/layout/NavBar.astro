@@ -42,7 +42,7 @@ const {
   <div class="flex items-center">
     <a
       href={logoHref}
-      class="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md"
+      class="flex items-center space-x-2 focus:outline-none rounded-md"
     >
       {logo && <img src={logo} alt={logoAlt} class="h-8 w-auto" />}
       <span class="text-xl font-bold text-foreground">
@@ -54,7 +54,7 @@ const {
   <!-- Desktop Navigation -->
   <div
     id="desktop-nav"
-    class="hidden lg:flex lg:items-center lg:space-x-1 bg-primary/75 rounded-full"
+    class="hidden md:flex md:items-center md:space-x-1 bg-primary/90 rounded-full"
   >
     {
       items.map((item, index) => {

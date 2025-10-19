@@ -108,6 +108,36 @@ const url = new URL(Astro.url, site).href;
   </head>
 
   <body>
+    <!-- Navigation Header -->
+    <Header
+      logoText={t("site.name", "Туры по Лигурии")}
+      logoHref={`/`}
+      navItems={[
+        {
+          label: t("nav.tours", "Туры с гидом"),
+          href: `/#tours`,
+        },
+        {
+          label: t("nav.boatTours", "Морская прогулка"),
+          href: `/tour/boat-tour`,
+        },
+        {
+          label: t("nav.about", "Обо мне"),
+          href: `/about-me`,
+        },
+        {
+          label: t("nav.contact", "Контакты"),
+          href: `/#contact`,
+        },
+      ]}
+      fixed={true}
+      showThemeToggle={true}
+      showLanguageSwitcher={true}
+      showMobileMenu={true}
+      currentLocale={activeLocale}
+      transparent={true}
+    />
+
     <main>
       <slot />
     </main>

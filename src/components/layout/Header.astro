@@ -1,6 +1,4 @@
 ---
-import ThemeToggle from "../ThemeToggle.astro";
-import LanguageSwitcher from "../LanguageSwitcher.astro";
 import MobileMenu from "./MobileMenu.astro";
 import NavBar from "./NavBar.astro";
 import type { Locale } from "@/i18n/config";
@@ -35,7 +33,6 @@ const {
   logoImage,
   logoAlt = "Logo",
   showMobileMenu = true,
-  showThemeToggle = false,
   showSearch = false,
   showLanguageSwitcher = false,
   currentLocale,
@@ -83,8 +80,8 @@ const headerClasses = [
 ---
 
 <header class={headerClasses} id="main-header" role="banner">
-  <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between h-16">
+  <div>
+    <div class="flex items-center justify-between h-16 gap-2">
       <!-- Navigation using NavBar component -->
       <NavBar
         items={navItems}
@@ -128,7 +125,10 @@ const headerClasses = [
           <!-- Book Now Button -->
           <a
             href="#book-tour"
-            class={getActionButtonClasses("primary")}
+            class={cn(
+              getActionButtonClasses("primary"),
+              "hidden md:block mr-4"
+            )}
             target={undefined}
             rel={undefined}
           >
@@ -141,7 +141,7 @@ const headerClasses = [
       </NavBar>
 
       <!-- Mobile Menu -->
-      <div class="lg:hidden flex items-center">
+      <div class="flex md:hidden items-center">
         {
           showMobileMenu && (
             <MobileMenu
@@ -180,14 +180,14 @@ const headerClasses = [
       if (window.scrollY > 50) {
         header!.classList.remove("bg-transparent");
         header!.classList.add("bg-background", "border-b", "border-border");
-        desktopNav?.classList?.remove("bg-primary/75");
+        desktopNav?.classList?.remove("bg-primary/90");
         navItems &&
           [...navItems].forEach((element) => {
             element.classList.remove("text-background");
             element.classList.add("text-foreground");
           });
       } else {
-        desktopNav?.classList?.add("bg-primary/75");
+        desktopNav?.classList?.add("bg-primary/90");
         header!.classList.add("bg-transparent");
         header!.classList.remove("bg-background", "border-b", "border-border");
         navItems &&
