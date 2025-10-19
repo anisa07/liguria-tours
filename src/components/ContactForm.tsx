@@ -38,6 +38,7 @@ export const ContactForm = ({
     defaultValues: {
       name: "",
       email: "",
+      subject: "",
       message: "",
     },
   });
@@ -46,7 +47,10 @@ export const ContactForm = ({
 
   const onSubmit = async (values: ContactFormValues) => {
     await sendEmail(values, emailApiAccessKey);
-    toast("Message sent");
+    toast(
+      t?.("forms.message_sent", "Сообщение отправлено") ||
+        "Сообщение отправлено"
+    );
     reset();
     form.reset();
   };
@@ -71,9 +75,12 @@ export const ContactForm = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("forms.name", "Username")}</FormLabel>
+              <FormLabel>{t("forms.name", "Ваше Имя")}</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input
+                  placeholder={t("forms.name_placeholder", "Введите ваше имя")}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,9 +92,32 @@ export const ContactForm = ({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("forms.email", "Email")}</FormLabel>
+              <FormLabel>{t("forms.email", "Ваш E-mail")}</FormLabel>
               <FormControl>
-                <Input placeholder="john_doe@gmail.com" {...field} />
+                <Input
+                  placeholder={t(
+                    "forms.email_placeholder",
+                    "example@email.com"
+                  )}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("forms.subject", "Тема")}</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder={t("forms.subject_placeholder", "Тема сообщения")}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,10 +129,13 @@ export const ContactForm = ({
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("forms.message", "Message")}</FormLabel>
+              <FormLabel>{t("forms.message", "Сообщение")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Your message"
+                  placeholder={t(
+                    "forms.message_placeholder",
+                    "Напишите ваше сообщение"
+                  )}
                   className="resize-none"
                   {...field}
                 />
@@ -112,8 +145,12 @@ export const ContactForm = ({
           )}
         />
 
-        <Button disabled={status === "loading"} type="submit">
-          {t("buttons.submit", "Submit")}
+        <Button
+          disabled={status === "loading"}
+          type="submit"
+          className="rounded-full"
+        >
+          {t("buttons.submit", "Отправить")}
         </Button>
 
         {message && (
