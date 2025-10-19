@@ -145,8 +145,10 @@ const { guide, story, personalTouch } = cmsData;
         <div class="flex flex-wrap justify-center gap-4 mb-12">
           {
             guide.highlights.map((highlight) => (
-              <div class="bg-muted px-4 py-2 rounded-full">
-                <span class="text-sm font-medium">{highlight.label}</span>
+              <div class="px-4 py-2 rounded-full bg-primary/20">
+                <span class="text-sm font-medium text-foreground/80">
+                  {highlight.label}
+                </span>
               </div>
             ))
           }
@@ -182,7 +184,7 @@ const { guide, story, personalTouch } = cmsData;
             ))
           }
 
-          <div class="text-center bg-liguria-mint/20 p-8 rounded-2xl">
+          <div class="text-center bg-primary/20 p-8 rounded-2xl">
             <blockquote class="text-xl italic text-foreground">
               "{personalTouch.citation}"
             </blockquote>
@@ -241,7 +243,7 @@ const { guide, story, personalTouch } = cmsData;
     description={cta.description}
     actions={cta.actions}
     variant="centered"
-    backgroundColor="surface"
-    size="lg"
+    backgroundColor="primary"
+    size="sm"
   />
 </IntlBaseLayout>
