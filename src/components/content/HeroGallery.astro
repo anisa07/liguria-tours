@@ -1,12 +1,14 @@
 ---
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
+import type { ImageMetadata } from "astro";
 
 export interface Props {
   galleryImages: Array<{
-    src: string;
+    image: ImageMetadata;
     alt: string;
-    title?: string;
+    title: string;
+    description: string;
   }>;
   locale?: Locale;
 }
@@ -31,14 +33,14 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
             {galleryImages[0]?.title || "Sunrise View Point"}
           </div>
           <div class="text-foreground/60 text-sm" id="main-description">
-            {t("hero.arrive_description", "Arrive at Sukapura Village and head to Sunrise View Point by using 4WD Jeep")}
+            {galleryImages[0]?.description || ""}
           </div>
         </div>
         <!-- Main image -->
         <div class="mobile-image-container" id="main-image">
           <img
             id="main-img"
-            src={galleryImages[0]?.src}
+            src={galleryImages[0]?.image.src}
             alt={galleryImages[0]?.alt}
             class="mobile-main-image"
             loading="lazy"
@@ -51,12 +53,13 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
             <div 
               class="flex-none w-20 h-20 relative overflow-hidden rounded-xl backdrop-blur-sm bg-primary-foreground/10 shadow-md cursor-pointer hover:scale-105 transition-all duration-200" 
               data-index={index + 1}
-              data-src={image.src}
+              data-src={image.image.src}
               data-alt={image.alt}
               data-title={image.title || "Gallery Image"}
+              data-description={image.description || ""}
             >
               <img
-                src={image.src}
+                src={image.image.src}
                 alt={image.alt}
                 class="w-full h-full object-cover"
                 loading="lazy"
@@ -74,7 +77,7 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
           <div class="desktop-image-container" id="main-image-desktop">
             <img
               id="main-img-desktop"
-              src={galleryImages[0]?.src}
+              src={galleryImages[0]?.image.src}
               alt={galleryImages[0]?.alt}
               class="desktop-main-image"
               loading="lazy"
@@ -89,7 +92,7 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
               {galleryImages[0]?.title || "Sunrise View Point"}
             </div>
             <div class="text-md" id="main-description-desktop">
-              {t("hero.arrive_description", "Arrive at Sukapura Village and head to Sunrise View Point by using 4WD Jeep")}
+              {galleryImages[0]?.description || ""}
             </div>
           </div>
         </div>
@@ -100,12 +103,13 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
             <div 
               class="relative overflow-hidden rounded-2xl backdrop-blur-sm bg-primary-foreground/10 aspect-square shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary-foreground/50" 
               data-index={index + 1}
-              data-src={image.src}
+              data-src={image.image.src}
               data-alt={image.alt}
               data-title={image.title || "Gallery Image"}
+              data-description={image.description}
             >
               <img
-                src={image.src}
+                src={image.image.src}
                 alt={image.alt}
                 class="w-full h-full object-cover transition-transform duration-200"
                 loading="lazy"
@@ -148,7 +152,7 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
         src: thumb.getAttribute('data-src'),
         alt: thumb.getAttribute('data-alt'),
         title: thumb.getAttribute('data-title'),
-        description: 'Explore the beautiful landscapes of Liguria'
+        description: thumb.getAttribute('data-description')
       });
     });
     
@@ -195,6 +199,7 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
           thumb.setAttribute('data-src', thumbData.src);
           thumb.setAttribute('data-alt', thumbData.alt);
           thumb.setAttribute('data-title', thumbData.title);
+          thumb.setAttribute('data-description', thumbData.description);
           
           // Update the actual img element inside the thumbnail
           const thumbImg = thumb.querySelector('img');

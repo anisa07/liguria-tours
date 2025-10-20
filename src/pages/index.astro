@@ -1,13 +1,9 @@
 ---
 import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
-import { getPageTranslations, getLocaleStaticPaths } from "@/i18n/i18n";
-import type { Locale } from "@/i18n/config";
-
-// Layout components
+import { getPageTranslations } from "@/i18n/i18n";
+import { defaultLocale, type Locale } from "@/i18n/config";
+import { getEntry } from "astro:content";
 import Container from "@/components/layout/Container.astro";
-import { Image } from "astro:assets";
-
-// Content components
 import Hero from "@/components/content/Hero.astro";
 import ItalianToursGallery from "@/components/content/ItalianToursGallery.astro";
 import BoatTour from "@/components/content/BoatTour.astro";
@@ -15,7 +11,7 @@ import CruiseTour from "@/components/content/CruiseTour.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
 
 // Set locale to Russian
-const locale: Locale = "ru";
+const locale: Locale = defaultLocale;
 
 // Get the translation function for this page
 const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
@@ -32,6 +28,9 @@ const ctaActions = [
     variant: "outline" as const,
   },
 ];
+
+const heroEntry = await getEntry("hero", "hero");
+const heroData = heroEntry?.data;
 ---
 
 <IntlBaseLayout
@@ -49,58 +48,25 @@ const ctaActions = [
   }}
 >
   <!-- Hero Section -->
-  <section class="relative border-none">
-    <!-- Gradient Background -->
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-primary/20 to-transparent rounded-b-[150px]"
-    >
-    </div>
-
-    <Container size="xl" padding="lg">
+  {
+    heroData && (
       <Hero
-        title={t("hero.title", "Экскурсии по Генуе и Лигурии")}
-        mainTitle={t("hero.titleH1", "Туры по Генуе и Лигурии")}
-        subtitle={t(
-          "hero.subtitle",
-          "Откройте душу Генуи и Лигурии вместе со Светланой Жуковой"
-        )}
-        description={t(
-          "hero.description",
-          "Погрузитесь в потрясающую красоту Восточной Лигурии с нашим знаменитым туром на рассвет к горе Бромо"
-        )}
+        title={heroData.title}
+        mainTitle={heroData.mainTitle}
+        subtitle={heroData.subtitle}
+        description={heroData.description}
         actions={[
           {
-            label: t("actions.book_now", "Забронировать сейчас"),
+            label: t("actions.book_now", "Забронировать"),
             href: "/contact",
             variant: "primary" as const,
           },
         ]}
-        galleryImages={[
-          {
-            src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-            alt: "Чинкве-Терре на рассвете",
-            title: "Точка обзора на рассвете",
-          },
-          {
-            src: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=400&fit=crop",
-            alt: "Портофино",
-            title: "Портофино",
-          },
-          {
-            src: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=400&fit=crop",
-            alt: "Лигурийское побережье",
-            title: "Побережье",
-          },
-          {
-            src: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=400&fit=crop",
-            alt: "Местная деревня",
-            title: "Деревня",
-          },
-        ]}
+        galleryImages={heroData.images}
         class="animate-fade-in"
       />
-    </Container>
-  </section>
+    )
+  }
 
   <!-- Italian Tours Gallery -->
   <ItalianToursGallery locale={locale} />
