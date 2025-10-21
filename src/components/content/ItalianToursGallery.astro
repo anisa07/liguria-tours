@@ -1,141 +1,33 @@
 ---
-import HeroTour from "./HeroTour.astro";
+import TourCard from "./TourCard.astro";
 import Container from "../layout/Container.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
+import type { CollectionEntry } from "astro:content";
 
 export interface Props {
   locale: Locale;
+  italianToursGalleryData?: CollectionEntry<"italianToursGallery">["data"]["tours"];
 }
 
-const { locale } = Astro.props;
+const { locale, italianToursGalleryData } = Astro.props;
 
 // Get the translation function for this component
 const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
 
-// All tours data from CMS
-const allTours = [
-  {
-    id: "cinque-terre",
-    title: "Чинкве-Терре",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-    price: "от €150",
-    duration: "8 часов",
-    rating: 4.9,
-    href: "/tour/cinque-terre",
-    category: "coastal",
-    difficulty: "moderate",
-    type: "walking",
-    priceValue: 150,
-    isInitiallyVisible: true,
-  },
-  {
-    id: "portofino",
-    title: "Портофино",
-    image:
-      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&h=400&fit=crop",
-    price: "от €120",
-    duration: "6 часов",
-    rating: 4.8,
-    href: "/tour/portofino",
-    category: "coastal",
-    difficulty: "easy",
-    type: "walking",
-    priceValue: 120,
-    isInitiallyVisible: true,
-  },
-  {
-    id: "genoa",
-    title: "Генуя",
-    image:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop",
-    price: "от €90",
-    duration: "4 часа",
-    rating: 4.7,
-    href: "/tour/genoa",
-    category: "city",
-    difficulty: "easy",
-    type: "cultural",
-    priceValue: 90,
-    isInitiallyVisible: true,
-  },
-  {
-    id: "liguria-coast",
-    title: "Побережье Лигурии",
-    image:
-      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=400&fit=crop",
-    price: "от €180",
-    duration: "Полный день",
-    rating: 4.9,
-    href: "/tour/liguria-coast",
-    category: "coastal",
-    difficulty: "moderate",
-    type: "scenic",
-    priceValue: 180,
-    isInitiallyVisible: true,
-  },
-  {
-    id: "santa-margherita",
-    title: "Санта-Маргерита-Лигуре",
-    image:
-      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=600&h=400&fit=crop",
-    price: "от €100",
-    duration: "5 часов",
-    rating: 4.6,
-    href: "/tour/santa-margherita",
-    category: "coastal",
-    difficulty: "easy",
-    type: "walking",
-    priceValue: 100,
-    isInitiallyVisible: false,
-  },
-  {
-    id: "rapallo",
-    title: "Рапалло",
-    image:
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
-    price: "от €80",
-    duration: "4 часа",
-    rating: 4.4,
-    href: "/tour/rapallo",
-    category: "coastal",
-    difficulty: "easy",
-    type: "cultural",
-    priceValue: 80,
-    isInitiallyVisible: false,
-  },
-  {
-    id: "camogli",
-    title: "Камольи",
-    image:
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
-    price: "от €110",
-    duration: "6 часов",
-    rating: 4.7,
-    href: "/tour/camogli",
-    category: "coastal",
-    difficulty: "moderate",
-    type: "scenic",
-    priceValue: 110,
-    isInitiallyVisible: false,
-  },
-  {
-    id: "la-spezia",
-    title: "Ла-Специя",
-    image:
-      "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=600&h=400&fit=crop",
-    price: "от €70",
-    duration: "3 часа",
-    rating: 4.3,
-    href: "/tour/la-spezia",
-    category: "city",
-    difficulty: "easy",
-    type: "cultural",
-    priceValue: 70,
-    isInitiallyVisible: false,
-  },
-];
+// Use italianToursGalleryData directly
+const allTours =
+  italianToursGalleryData?.map((tour, index) => ({
+    id: tour.slug,
+    title: tour.title,
+    image: tour.images[0]?.image?.src,
+    price: tour.price,
+    duration: tour.duration,
+    href: `/tour/${tour.slug}`,
+    category: tour.category,
+    isInitiallyVisible: index < 3,
+    description: tour.description,
+  })) || [];
 ---
 
 <!-- Italian Tours Gallery -->
@@ -178,22 +70,40 @@ const allTours = [
           >
             {t("filters.city", "Городские")}
           </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="cultural"
+          >
+            {t("filters.cultural", "Культурные")}
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
+            data-filter="history"
+          >
+            {t("filters.history", "Исторические")}
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="tours-grid">
+    <div
+      class="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
+      id="tours-grid"
+    >
       {
         allTours.map((tour) => (
           <div
             class={`tour-item h-full ${!tour.isInitiallyVisible ? "hidden load-more-item" : ""}`}
             data-category={tour.category}
-            data-difficulty={tour.difficulty}
-            data-type={tour.type}
-            data-price={tour.priceValue}
             style={!tour.isInitiallyVisible ? "display: none;" : ""}
           >
-            <HeroTour tour={tour} />
+            <TourCard
+              tour={{
+                ...tour,
+                price: tour.price || "По запросу",
+                duration: tour.duration || "По запросу",
+              }}
+            />
           </div>
         ))
       }
@@ -259,21 +169,17 @@ const allTours = [
 
         // Apply current filter to newly shown tours
         const category = htmlTour.getAttribute("data-category");
-        const difficulty = htmlTour.getAttribute("data-difficulty");
-        const priceAttr = htmlTour.getAttribute("data-price");
-        const price = priceAttr ? parseInt(priceAttr) : 0;
 
         let shouldShow = false;
         if (currentFilter === "all") {
           shouldShow = true;
-        } else if (currentFilter === "coastal" || currentFilter === "city") {
+        } else if (
+          currentFilter === "coastal" ||
+          currentFilter === "city" ||
+          currentFilter === "cultural" ||
+          currentFilter === "history"
+        ) {
           shouldShow = category === currentFilter;
-        } else if (currentFilter === "easy" || currentFilter === "moderate") {
-          shouldShow = difficulty === currentFilter;
-        } else if (currentFilter === "budget") {
-          shouldShow = price <= 100;
-        } else if (currentFilter === "premium") {
-          shouldShow = price >= 150;
         }
 
         if (shouldShow) {
@@ -333,24 +239,18 @@ const allTours = [
           tourItems.forEach((item) => {
             const htmlItem = item as HTMLElement;
             const category = item.getAttribute("data-category");
-            const difficulty = item.getAttribute("data-difficulty");
-            const priceAttr = item.getAttribute("data-price");
-            const price = priceAttr ? parseInt(priceAttr) : 0;
-            const isLoadMoreItem =
-              htmlItem.classList.contains("load-more-item");
 
             let shouldShow = false;
 
             if (filter === "all") {
               shouldShow = true;
-            } else if (filter === "coastal" || filter === "city") {
+            } else if (
+              filter === "coastal" ||
+              filter === "city" ||
+              filter === "cultural" ||
+              filter === "history"
+            ) {
               shouldShow = category === filter;
-            } else if (filter === "easy" || filter === "moderate") {
-              shouldShow = difficulty === filter;
-            } else if (filter === "budget") {
-              shouldShow = price <= 100;
-            } else if (filter === "premium") {
-              shouldShow = price >= 150;
             }
 
             // Clear any inline styles and show/hide instantly
@@ -358,18 +258,39 @@ const allTours = [
             htmlItem.style.opacity = "";
             htmlItem.style.transform = "";
 
-            // Only show items that match the filter AND respect the load more state
+            // Show items that match the filter
             if (shouldShow) {
-              // If it's a load-more item and additional tours haven't been loaded yet, keep it hidden
-              if (isLoadMoreItem && !additionalToursVisible) {
-                htmlItem.style.display = "none";
-              } else {
-                htmlItem.style.display = "block";
-              }
+              htmlItem.style.display = "block";
+              htmlItem.classList.remove("hidden");
             } else {
               htmlItem.style.display = "none";
             }
           });
+
+          // If no initially visible tours match the filter, show some load-more items
+          if (filter !== "all") {
+            const visibleTours = Array.from(tourItems).filter((item) => {
+              const htmlItem = item as HTMLElement;
+              return htmlItem.style.display === "block";
+            });
+
+            // If no tours are visible, show the first 1 matching tour from load-more items
+            if (visibleTours.length === 0) {
+              let shownCount = 0;
+              tourItems.forEach((item) => {
+                const htmlItem = item as HTMLElement;
+                const category = item.getAttribute("data-category");
+                const isLoadMoreItem =
+                  htmlItem.classList.contains("load-more-item");
+
+                if (shownCount < 1 && isLoadMoreItem && category === filter) {
+                  htmlItem.style.display = "block";
+                  htmlItem.classList.remove("hidden");
+                  shownCount++;
+                }
+              });
+            }
+          }
         });
       });
     }

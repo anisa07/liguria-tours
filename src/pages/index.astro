@@ -9,6 +9,7 @@ import ItalianToursGallery from "@/components/content/ItalianToursGallery.astro"
 import BoatTour from "@/components/content/BoatTour.astro";
 import CruiseTour from "@/components/content/CruiseTour.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
+import { getCollection } from "astro:content";
 
 // Set locale to Russian
 const locale: Locale = defaultLocale;
@@ -31,6 +32,9 @@ const ctaActions = [
 
 const heroEntry = await getEntry("hero", "hero");
 const heroData = heroEntry?.data;
+
+const toursEntry = await getCollection("italianToursGallery");
+const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
 ---
 
 <IntlBaseLayout
@@ -69,7 +73,14 @@ const heroData = heroEntry?.data;
   }
 
   <!-- Italian Tours Gallery -->
-  <ItalianToursGallery locale={locale} />
+  {
+    italianToursGalleryData && (
+      <ItalianToursGallery
+        locale={locale}
+        italianToursGalleryData={italianToursGalleryData.tours}
+      />
+    )
+  }
 
   <!-- Sea Tours Section -->
   <BoatTour locale={locale} />

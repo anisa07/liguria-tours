@@ -4,6 +4,7 @@ import Container from "@/components/layout/Container.astro";
 import Section from "@/components/layout/Section.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
+import { getCollection } from "astro:content";
 
 export interface Props {
   locale: Locale;
@@ -19,285 +20,10 @@ const locale = (pathSegments[0] as Locale) || "ru";
 // Get the translation function for this page
 const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
 
-// Tours data (in real app, this would come from CMS)
-const allTours = [
-  {
-    id: "cinque-terre",
-    slug: "cinque-terre",
-    title: "Чинкве-Терре",
-    shortDescription: "Живописные деревни на побережье Лигурии",
-    description:
-      "Откройте для себя пять уникальных деревень Чинкве-Терре, расположенных на скалистом побережье Лигурии. Эти древние рыбацкие поселения поражают своей красотой и аутентичностью.",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-    gallery: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
-    ],
-    price: "от €150",
-    duration: "8 часов",
-    rating: 4.9,
-    reviews: 127,
-    category: "coastal",
-    difficulty: "moderate",
-    type: "walking",
-    priceValue: 150,
-    highlights: [
-      "Посещение всех 5 деревень Чинкве-Терре",
-      "Прогулка по живописным тропам",
-      "Дегустация местных продуктов",
-      "Панорамные виды на Лигурийское море",
-    ],
-    included: [
-      "Профессиональный русскоязычный гид",
-      "Транспорт на комфортабельном автомобиле",
-      "Входные билеты в национальный парк",
-      "Дегустация местного вина",
-    ],
-    notIncluded: ["Обед (по желанию)", "Личные расходы", "Чаевые гиду"],
-    itinerary: [
-      {
-        time: "09:00",
-        title: "Встреча в отеле",
-        description: "Выезд из Генуи в направлении Чинкве-Терре",
-      },
-      {
-        time: "10:30",
-        title: "Монтероссо-аль-Маре",
-        description:
-          "Первая деревня, знаменитая своими пляжами и лимонными террасами",
-      },
-      {
-        time: "12:00",
-        title: "Вернацца",
-        description: "Самая фотогеничная деревня с разноцветными домами",
-      },
-      {
-        time: "14:00",
-        title: "Корнилья",
-        description: "Единственная деревня, расположенная на утесе",
-      },
-      {
-        time: "15:30",
-        title: "Манарола",
-        description: "Древняя деревня с великолепными виноградниками",
-      },
-      {
-        time: "16:30",
-        title: "Риомаджоре",
-        description: "Самая южная деревня с живописной гаванью",
-      },
-      {
-        time: "17:30",
-        title: "Возвращение",
-        description: "Возвращение в Геную с остановками для фотографий",
-      },
-    ],
-  },
-  {
-    id: "portofino",
-    slug: "portofino",
-    title: "Портофино",
-    shortDescription: "Элегантный курорт итальянской Ривьеры",
-    description:
-      "Портофино - жемчужина Лигурийского побережья, известная своими разноцветными домами и роскошными яхтами. Этот небольшой рыбацкий городок стал символом итальянской элегантности.",
-    image:
-      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop",
-    gallery: [
-      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
-    ],
-    price: "от €120",
-    duration: "6 часов",
-    rating: 4.8,
-    reviews: 89,
-    category: "coastal",
-    difficulty: "easy",
-    type: "walking",
-    priceValue: 120,
-    highlights: [
-      "Прогулка по знаменитой набережной",
-      "Посещение замка Кастелло Браун",
-      "Панорамные виды с маяка",
-      "Свободное время для шопинга",
-    ],
-    included: [
-      "Профессиональный русскоязычный гид",
-      "Транспорт на комфортабельном автомобиле",
-      "Входной билет в замок",
-      "Дегустация фокаччи",
-    ],
-    notIncluded: ["Обед (по желанию)", "Личные расходы", "Чаевые гиду"],
-    itinerary: [
-      {
-        time: "10:00",
-        title: "Встреча в отеле",
-        description: "Выезд из Генуи в направлении Портофино",
-      },
-      {
-        time: "11:30",
-        title: "Прибытие в Портофино",
-        description: "Прогулка по знаменитой площади Мартири",
-      },
-      {
-        time: "13:00",
-        title: "Замок Кастелло Браун",
-        description: "Посещение средневекового замка с панорамными видами",
-      },
-      {
-        time: "14:30",
-        title: "Свободное время",
-        description: "Обед и шопинг в бутиках Портофино",
-      },
-      {
-        time: "16:00",
-        title: "Возвращение",
-        description: "Возвращение в Геную через Санта-Маргерита-Лигуре",
-      },
-    ],
-  },
-  {
-    id: "genoa",
-    slug: "genoa",
-    title: "Генуя",
-    shortDescription: "Древний морской город с богатой историей",
-    description:
-      "Генуя - родина Христофора Колумба и один из важнейших портовых городов Средиземноморья. Откройте для себя величественные палаццо, узкие средневековые улочки и один из крупнейших исторических центров Европы.",
-    image:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=600&fit=crop",
-    gallery: [
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
-    ],
-    price: "от €90",
-    duration: "4 часа",
-    rating: 4.7,
-    reviews: 73,
-    category: "city",
-    difficulty: "easy",
-    type: "cultural",
-    priceValue: 90,
-    highlights: [
-      "Дом Христофора Колумба",
-      "Кафедральный собор Сан-Лоренцо",
-      "Дворец дожей и исторический центр",
-      "Старый порт и аквариум",
-    ],
-    included: [
-      "Профессиональный русскоязычный гид",
-      "Пешеходная экскурсия по центру",
-      "Входные билеты в музеи",
-      "Карта города в подарок",
-    ],
-    notIncluded: [
-      "Транспорт (при необходимости)",
-      "Обед (по желанию)",
-      "Личные расходы",
-    ],
-    itinerary: [
-      {
-        time: "10:00",
-        title: "Встреча в центре",
-        description: "Начало экскурсии на площади Де Феррари",
-      },
-      {
-        time: "10:30",
-        title: "Исторический центр",
-        description: "Прогулка по узким улочкам средневекового города",
-      },
-      {
-        time: "11:30",
-        title: "Кафедральный собор",
-        description: "Посещение собора Сан-Лоренцо с его сокровищницей",
-      },
-      {
-        time: "12:30",
-        title: "Дом Колумба",
-        description: "Знакомство с историей великого мореплавателя",
-      },
-      {
-        time: "13:30",
-        title: "Старый порт",
-        description: "Современная реконструкция исторического порта",
-      },
-    ],
-  },
-  {
-    id: "liguria-coast",
-    slug: "liguria-coast",
-    title: "Побережье Лигурии",
-    shortDescription: "Панорамное путешествие по Ривьере",
-    description:
-      "Откройте для себя всю красоту Лигурийского побережья во время комфортного путешествия на автомобиле. Живописные бухты, террасы с оливковыми деревьями и потрясающие панорамы Лигурийского моря.",
-    image:
-      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&h=600&fit=crop",
-    gallery: [
-      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=800&h=600&fit=crop",
-    ],
-    price: "от €180",
-    duration: "Полный день",
-    rating: 4.9,
-    reviews: 156,
-    category: "coastal",
-    difficulty: "moderate",
-    type: "scenic",
-    priceValue: 180,
-    highlights: [
-      "Панорамная дорога вдоль побережья",
-      "Остановки в живописных городках",
-      "Дегустация местных деликатесов",
-      "Фотосессии на смотровых площадках",
-    ],
-    included: [
-      "Профессиональный русскоязычный гид-водитель",
-      "Комфортабельный автомобиль",
-      "Топливо и парковки",
-      "Дегустация местных продуктов",
-    ],
-    notIncluded: [
-      "Обед в ресторане",
-      "Входные билеты в музеи",
-      "Личные расходы",
-    ],
-    itinerary: [
-      {
-        time: "09:00",
-        title: "Отправление",
-        description: "Выезд из Генуи по панорамной дороге",
-      },
-      {
-        time: "10:30",
-        title: "Камольи",
-        description: "Остановка в живописном рыбацком городке",
-      },
-      {
-        time: "12:00",
-        title: "Сан-Фруттуозо",
-        description: "Древнее аббатство в уединенной бухте",
-      },
-      {
-        time: "14:00",
-        title: "Портофино",
-        description: "Обед и прогулка по элегантному курорту",
-      },
-      {
-        time: "16:00",
-        title: "Санта-Маргерита",
-        description: "Посещение элегантного курортного города",
-      },
-      {
-        time: "17:30",
-        title: "Возвращение",
-        description: "Возвращение в Геную с панорамными остановками",
-      },
-    ],
-  },
-];
+// Load tours from content collection
+const toursCollection = await getCollection("italianToursGallery");
+const toursData = toursCollection && toursCollection[0]?.data;
+const allTours = toursData?.tours || [];
 
 // Find the tour by slug
 const tour = allTours.find((t) => t.slug === slug);
@@ -309,25 +35,18 @@ if (!tour) {
 
 // Static paths generation for pre-rendering
 export async function getStaticPaths() {
-  const tours = [
-    "cinque-terre",
-    "portofino",
-    "genoa",
-    "liguria-coast",
-    "santa-margherita",
-    "rapallo",
-    "camogli",
-    "la-spezia",
-  ];
+  const toursCollection = await getCollection("italianToursGallery");
+  const toursData = toursCollection && toursCollection[0]?.data;
+  const tours = toursData?.tours || [];
 
-  const locales = ["ru", "en", "it"];
+  const locales = ["ru"];
 
   const paths = [];
 
   for (const locale of locales) {
-    for (const slug of tours) {
+    for (const tour of tours) {
       paths.push({
-        params: { slug },
+        params: { slug: tour.slug },
         props: { locale },
       });
     }
@@ -339,7 +58,7 @@ export async function getStaticPaths() {
 
 <IntlBaseLayout
   title={`${tour.title} - ${t("tours.title", "Туры по Италии")}`}
-  description={tour.shortDescription}
+  description={tour.description}
   locale={locale}
 >
   <Section class="py-12">
@@ -366,6 +85,11 @@ export async function getStaticPaths() {
         </button>
       </div>
 
+      <!-- Title -->
+      <div class="mb-12">
+        <h1 class="text-3xl md:text-4xl font-bold text-center">{tour.title}</h1>
+      </div>
+
       <!-- Tour Content -->
       <div class="grid lg:grid-cols-2 gap-12">
         <!-- Images Section -->
@@ -373,7 +97,7 @@ export async function getStaticPaths() {
           <!-- Main Image -->
           <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
             <img
-              src={tour.image}
+              src={tour.images[0]?.image?.src}
               alt={tour.title}
               class="w-full h-full object-cover"
             />
@@ -381,13 +105,13 @@ export async function getStaticPaths() {
 
           <!-- Small Images -->
           {
-            tour.gallery && tour.gallery.length > 1 && (
+            tour.images && tour.images.length > 1 && (
               <div class="grid grid-cols-2 gap-4">
-                {tour.gallery.slice(1, 3).map((image, index) => (
+                {tour.images.slice(1, 3).map((imageObj, index) => (
                   <div class="aspect-[4/3] rounded-lg overflow-hidden">
                     <img
-                      src={image}
-                      alt={`${tour.title} ${index + 2}`}
+                      src={imageObj.image.src}
+                      alt={imageObj.alt || `${tour.title} ${index + 2}`}
                       class="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
                     />
                   </div>
@@ -399,18 +123,6 @@ export async function getStaticPaths() {
 
         <!-- Content Section -->
         <div class="space-y-8">
-          <!-- Title -->
-          <div>
-            <h1 class="text-3xl md:text-4xl font-bold mb-4">{tour.title}</h1>
-          </div>
-
-          <!-- Description -->
-          <div>
-            <p class="text-muted-foreground leading-relaxed text-lg">
-              {tour.description}
-            </p>
-          </div>
-
           <!-- Price and Duration -->
           <div class="flex flex-wrap gap-6">
             {
@@ -437,35 +149,6 @@ export async function getStaticPaths() {
             }
           </div>
 
-          <!-- Highlights -->
-          {
-            tour.highlights && tour.highlights.length > 0 && (
-              <div>
-                <h3 class="text-xl font-bold mb-4">
-                  {t("tours.highlights", "Основные моменты")}
-                </h3>
-                <div class="space-y-3">
-                  {tour.highlights.map((highlight) => (
-                    <div class="flex items-start gap-3">
-                      <svg
-                        class="w-5 h-5 text-primary mt-0.5 flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                      <span class="text-muted-foreground">{highlight}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          }
-
           <!-- Book Now Button -->
           <div class="pt-4">
             <a
@@ -477,6 +160,44 @@ export async function getStaticPaths() {
           </div>
         </div>
       </div>
+
+      <!-- Description Section - Full Width -->
+      <div class="mt-16">
+        <div class="max-w-4xl mx-auto">
+          <p class="text-muted-foreground leading-relaxed text-lg text-justify">
+            {tour.fullDescription}
+          </p>
+        </div>
+      </div>
+
+      <!-- Highlights Section - Full Width Below in Columns -->
+      {
+        tour.points && tour.points.length > 0 && (
+          <div class="mt-16">
+            <h3 class="text-2xl font-bold mb-8 text-center">
+              {t("tours.highlights", "Основные моменты")}
+            </h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tour.points.map((point) => (
+                <div class="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
+                  <svg
+                    class="w-5 h-5 text-primary mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span class="text-muted-foreground">{point}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      }
     </Container>
   </Section>
 </IntlBaseLayout>

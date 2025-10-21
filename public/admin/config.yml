@@ -12,6 +12,7 @@ collections:
         file: "src/content/hero/hero.md"
         fields:
           - { label: "Title", name: "title", widget: "string" }
+          - { label: "Main Title", name: "mainTitle", widget: "string" }
           - { label: "Subtitle", name: "subtitle", widget: "string" }
           - { label: "Description", name: "description", widget: "text" }
           - {
@@ -23,152 +24,67 @@ collections:
               default: 260,
               hint: "Brand color hue (0-360): 0=red, 60=yellow, 120=green, 180=cyan, 240=blue, 260=purple, 300=magenta",
             }
-          - label: "Hero Images"
-            name: "images"
-            widget: "object"
-            fields:
-              - { label: "Main Image", name: "mainImage", widget: "image" }
-              - {
-                  label: "Main Image Alt Text",
-                  name: "mainImageAlt",
-                  widget: "string",
-                }
-              - {
-                  label: "Secondary Image",
-                  name: "secondaryImage",
-                  widget: "image",
-                }
-              - {
-                  label: "Secondary Image Alt Text",
-                  name: "secondaryImageAlt",
-                  widget: "string",
-                }
-
-  - name: "tour-categories"
-    label: "Tour Categories"
-    files:
-      - label: "Tour Filter Categories"
-        name: "tour-categories"
-        file: "src/content/tour-categories/categories.md"
-        fields:
-          - label: "Categories"
-            name: "categories"
-            widget: "list"
-            fields:
-              - { label: "Category ID", name: "id", widget: "string" }
-              - { label: "Category Title", name: "title", widget: "string" }
-              - label: "Tours"
-                name: "tours"
-                widget: "list"
-                fields:
-                  - { label: "Tour Title", name: "title", widget: "string" }
-                  - {
-                      label: "Tour Description",
-                      name: "description",
-                      widget: "markdown",
-                      hint: "Full description with formatting support (bold, italic, lists, etc.)",
-                    }
-                  - {
-                      label: "Short Description",
-                      name: "shortDescription",
-                      widget: "string",
-                      required: false,
-                      hint: "Optional brief summary for cards/previews",
-                    }
-                  - { label: "Price", name: "price", widget: "string" }
-                  - { label: "Duration", name: "duration", widget: "string" }
-                  - { label: "Tour Image", name: "image", widget: "image" }
-                  - { label: "Image Alt Text", name: "alt", widget: "string" }
-                  - {
-                      label: "Tour Slug",
-                      name: "slug",
-                      widget: "string",
-                      hint: "URL-friendly identifier (e.g., labuan-bajo-adventure)",
-                    }
-
-  - name: "testimonials"
-    label: "Testimonials"
-    files:
-      - label: "Customer Testimonials"
-        name: "testimonials"
-        file: "src/content/testimonials/testimonials.md"
-        fields:
-          - label: "Testimonials"
-            name: "testimonials"
-            widget: "list"
-            fields:
-              - { label: "Quote", name: "quote", widget: "text" }
-              - { label: "Tour", name: "tour", widget: "text" }
-              - label: "Author"
-                name: "author"
-                widget: "object"
-                fields:
-                  - { label: "Name", name: "name", widget: "string" }
-                  - { label: "Avatar Image", name: "avatar", widget: "image" }
-              - {
-                  label: "Rating",
-                  name: "rating",
-                  widget: "number",
-                  min: 1,
-                  max: 5,
-                  default: 5,
-                }
-
-  - name: "gallery"
-    label: "Gallery"
-    files:
-      - label: "Image Gallery"
-        name: "gallery"
-        file: "src/content/gallery/gallery.md"
-        fields:
           - label: "Gallery Images"
             name: "images"
             widget: "list"
             fields:
-              - { label: "Image ID", name: "id", widget: "string" }
-              - { label: "Image", name: "src", widget: "image" }
+              - { label: "Image", name: "image", widget: "image" }
               - { label: "Alt Text", name: "alt", widget: "string" }
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
-              - { label: "Thumbnail", name: "thumbnail", widget: "image" }
 
-  - name: "pages"
-    label: "Pages"
+  - name: "italianToursGallery"
+    label: "Italian Tours Gallery"
     files:
-      - label: "About Page"
-        name: "about"
-        file: "src/content/pages/about.md"
+      - label: "Tours Gallery Content"
+        name: "italianToursGallery"
+        file: "src/content/italianToursGallery/italianToursGallery.md"
         fields:
-          - { label: "Title", name: "title", widget: "string" }
-          - { label: "Subtitle", name: "subtitle", widget: "string" }
-          - { label: "Profile Image", name: "profileImage", widget: "image" }
-          - { label: "Introduction", name: "introduction", widget: "markdown" }
-          - label: "Services"
-            name: "services"
-            widget: "object"
+          - {
+              label: "Theme Color (Hue)",
+              name: "themeColor",
+              widget: "number",
+              min: 0,
+              max: 360,
+              default: 260,
+              hint: "Brand color hue (0-360): 0=red, 60=yellow, 120=green, 180=cyan, 240=blue, 260=purple, 300=magenta",
+            }
+          - label: "Tours"
+            name: "tours"
+            widget: "list"
             fields:
-              - label: "Tours"
-                name: "tours"
-                widget: "object"
+              - { label: "Title", name: "title", widget: "string" }
+              - {
+                  label: "Slug",
+                  name: "slug",
+                  widget: "string",
+                  hint: "URL-friendly identifier (e.g., genoa-walking-tour)",
+                }
+              - { label: "Description", name: "description", widget: "text" }
+              - {
+                  label: "Category",
+                  name: "category",
+                  widget: "select",
+                  options: ["city", "coastal", "cultural", "walking"],
+                  default: "city",
+                }
+              - {
+                  label: "Full Description",
+                  name: "fullDescription",
+                  widget: "text",
+                }
+              - label: "Key Points"
+                name: "points"
+                widget: "list"
+                field: { label: "Point", name: "point", widget: "string" }
+              - { label: "Duration", name: "duration", widget: "string" }
+              - { label: "Price", name: "price", widget: "string" }
+              - label: "Images"
+                name: "images"
+                widget: "list"
                 fields:
-                  - { label: "Title", name: "title", widget: "string" }
-                  - {
-                      label: "Description",
-                      name: "description",
-                      widget: "text",
-                    }
                   - { label: "Image", name: "image", widget: "image" }
-              - label: "Events"
-                name: "events"
-                widget: "object"
-                fields:
-                  - { label: "Title", name: "title", widget: "string" }
-                  - {
-                      label: "Description",
-                      name: "description",
-                      widget: "text",
-                    }
-                  - { label: "Image", name: "image", widget: "image" }
+                  - { label: "Alt Text", name: "alt", widget: "string" }
 
 backend:
   name: git-gateway
