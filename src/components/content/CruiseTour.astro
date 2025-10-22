@@ -17,30 +17,6 @@ const { locale, contentTitle, contentDescription, imageUrl, imageAlt } =
 
 // Get the translation function for this component
 const { t } = await getPageTranslations(locale, ["common", "ui", "cruise"]);
-
-// Action button styling function
-const getActionButtonClasses = (actionVariant: string = "primary") => {
-  const baseClasses =
-    "inline-flex items-center justify-center px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm shadow-md";
-
-  switch (actionVariant) {
-    case "secondary":
-      return cn(
-        baseClasses,
-        "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
-      );
-    case "outline":
-      return cn(
-        baseClasses,
-        "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary"
-      );
-    default:
-      return cn(
-        baseClasses,
-        "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-foreground/75 focus:ring-primary"
-      );
-  }
-};
 ---
 
 <!-- Cruise Tours Section -->
@@ -76,7 +52,7 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
   <Container size="xl" class="relative z-10">
     <!-- Section Header -->
     <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-6xl font-bold mb-6 text-primary">
+      <h2 class="text-4xl md:text-5xl font-bold mb-6 text-primary">
         {t("cruise.title", "Круизные экскурсии")}
       </h2>
     </div>
@@ -84,15 +60,12 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
     <!-- Main Content Area -->
     <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
       <div class="relative">
-        <div
-          class="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl"
-        >
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl">
           <img
-            src={imageUrl ||
-              "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop"}
+            src={imageUrl || "/images/liner2.jpg"}
             alt={imageAlt ||
               t("cruise.image.alt", "Круизный лайнер в порту Генуи")}
-            class="w-full h-full object-cover"
+            class="w-full h-full object-contain"
           />
         </div>
       </div>
@@ -127,7 +100,7 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
         target={undefined}
         rel={undefined}
       >
-        {t("common.book_now", "Связаться с нами")}
+        {t("common.book_now", "Узнать больше")}
       </a>
     </div>
   </Container>

@@ -62,10 +62,7 @@ const defaultCopyright =
   );
 ---
 
-<footer
-  class={`bg-primary/20 text-foreground ${className}`}
-  role="contentinfo"
->
+<footer class={`bg-primary/20 text-foreground ${className}`} role="contentinfo">
   <div class="container mx-auto px-4 py-12">
     <!-- Main Footer Content -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -156,66 +153,6 @@ const defaultCopyright =
             </ul>
           </div>
         ))
-      }
-
-      <!-- Newsletter Section -->
-      {
-        showNewsletter && (
-          <div class="col-span-1 md:col-span-2 lg:col-span-1">
-            <h3 class="text-sm font-medium text-foreground mb-4">
-              {newsletterTitle ||
-                t("footer.newsletter.title", "Subscribe to our newsletter")}
-            </h3>
-            <p class="text-sm text-foreground mb-4">
-              {newsletterDescription ||
-                t(
-                  "footer.newsletter.description",
-                  "Get the latest updates and news delivered to your inbox."
-                )}
-            </p>
-
-            <!-- Alert container for newsletter messages -->
-            <div id="newsletter-alert-container" class="mb-4"></div>
-            
-            <form 
-              class="space-y-3" 
-              action="#" 
-              method="POST"
-              data-success-message={t("footer.newsletter.success", "Thank you for subscribing! Please check your email for confirmation.")}
-              data-error-message={t("footer.newsletter.error", "Please enter a valid email address")}
-            >
-              <div class="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="email"
-                  name="email"
-                  id="newsletter-email"
-                  placeholder={t(
-                    "footer.newsletter.email_placeholder",
-                    "Enter your email"
-                  )}
-                  required
-                  class="flex-1 px-3 py-2 bg-background border border-border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                  aria-label={t(
-                    "footer.newsletter.email_label",
-                    "Email address for newsletter"
-                  )}
-                />
-                <button
-                  type="submit"
-                  class="inline-flex items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
-                >
-                  {t("footer.newsletter.subscribe", "Subscribe")}
-                </button>
-              </div>
-              <p class="text-xs text-foreground">
-                {t(
-                  "footer.newsletter.privacy_notice",
-                  "We respect your privacy. Unsubscribe at any time."
-                )}
-              </p>
-            </form>
-          </div>
-        )
       }
     </div>
 
@@ -352,8 +289,9 @@ const defaultCopyright =
       // Basic email validation
       const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!EMAIL_REGEX.test(email)) {
-        const errorMessage = newsletterForm.dataset.errorMessage || 
-                           'Please enter a valid email address';
+        const errorMessage =
+          newsletterForm.dataset.errorMessage ||
+          "Please enter a valid email address";
         emailInput.focus();
         emailInput.setCustomValidity(errorMessage);
         emailInput.reportValidity();
@@ -371,36 +309,43 @@ const defaultCopyright =
       // Simulate API call (replace with actual implementation)
       setTimeout(() => {
         // Show success message using Alert component
-        const alertContainer = (document.querySelector('#newsletter-alert-container') || 
-                              newsletterForm.parentElement) as HTMLElement;
-        
+        const alertContainer = (document.querySelector(
+          "#newsletter-alert-container"
+        ) || newsletterForm.parentElement) as HTMLElement;
+
         // Check if AlertUtils is available (from Alert.astro component)
         interface AlertUtilsInterface {
-          show: (container: HTMLElement, options: {
-            variant?: string;
-            message: string;
-            dismissible?: boolean;
-            duration?: number;
-          }) => HTMLElement | null;
+          show: (
+            container: HTMLElement,
+            options: {
+              variant?: string;
+              message: string;
+              dismissible?: boolean;
+              duration?: number;
+            }
+          ) => HTMLElement | null;
         }
-        const alertUtils = (globalThis as typeof globalThis & { AlertUtils?: AlertUtilsInterface }).AlertUtils;
+        const alertUtils = (
+          globalThis as typeof globalThis & { AlertUtils?: AlertUtilsInterface }
+        ).AlertUtils;
         if (alertContainer && alertUtils) {
           // Get translation from data attribute set on the form
-          const successMessage = newsletterForm.dataset.successMessage || 
-                                'Thank you for subscribing! Please check your email for confirmation.';
-          
+          const successMessage =
+            newsletterForm.dataset.successMessage ||
+            "Thank you for subscribing! Please check your email for confirmation.";
+
           alertUtils.show(alertContainer, {
-            variant: 'success',
+            variant: "success",
             message: successMessage,
             dismissible: true,
-            duration: 5000
+            duration: 5000,
           });
-        } 
+        }
         // else {
         //   // Fallback for when Alert component is not available
         //   alert("Thank you for subscribing! Please check your email for confirmation.");
         // }
-        
+
         emailInput.value = "";
         submitButton.disabled = false;
         submitButton.textContent = originalText || "Subscribe";

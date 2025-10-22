@@ -5,6 +5,7 @@ import Section from "@/components/layout/Section.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
+import { getCollection } from "astro:content";
 
 // Set locale to Russian
 const locale: Locale = "ru";
@@ -12,80 +13,16 @@ const locale: Locale = "ru";
 // Get the translation function for this page
 const { t } = await getPageTranslations(locale, ["common", "ui", "about"]);
 
-// CMS Data Structure - simulating data from headless CMS
-const cmsData = {
-  guide: {
-    name: "Светлана Жукова",
-    title: "Ваш персональный гид по душе Лигурии",
-    profileImage: {
-      url: "https://images.unsplash.com/photo-1494790108755-2616b9e91ce2?w=300&h=300&fit=crop&crop=face",
-      alt: "Светлана Жукова - Гид по Лигурии",
-    },
-    introduction:
-      "Привет! Меня зовут Светлана, и я живу в Генуе с 1992 года. Как аккредитованный гид-переводчик с экономическим образованием, я помогаю путешественникам открыть уникальную Геную — город, который можно либо полюбить, либо не понять. Моя задача — показать его красоту и заложить частичку Генуи в сердца гостей.",
-    highlights: [
-      { label: "24+ года в туризме" },
-      { label: "С 1992 в Италии" },
-      { label: "Гид-переводчик" },
-      { label: "Историк-практик" },
-    ],
-  },
-  story: {
-    title: "Моя история",
-    sections: [
-      {
-        title: "Путь в Италию",
-        content:
-          "Получив высшее экономическое образование в России, я строила карьеру в одной организации, пройдя все ступени от самой младшей позиции до руководителя. В 1992 году моя жизнь кардинально изменилась — я переехала в Италию и получила итальянскую прописку.",
-        image: {
-          url: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=500&h=400&fit=crop",
-          alt: "Порт Генуи",
-        },
-      },
-      {
-        title: "Открытие призвания",
-        content:
-          "Моя увлечённость чтением, печатными изданиями и историей позволила интересу к Генуе перерасти в любимую работу. С 2000 года я работаю в туризме как аккредитованный гид-переводчик в Генуе и её провинции, открывая для людей уникальный мир этого древнего города.",
-        image: {
-          url: "https://images.unsplash.com/photo-1481833761820-0509d3217039?w=500&h=400&fit=crop",
-          alt: "Университет в Италии",
-        },
-      },
-    ],
-    quote: {
-      text: "Если даже нескольким туристам мне удалось заложить частичку Генуи в их сердца, значит, мне удалось изменить мир в лучшую сторону. Работа строится не по принципу имиджа и преуспевания, а по принципу безумного увлечения.",
-      author: "Светлана Жукова",
-    },
-  },
-  personalTouch: {
-    citation:
-      "Если даже нескольким туристам мне удалось заложить частичку Генуи в их сердца, значит, мне удалось изменить мир в лучшую сторону. Работа строится не по принципу имиджа и преуспевания, а по принципу безумного увлечения.",
-    title: "Что меня вдохновляет",
-    interests: {
-      title: "Мои интересы",
-      items: [
-        "История Генуи и её великие личности",
-        "Средневековые улицы исторического центра",
-        "Музеи и их коллекции",
-        "Церкви и их реликвии",
-        "Жизнь Христофора Колумба и Никколо Паганини",
-        "Культурная жизнь России и Италии",
-      ],
-    },
-    philosophy: {
-      title: "Моя философия",
-      paragraphs: [
-        "ГЕНУЯ может нравиться или не нравиться. Но она уникальна, она паутинна. В этот город надо вжиться. В него надо влюбиться. Дома, дворцы, соборы, история с её курьёзами представляют всеобщее восхищение.",
-        "Трёхчасовая прогулка со мной способна увлечь даже неординарных личностей. Я рассказываю то, что когда-то поразило меня — совершенно уникальные сведения с невероятно яркими впечатлениями. Откройте для себя новый маршрут, образы, лица!",
-      ],
-    },
-  },
-};
+// Load about me data from content collection
+const aboutMeCollection = await getCollection("aboutMe");
+const aboutMeData = aboutMeCollection && aboutMeCollection[0]?.data;
+
+// Use content collection data or fallback
+const cmsData = aboutMeData;
 
 const cta = {
-  title: "Готовы открыть для себя настоящую Лигурию?",
-  description:
-    "Позвольте мне показать вам мою родную Лигурию такой, какой её знают и любят местные жители. Каждая экскурсия - это уникальное путешествие, созданное специально для вас.",
+  title: cmsData.cta.title,
+  description: cmsData.cta.description,
   actions: [
     {
       label: t("common.choose_tour", "Выбрать экскурсию"),
@@ -100,11 +37,7 @@ const cta = {
   ],
 };
 
-const seoData = {
-  title: "О гиде Светлане Жуковой - Профессиональные туры по Лигурии",
-  description:
-    "Познакомьтесь со Светланой Жуковой - лицензированным гидом с 24-летним опытом, специалистом по истории и культуре Лигурии. Откройте для себя настоящую Италию!",
-};
+const seoData = cmsData.seoData;
 
 // Extract data for easier use in templates
 const { guide, story, personalTouch } = cmsData;
@@ -119,123 +52,121 @@ const { guide, story, personalTouch } = cmsData;
   }}
 >
   <!-- Hero Section -->
-  <Section class="pt-24 pb-12">
-    <Container class="text-center">
-      <!-- Profile Image -->
-      <div class="mb-8">
-        <div class="relative inline-block">
-          <img
-            src={guide.profileImage.url}
-            alt={guide.profileImage.alt}
-            class="w-48 h-48 rounded-full object-cover mx-auto shadow-xl border-4 border-liguria-mint"
-          />
-        </div>
+  <Container class="text-center pt-24">
+    <!-- Profile Image -->
+    <div class="mb-8">
+      <div class="relative inline-block">
+        <img
+          src={guide.profileImage.src}
+          alt={guide.alt}
+          class="w-48 h-48 rounded-full object-cover mx-auto shadow-xl border-4 border-liguria-mint"
+        />
       </div>
+    </div>
 
-      <!-- Introduction -->
-      <div class="max-w-3xl mx-auto">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">{guide.name}</h1>
-        <h2 class="text-xl md:text-2xl text-primary font-semibold mb-6">
-          {guide.title}
-        </h2>
-        <p class="text-lg text-muted-foreground leading-relaxed mb-8">
-          {guide.introduction}
-        </p>
+    <!-- Introduction -->
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">{guide.name}</h1>
+      <h2 class="text-xl md:text-2xl text-primary font-semibold mb-6">
+        {guide.title}
+      </h2>
+      <p class="text-lg text-muted-foreground leading-relaxed mb-8">
+        {guide.introduction}
+      </p>
 
-        <div class="flex flex-wrap justify-center gap-4 mb-12">
-          {
-            guide.highlights.map((highlight) => (
-              <div class="px-4 py-2 rounded-full bg-primary/20">
-                <span class="text-sm font-medium text-foreground/80">
-                  {highlight.label}
-                </span>
-              </div>
-            ))
-          }
-        </div>
+      <div class="flex flex-wrap justify-center gap-4 mb-12">
+        {
+          guide.highlights.map((highlight: { label: string }) => (
+            <div class="px-4 py-2 rounded-full bg-primary/20">
+              <span class="text-sm font-medium text-foreground/80">
+                {highlight.label}
+              </span>
+            </div>
+          ))
+        }
       </div>
-    </Container>
-  </Section>
+    </div>
+  </Container>
 
   <!-- My Story -->
-  <Section class="py-16">
-    <Container>
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-bold text-center mb-12">Моя история</h2>
 
-        <div class="prose prose-lg max-w-none text-foreground/80">
-          {
-            story.sections.map((item, index) => (
-              <div
-                class={`flex flex-col ${index === 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-4`}
-              >
-                <div>
-                  <h3 class="text-xl font-semibold text-foreground mb-4">
-                    {item.title}
-                  </h3>
-                  <p class="text-justify">{item.content}</p>
-                </div>
+  <Container class="py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">Моя история</h2>
+
+      <div class="prose prose-lg max-w-none text-foreground/80">
+        {
+          story.sections.map((item, index: number) => (
+            <div
+              class={`flex flex-col ${index === 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-8 mb-12 items-center`}
+            >
+              <div class="flex-1">
+                <h3 class="text-xl font-semibold text-foreground mb-4">
+                  {item.title}
+                </h3>
+                <p class="text-justify">{item.content}</p>
+              </div>
+              <div class="flex-shrink-0">
                 <img
-                  src={item.image.url}
-                  alt={item.image.alt}
-                  class="w-64 h-48 object-cover rounded-2xl shadow-lg"
+                  src={item.image.src}
+                  alt={item.alt}
+                  class="w-80 h-60 object-cover rounded-2xl shadow-lg"
                 />
               </div>
-            ))
-          }
+            </div>
+          ))
+        }
 
-          <div class="text-center bg-primary/20 p-8 rounded-2xl">
-            <blockquote class="text-xl italic text-foreground">
-              "{personalTouch.citation}"
-            </blockquote>
-            <cite class="block mt-4 text-foreground/80">- Светлана Жукова</cite>
-          </div>
+        <div class="text-center bg-primary/20 p-8 rounded-2xl">
+          <blockquote class="text-xl italic text-foreground">
+            "{personalTouch.citation}"
+          </blockquote>
+          <cite class="block mt-4 text-foreground/80">- Светлана Жукова</cite>
         </div>
       </div>
-    </Container>
-  </Section>
+    </div>
+  </Container>
 
   <!-- Personal Touch -->
-  <Section class="py-16">
-    <Container>
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-bold text-center mb-12">
-          {personalTouch.title}
-        </h2>
 
-        <div class="grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 class="text-xl font-semibold mb-6">
-              {personalTouch.interests.title}
-            </h3>
-            <div class="space-y-3">
-              {
-                personalTouch.interests.items.map((interest) => (
-                  <div class="flex items-center gap-3">
-                    <div class="w-2 h-2 bg-liguria-mint rounded-full" />
-                    <span class="text-muted-foreground">{interest}</span>
-                  </div>
-                ))
-              }
-            </div>
+  <Container class="py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">
+        {personalTouch.title}
+      </h2>
+
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <h3 class="text-xl font-semibold mb-6">
+            {personalTouch.interests.title}
+          </h3>
+          <div class="space-y-3">
+            {
+              personalTouch.interests.items.map((interest: string) => (
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 bg-liguria-mint rounded-full" />
+                  <span class="text-muted-foreground">{interest}</span>
+                </div>
+              ))
+            }
           </div>
+        </div>
 
-          <div>
-            <h3 class="text-xl font-semibold mb-6">
-              {personalTouch.philosophy.title}
-            </h3>
-            <div class="space-y-4 text-muted-foreground">
-              {
-                personalTouch.philosophy.paragraphs.map((paragraph) => (
-                  <p>{paragraph}</p>
-                ))
-              }
-            </div>
+        <div>
+          <h3 class="text-xl font-semibold mb-6">
+            {personalTouch.philosophy.title}
+          </h3>
+          <div class="space-y-4 text-muted-foreground">
+            {
+              personalTouch.philosophy.paragraphs.map((paragraph: string) => (
+                <p>{paragraph}</p>
+              ))
+            }
           </div>
         </div>
       </div>
-    </Container>
-  </Section>
+    </div>
+  </Container>
 
   <!-- Call to Action -->
   <CallToAction

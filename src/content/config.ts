@@ -52,7 +52,97 @@ const italianToursGallery = defineCollection({
     }),
 });
 
+const boatTourCollection = defineCollection({
+  loader: glob({
+    pattern: "**/*.md",
+    base: "./src/content/boatTourCollection",
+  }),
+  schema: ({ image }) =>
+    z.object({
+      themeColor: z.number().min(0).max(360).default(260),
+      tours: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          description: z.string(),
+          price: z.string().optional(),
+          duration: z.string().optional(),
+          badge: z.string().optional(),
+          tourPoints: z.array(
+            z.object({
+              id: z.string(),
+              image: image(),
+              alt: z.string(),
+              title: z.string(),
+              description: z.string(),
+            })
+          ),
+        })
+      ),
+    }),
+});
+
+const aboutMeCollection = defineCollection({
+  loader: glob({
+    pattern: "**/*.md",
+    base: "./src/content/aboutMe",
+  }),
+  schema: ({ image }) =>
+    z.object({
+      themeColor: z.number().min(0).max(360).default(260),
+      guide: z.object({
+        name: z.string(),
+        title: z.string(),
+        profileImage: image(),
+        alt: z.string(),
+        introduction: z.string(),
+        highlights: z.array(
+          z.object({
+            label: z.string(),
+          })
+        ),
+      }),
+      story: z.object({
+        title: z.string(),
+        sections: z.array(
+          z.object({
+            title: z.string(),
+            content: z.string(),
+            image: image(),
+            alt: z.string(),
+          })
+        ),
+        quote: z.object({
+          text: z.string(),
+          author: z.string(),
+        }),
+      }),
+      personalTouch: z.object({
+        citation: z.string(),
+        title: z.string(),
+        interests: z.object({
+          title: z.string(),
+          items: z.array(z.string()),
+        }),
+        philosophy: z.object({
+          title: z.string(),
+          paragraphs: z.array(z.string()),
+        }),
+      }),
+      cta: z.object({
+        title: z.string(),
+        description: z.string(),
+      }),
+      seoData: z.object({
+        title: z.string(),
+        description: z.string(),
+      }),
+    }),
+});
+
 export const collections = {
   hero: heroCollection,
   italianToursGallery,
+  boatTourCollection,
+  aboutMe: aboutMeCollection,
 };

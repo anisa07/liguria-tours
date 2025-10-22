@@ -1,23 +1,20 @@
 ---
 import BoatCarousel from "./BoatCarousel.astro";
+import type { ImageMetadata } from "astro";
 
 interface TourDetails {
-  icon?: string;
   title: string;
   description?: string;
   price?: string;
   duration?: string;
   badge?: string;
-  highlight?: string;
-  highlightDescription?: string;
   tourPoints: CarouselSlide[];
 }
 
 interface CarouselSlide {
   id: string;
-  image: string;
+  image: ImageMetadata;
   alt: string;
-  icon: string;
   title: string;
   description: string;
 }
@@ -32,7 +29,7 @@ const { tour, carouselId, class: className = "" } = Astro.props;
 ---
 
 <div
-  class={`bg-background/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-border/20 hover:shadow-2xl transition-all duration-300 group col-span-full ${className}`}
+  class={`bg-background/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-border/20 transition-all duration-300 group col-span-full ${className}`}
 >
   <div class="flex flex-col gap-4">
     <h3 class="text-2xl font-bold text-primary">
