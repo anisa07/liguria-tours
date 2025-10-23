@@ -43,7 +43,7 @@ const getBackgroundClasses = (bgType: string) => {
     case "secondary":
       return "bg-secondary text-secondary-foreground";
     case "surface":
-      return "bg-surface-2 text-foreground";
+      return "bg-muted text-foreground";
     case "gradient":
       return "bg-gradient-to-r from-primary to-secondary text-primary-foreground";
     case "neutral":
@@ -66,7 +66,7 @@ const getSizeClasses = (size: string) => {
 
 const getActionButtonClasses = (
   actionVariant: string = "primary",
-  isOnPrimary: boolean = false
+  isOnPrimary: boolean = false,
 ) => {
   const baseClasses =
     "inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
@@ -259,7 +259,7 @@ const isOnPrimaryBg =
                   href={action.href}
                   class={getActionButtonClasses(
                     action.variant,
-                    !!isOnPrimaryBg
+                    !!isOnPrimaryBg,
                   )}
                   target={action.external ? "_blank" : undefined}
                   rel={action.external ? "noopener noreferrer" : undefined}
@@ -319,26 +319,24 @@ const isOnPrimaryBg =
 
   /* Focus styles for CTA buttons */
   .focus\:ring-primary:focus {
-    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--primary) / var(--tw-ring-opacity));
   }
 
   .focus\:ring-secondary:focus {
-    --tw-ring-color: rgb(var(--color-secondary) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--secondary) / var(--tw-ring-opacity));
   }
 
   .focus\:ring-background:focus {
-    --tw-ring-color: rgb(var(--color-background) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--bg-light) / var(--tw-ring-opacity));
   }
 
   .focus\:ring-primary-foreground:focus {
-    --tw-ring-color: rgb(
-      var(--color-primary-foreground) / var(--tw-ring-opacity)
-    );
+    --tw-ring-color: rgb(var(--text-light) / var(--tw-ring-opacity));
   }
 
   /* Ensure good contrast for buttons on dark backgrounds */
   .text-white {
-    color: rgb(var(--color-primary-foreground));
+    color: rgb(var(--text-light));
   }
 
   /* Smooth transitions */

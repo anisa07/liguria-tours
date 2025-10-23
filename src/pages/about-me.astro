@@ -59,7 +59,7 @@ const { guide, story, personalTouch } = cmsData;
         <img
           src={guide.profileImage.src}
           alt={guide.alt}
-          class="w-48 h-48 rounded-full object-cover mx-auto shadow-xl border-4 border-liguria-mint"
+          class="w-48 h-48 rounded-full object-cover mx-auto shadow-xl border-4 border-tertiary"
         />
       </div>
     </div>
@@ -144,7 +144,7 @@ const { guide, story, personalTouch } = cmsData;
             {
               personalTouch.interests.items.map((interest: string) => (
                 <div class="flex items-center gap-3">
-                  <div class="w-2 h-2 bg-liguria-mint rounded-full" />
+                  <div class="w-2 h-2 bg-tertiary rounded-full" />
                   <span class="text-muted-foreground">{interest}</span>
                 </div>
               ))

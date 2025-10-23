@@ -19,7 +19,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
 const pageTitle = t("sea_tours.title", "Морская прогулка");
 const pageDescription = t(
   "sea_tours.description",
-  "Отправьтесь в морское путешествие из Генуи по живописному побережью Леванте. Прогулка на катере, уютные города и дегустация лёгких вин у моря."
+  "Отправьтесь в морское путешествие из Генуи по живописному побережью Леванте. Прогулка на катере, уютные города и дегустация лёгких вин у моря.",
 );
 
 // Load boat tours from content collection
@@ -46,7 +46,7 @@ const ctaActions = [
   <!-- Sea Tours Section -->
   <section
     id="sea-tours"
-    class="py-20 relative overflow-hidden bg-gradient-to-br from-muted/30 via-liguria-mint/20 to-liguria-mint/40"
+    class="py-20 relative overflow-hidden bg-gradient-to-br from-muted/30 via-tertiary/20 to-tertiary/40"
   >
     <!-- Wave Pattern Background -->
     <div class="absolute inset-0 opacity-10">
@@ -107,7 +107,7 @@ const ctaActions = [
     title={t("sea_tours.cta.title", "Готовы к морскому приключению?")}
     description={t(
       "sea_tours.cta.description",
-      "Забронируйте морскую прогулку и увидьте Лигурию с совершенно новой стороны"
+      "Забронируйте морскую прогулку и увидьте Лигурию с совершенно новой стороны",
     )}
     actions={ctaActions}
     variant="centered"

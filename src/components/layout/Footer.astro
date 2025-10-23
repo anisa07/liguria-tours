@@ -58,7 +58,7 @@ const defaultCopyright =
   copyrightText ||
   t(
     "footer.copyright",
-    `© ${currentYear} ${logoText || t("footer.company_name", "Your Company")}. ${t("footer.rights_reserved", "All rights reserved")}.`
+    `© ${currentYear} ${logoText || t("footer.company_name", "Your Company")}. ${t("footer.rights_reserved", "All rights reserved")}.`,
   );
 ---
 
@@ -86,7 +86,7 @@ const defaultCopyright =
               {
                 t(
                   "footer.company_description",
-                  "Building exceptional digital experiences with modern web technologies."
+                  "Building exceptional digital experiences with modern web technologies.",
                 )
               }
             </p>
@@ -104,7 +104,7 @@ const defaultCopyright =
                 {socialLinks.map((social) => (
                   <a
                     href={social.href}
-                    class="inline-flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-1 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                     aria-label={
                       social.ariaLabel ||
                       t("footer.follow_on", `Follow us on ${social.name}`, {
@@ -218,23 +218,23 @@ const defaultCopyright =
         backToTopButton!.classList.remove(
           "opacity-0",
           "invisible",
-          "translate-y-4"
+          "translate-y-4",
         );
         backToTopButton!.classList.add(
           "opacity-100",
           "visible",
-          "translate-y-0"
+          "translate-y-0",
         );
       } else {
         backToTopButton!.classList.add(
           "opacity-0",
           "invisible",
-          "translate-y-4"
+          "translate-y-4",
         );
         backToTopButton!.classList.remove(
           "opacity-100",
           "visible",
-          "translate-y-0"
+          "translate-y-0",
         );
       }
     }
@@ -267,7 +267,7 @@ const defaultCopyright =
   // Newsletter form enhancement
   function initNewsletter() {
     const newsletterForm = document.querySelector(
-      'form[action="#"]'
+      'form[action="#"]',
     ) as HTMLFormElement;
     if (!newsletterForm) return;
 
@@ -275,10 +275,10 @@ const defaultCopyright =
       e.preventDefault();
 
       const emailInput = newsletterForm.querySelector(
-        'input[type="email"]'
+        'input[type="email"]',
       ) as HTMLInputElement;
       const submitButton = newsletterForm.querySelector(
-        'button[type="submit"]'
+        'button[type="submit"]',
       ) as HTMLButtonElement;
 
       if (!emailInput || !submitButton) return;
@@ -310,7 +310,7 @@ const defaultCopyright =
       setTimeout(() => {
         // Show success message using Alert component
         const alertContainer = (document.querySelector(
-          "#newsletter-alert-container"
+          "#newsletter-alert-container",
         ) || newsletterForm.parentElement) as HTMLElement;
 
         // Check if AlertUtils is available (from Alert.astro component)
@@ -322,7 +322,7 @@ const defaultCopyright =
               message: string;
               dismissible?: boolean;
               duration?: number;
-            }
+            },
           ) => HTMLElement | null;
         }
         const alertUtils = (

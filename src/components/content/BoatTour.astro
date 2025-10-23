@@ -40,7 +40,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
 <!-- Sea Tours Section -->
 <section
   id="sea-tours"
-  class="py-20 relative overflow-hidden bg-gradient-to-br from-muted/30 via-liguria-mint/20 to-liguria-mint/40 dark:from-muted/10 dark:via-liguria-mint/10 dark:to-liguria-mint/20"
+  class="py-20 relative overflow-hidden bg-gradient-to-br from-muted/30 via-tertiary/20 to-tertiary/40"
 >
   <!-- Wave Pattern Background -->
   <div class="absolute inset-0 opacity-10">
@@ -83,7 +83,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
           description ||
             t(
               "sea_tours.description",
-              "Отправьтесь в морское путешествие из Генуи по живописному побережью Леванте. Прогулка на катере, уютные города и дегустация лёгких вин у моря."
+              "Отправьтесь в морское путешествие из Генуи по живописному побережью Леванте. Прогулка на катере, уютные города и дегустация лёгких вин у моря.",
             )
         }
       </p>
@@ -100,7 +100,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
               class={`grid gap-4 ${duration && price ? "grid-cols-2" : "grid-cols-1"}`}
             >
               {duration && (
-                <div class="bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-border/30">
+                <div class="bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-border/30">
                   <div class="text-2xl font-bold text-foreground">
                     {duration}
                   </div>
@@ -110,7 +110,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
                 </div>
               )}
               {price && (
-                <div class="bg-gradient-to-br from-accent/10 to-liguria-mint/30 backdrop-blur-sm rounded-2xl p-6 text-center border border-border/30">
+                <div class="bg-gradient-to-br from-secondary/10 to-tertiary/30 backdrop-blur-sm rounded-2xl p-6 text-center border border-border/30">
                   <div class="text-2xl font-bold text-foreground">{price}</div>
                   <div class="text-muted-foreground text-sm">
                     {t("sea_tours.price.label", "За человека")}
@@ -137,7 +137,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
               >
             </div>
             <div
-              class="flex items-center gap-3 p-3 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors"
+              class="flex items-center gap-3 p-3 rounded-lg bg-tertiary/5 hover:bg-tertiary/10 transition-colors"
             >
               <span class="font-medium"
                 >{
@@ -146,7 +146,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
               >
             </div>
             <div
-              class="flex items-center gap-3 p-3 rounded-lg bg-liguria-mint/20 hover:bg-liguria-mint/30 transition-colors"
+              class="flex items-center gap-3 p-3 rounded-lg bg-tertiary/20 hover:bg-tertiary/30 transition-colors"
             >
               <span class="font-medium"
                 >{t("sea_tours.tasting.title", "Дегустация")}</span
@@ -180,12 +180,12 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
             <h3 class="text-foreground text-xl font-bold mb-2">
               {imageTitle || t("sea_tours.image.title", "Побережье с моря")}
             </h3>
-            <p class="text-muted-foreground dark:text-background/90 text-sm">
+            <p class="text-muted-foreground text-sm">
               {
                 imageDescription ||
                   t(
                     "sea_tours.image.description",
-                    "Уникальный взгляд на Чинкве-Терре и Портофино"
+                    "Уникальный взгляд на Чинкве-Терре и Портофино",
                   )
               }
             </p>
@@ -197,7 +197,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "tours"]);
     <div class="text-center">
       <a
         href={linkUrl || `/tour/boat-tour`}
-        class="inline-flex items-center gap-2 bg-primary text-background hover:text-background/90 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 text-sm"
+        class="inline-flex items-center gap-2 bg-primary text-light hover:text-light/90 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 text-sm"
       >
         {ctaText || t("sea_tours.cta.details", "Подробнее о турах")}
         <span class="text-lg">→</span>

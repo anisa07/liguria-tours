@@ -66,10 +66,10 @@ const {
             {item.href ? (
               <a
                 href={item.href}
-                class={`nav-item inline-flex items-center px-3 py-2 text-sm font-medium rounded-full focus:outline-none text-background ${
+                class={`nav-item inline-flex items-center px-3 py-2 text-sm font-medium rounded-full focus:outline-none text-light ${
                   item.active
-                    ? "bg-surface-2"
-                    : "hover:text-foreground hover:bg-surface-1"
+                    ? "bg-secondary"
+                    : "hover:text-light hover:bg-primary-dark"
                 } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 tabindex={item.disabled ? -1 : undefined}
                 aria-disabled={item.disabled ? "true" : undefined}
@@ -87,8 +87,8 @@ const {
                 type="button"
                 class={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
                   item.active
-                    ? "text-foreground bg-surface-2"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 aria-expanded="false"
                 aria-haspopup="true"
@@ -133,7 +133,7 @@ const {
                       class={`flex items-start px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background ${
                         dropdownItem.disabled
                           ? "opacity-50 cursor-not-allowed text-muted-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       }`}
                       role="menuitem"
                       tabindex={dropdownItem.disabled ? -1 : 0}
@@ -178,7 +178,7 @@ const {
 
     dropdowns.forEach((dropdown) => {
       const trigger = dropdown.querySelector(
-        '[data-dropdown-trigger="true"]'
+        '[data-dropdown-trigger="true"]',
       ) as HTMLElement;
       const menu = dropdown.querySelector('[role="menu"]') as HTMLElement;
 

@@ -107,7 +107,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
               animationDelay={index > 0 ? Math.min(index, 5) : 0}
               className={cn(
                 "relative",
-                memberItem.featured && "ring-2 ring-primary/20"
+                memberItem.featured && "ring-2 ring-primary/20",
               )}
             >
               {/* Featured Badge */}
@@ -189,7 +189,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
                     </h4>
                     <div class="flex flex-wrap gap-2">
                       {memberItem.skills.slice(0, 5).map((skill) => (
-                        <span class="inline-flex items-center px-2 py-1 bg-surface-1 text-muted-foreground rounded-full text-xs">
+                        <span class="inline-flex items-center px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs">
                           {skill}
                         </span>
                       ))}
@@ -205,7 +205,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
                     {memberItem.socialLinks.map((social) => (
                       <a
                         href={social.url}
-                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-1 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         aria-label={`${memberItem.name} on ${social.platform}`}
                         title={social.handle || social.platform}
                         target="_blank"
@@ -232,7 +232,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
       className={cn(
         "max-w-md mx-auto relative",
         singleMember.featured && "ring-2 ring-primary/20",
-        className
+        className,
       )}
     >
       {/* Featured Badge */}
@@ -250,7 +250,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
           "flex",
           variant === "minimal"
             ? "justify-center mb-6"
-            : "items-start space-x-6 mb-6"
+            : "items-start space-x-6 mb-6",
         )}
       >
         <div class="relative">
@@ -269,7 +269,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
                 ? "w-24 h-24"
                 : variant === "minimal"
                   ? "w-32 h-32 mx-auto"
-                  : "w-20 h-20"
+                  : "w-20 h-20",
             )}
             loading="lazy"
           />
@@ -345,7 +345,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
         <p
           class={cn(
             "text-muted-foreground leading-relaxed mb-6",
-            variant === "minimal" && "text-center"
+            variant === "minimal" && "text-center",
           )}
         >
           {singleMember.bio}
@@ -358,7 +358,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
           <h4
             class={cn(
               "font-semibold text-foreground mb-3",
-              variant === "minimal" && "text-center"
+              variant === "minimal" && "text-center",
             )}
           >
             {t("team.skills_expertise", "Skills & Expertise")}
@@ -366,11 +366,11 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
           <div
             class={cn(
               "flex flex-wrap gap-2",
-              variant === "minimal" && "justify-center"
+              variant === "minimal" && "justify-center",
             )}
           >
             {singleMember.skills.map((skill) => (
-              <span class="inline-flex items-center px-3 py-1 bg-surface-1 text-muted-foreground rounded-full text-sm">
+              <span class="inline-flex items-center px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
                 {skill}
               </span>
             ))}
@@ -388,7 +388,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
             {singleMember.socialLinks.map((social) => (
               <a
                 href={social.url}
-                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-1 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label={`${singleMember.name} on ${social.platform}`}
                 title={social.handle || social.platform}
                 target="_blank"
@@ -406,8 +406,8 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
     // Placeholder
     <div
       class={cn(
-        "max-w-md mx-auto bg-surface-1 border-2 border-dashed border-border rounded-lg p-8 text-center",
-        className
+        "max-w-md mx-auto bg-muted border-2 border-dashed border-border rounded-lg p-8 text-center",
+        className,
       )}
     >
       <div class="text-4xl mb-4" aria-hidden="true">
@@ -419,7 +419,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
       <p class="text-muted-foreground">
         {t(
           "team.add_members_message",
-          "Add a member or members prop to display team information."
+          "Add a member or members prop to display team information.",
         )}
       </p>
     </div>
@@ -431,16 +431,16 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
 
   /* Hover effects for social links */
   .hover\:bg-primary:hover {
-    background-color: rgb(var(--color-primary));
+    background-color: rgb(var(--primary));
   }
 
   .hover\:text-primary-foreground:hover {
-    color: rgb(var(--color-primary-foreground));
+    color: rgb(var(--text-light));
   }
 
   /* Focus styles */
   .focus\:ring-primary:focus {
-    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--primary) / var(--tw-ring-opacity));
   }
 
   /* Online status indicator uses CSS variable bg-success */

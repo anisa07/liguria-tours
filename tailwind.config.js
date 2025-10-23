@@ -19,18 +19,29 @@ export default {
       },
       colors: {
         primary: {
-          DEFAULT: "rgb(var(--color-primary) / <alpha-value>)",
-          foreground: "rgb(var(--color-primary-foreground) / <alpha-value>)",
+          DEFAULT: "rgb(var(--primary) / <alpha-value>)",
+          light: "rgb(var(--primary-light) / <alpha-value>)",
+          dark: "rgb(var(--primary-dark) / <alpha-value>)",
+          foreground: "rgb(var(--text-light) / <alpha-value>)",
         },
         secondary: {
-          DEFAULT: "rgb(var(--color-secondary))",
-          foreground: "rgb(var(--color-secondary-foreground))",
+          DEFAULT: "rgb(var(--secondary) / <alpha-value>)",
+          light: "rgb(var(--secondary-light) / <alpha-value>)",
+          dark: "rgb(var(--secondary-dark) / <alpha-value>)",
+          foreground: "rgb(var(--text-light) / <alpha-value>)",
         },
+        tertiary: {
+          DEFAULT: "rgb(var(--tertiary) / <alpha-value>)",
+          light: "rgb(var(--tertiary-light) / <alpha-value>)",
+          dark: "rgb(var(--tertiary-dark) / <alpha-value>)",
+        },
+        // Alias for Shadcn UI compatibility
         accent: {
-          DEFAULT: "rgb(var(--color-accent) / <alpha-value>)",
+          DEFAULT: "rgb(var(--tertiary) / <alpha-value>)",
           foreground: "hsl(var(--accent-foreground))",
         },
-        "accent-hover": "rgb(var(--color-accent-hover))",
+        // Alias for backward compatibility
+        "liguria-mint": "rgb(var(--tertiary) / <alpha-value>)",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -49,67 +60,13 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
-        // Semantic colors
-        success: {
-          DEFAULT: "rgb(var(--color-success) / <alpha-value>)",
-          foreground: "rgb(var(--color-success-foreground) / <alpha-value>)",
-        },
-        warning: {
-          DEFAULT: "rgb(var(--color-warning) / <alpha-value>)",
-          foreground: "rgb(var(--color-warning-foreground) / <alpha-value>)",
-        },
-        error: {
-          DEFAULT: "rgb(var(--color-error) / <alpha-value>)",
-          foreground: "rgb(var(--color-error-foreground) / <alpha-value>)",
-        },
-        info: {
-          DEFAULT: "rgb(var(--color-info) / <alpha-value>)",
-          foreground: "rgb(var(--color-info-foreground) / <alpha-value>)",
-        },
-        // Surface color variations for visual depth
-        surface: {
-          1: "rgb(var(--color-surface-1) / <alpha-value>)",
-          2: "rgb(var(--color-surface-2) / <alpha-value>)",
-          3: "rgb(var(--color-surface-3) / <alpha-value>)",
-        },
-        // Interactive state colors for user feedback
-        hover: "rgb(var(--color-hover))",
-        pressed: "rgb(var(--color-pressed))",
-        focus: "rgb(var(--color-focus))",
-        disabled: {
-          DEFAULT: "rgb(var(--color-disabled) / <alpha-value>)",
-          foreground: "rgb(var(--color-disabled-foreground) / <alpha-value>)",
-        },
-        // 60-30-10 Color Rule Schemes
-        "scheme-professional": {
-          60: "rgb(var(--scheme-professional-60) / <alpha-value>)",
-          30: "rgb(var(--scheme-professional-30) / <alpha-value>)",
-          10: "rgb(var(--scheme-professional-10) / <alpha-value>)",
-        },
-        "scheme-modern": {
-          60: "rgb(var(--scheme-modern-60) / <alpha-value>)",
-          30: "rgb(var(--scheme-modern-30) / <alpha-value>)",
-          10: "rgb(var(--scheme-modern-10) / <alpha-value>)",
-        },
-        "scheme-elegant": {
-          60: "rgb(var(--scheme-elegant-60) / <alpha-value>)",
-          30: "rgb(var(--scheme-elegant-30) / <alpha-value>)",
-          10: "rgb(var(--scheme-elegant-10) / <alpha-value>)",
-        },
-        "scheme-corporate": {
-          60: "rgb(var(--scheme-corporate-60) / <alpha-value>)",
-        },
-        // Custom brand colors
-        "liguria-mint": {
-          DEFAULT: "rgb(var(--color-liguria-mint) / <alpha-value>)",
-          foreground:
-            "rgb(var(--color-liguria-mint-foreground) / <alpha-value>)",
-          30: "rgb(var(--scheme-corporate-30) / <alpha-value>)",
-          10: "rgb(var(--scheme-corporate-10) / <alpha-value>)",
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        // Interactive state colors
+        hover: "rgb(var(--hover))",
+        pressed: "rgb(var(--pressed))",
+        disabled: "rgb(var(--disabled) / <alpha-value>)",
+        border: "rgb(var(--border) / <alpha-value>)",
+        input: "rgb(var(--input-bg) / <alpha-value>)",
+        ring: "rgb(var(--ring) / <alpha-value>)",
         link: "hsl(var(--link))",
         "link-hover": "hsl(var(--link-hover))",
         "badge-bg": "hsl(var(--badge-bg))",
