@@ -1,0 +1,21 @@
+---
+export interface Props {
+  items: Array<{ label: string }>;
+  class?: string;
+  gap?: string;
+}
+
+const { items = [], class: className = "", gap = "gap-2" } = Astro.props;
+---
+
+<div class={`flex flex-wrap ${gap} ${className}`}>
+  {
+    items.map((item) => (
+      <span class="group px-4 py-1 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-xs rounded-full border border-primary/30 font-medium hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 cursor-default">
+        <span class="group-hover:text-white transition-colors">
+          {item.label}
+        </span>
+      </span>
+    ))
+  }
+</div>

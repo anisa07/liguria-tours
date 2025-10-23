@@ -28,7 +28,7 @@ function DefaultErrorFallback({
   error,
   resetErrorBoundary,
   className,
-  locale = "en",
+  locale = "ru",
   mode = "production",
 }: FallbackProps & DefaultErrorFallbackProps) {
   const { t, isLoading } = useTranslation(locale, ["ui", "errors"]);
@@ -142,7 +142,7 @@ function ErrorBoundary({
   fallback,
   onError,
   resetKeys,
-  locale = "en",
+  locale = "ru",
   mode = "production",
 }: Props) {
   // Handle error reporting and development logging

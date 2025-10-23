@@ -1,7 +1,7 @@
 ---
 import { createT } from "@/i18n/t";
 import type { Locale } from "@/i18n/config";
-import LanguageSwitcher from "../LanguageSwitcher.astro";
+import { Menu, X } from "lucide";
 
 export interface MenuItem {
   label: string;
@@ -48,9 +48,8 @@ const t = createT(translations);
     id={`${menuId}-button`}
   >
     <span class="sr-only">{t("mobile_menu.open", "Open main menu")}</span>
-    <span class="menu-icon text-xl" aria-hidden="true">{trigger}</span>
-    <span class="close-icon text-xl hidden" aria-hidden="true">{closeText}</span
-    >
+    <Menu class="menu-icon w-6 h-6" aria-hidden="true" />
+    <X class="close-icon w-6 h-6 hidden" aria-hidden="true" />
   </button>
 </div>
 
