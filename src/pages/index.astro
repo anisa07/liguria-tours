@@ -6,8 +6,6 @@ import { getEntry } from "astro:content";
 import Container from "@/components/layout/Container.astro";
 import Hero from "@/components/content/Hero.astro";
 import ItalianToursGallery from "@/components/content/ItalianToursGallery.astro";
-import BoatTour from "@/components/content/BoatTour.astro";
-import CruiseTour from "@/components/content/CruiseTour.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
 import { getCollection } from "astro:content";
 
@@ -43,11 +41,11 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
   seo={{
     title: t(
       "seo.title",
-      "TechFlow - Modern Development Platform | Build the Future"
+      "TechFlow - Modern Development Platform | Build the Future",
     ),
     description: t(
       "seo.description",
-      "Streamline your development workflow with our powerful, secure, and scalable platform. Join 10M+ developers building the future with TechFlow."
+      "Streamline your development workflow with our powerful, secure, and scalable platform. Join 10M+ developers building the future with TechFlow.",
     ),
   }}
 >
@@ -82,12 +80,6 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
     )
   }
 
-  <!-- Sea Tours Section -->
-  <BoatTour locale={locale} />
-
-  <!-- Cruise tour -->
-  <CruiseTour locale={locale} />
-
   <!-- CTA Section -->
   <section class="py-20 relative overflow-hidden">
     <div
@@ -100,7 +92,7 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
         subtitle={t("cta.subtitle", "Join 10M+ developers building the future")}
         description={t(
           "cta.description",
-          "Свяжитесь со мной сегодня, и я помогу вам спланировать идеальную экскурсию по Лигурии."
+          "Свяжитесь со мной сегодня, и я помогу вам спланировать идеальную экскурсию по Лигурии.",
         )}
         actions={ctaActions}
         backgroundColor="neutral"

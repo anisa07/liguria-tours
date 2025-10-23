@@ -53,7 +53,7 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
 
   <Container size="xl" padding="lg">
     <div
-      class="relative z-10 gap-8 md:gap-16 items-center min-h-screen py-20 flex flex-col w-full"
+      class="relative z-10 gap-8 md:gap-16 items-center min-h-screen pt-20 pb-8 flex flex-col w-full"
     >
       <!-- Top Side - Content -->
       <div
@@ -67,14 +67,15 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
       <!-- Down Side - Gallery Preview -->
       <div class="relative flex flex-col gap-6 w-full items-start">
         <!-- Tour Info and Gallery Row -->
-        <div class="flex flex-col md:flex-row gap-4 w-full items-start">
-          <HeroText
-            locale={locale}
-            title={subtitle}
-            description={description}
-            actions={actions}
-          />
-          <div class="w-full md:w-2/3 lg:1/2 flex flex-col">
+        <div class="flex flex-col md:flex-row gap-4 w-full items-stretch">
+          <div class="w-full md:w-1/2">
+            <HeroText
+              locale={locale}
+              title={subtitle}
+              description={description}
+            />
+          </div>
+          <div class="w-full md:w-1/2 flex flex-col">
             <HeroGallery galleryImages={galleryImages} locale={locale} />
           </div>
         </div>
