@@ -10,11 +10,11 @@ Cross-Origin-Opener-Policy = "same-origin"
 Cross-Origin-Resource-Policy = "same-origin"
 Content-Security-Policy = """
     default-src 'self'; 
-    script-src 'strict-dynamic' 'nonce-{nonce}' 'self' https://js.hcaptcha.com https://api.web3forms.com https://web3forms.com; 
+    script-src 'strict-dynamic' 'nonce-{nonce}' 'self' https: https://api.web3forms.com; 
     style-src 'self' 'unsafe-inline'; 
     img-src 'self' https: data:; 
     font-src 'self' https: data:; 
-    connect-src 'self' https://api.web3forms.com https://web3forms.com https://hcaptcha.com; 
+    connect-src 'self' https://api.web3forms.com https://web3forms.com; 
     form-action 'self' https://api.web3forms.com https://web3forms.com; 
     frame-src https://hcaptcha.com https://*.hcaptcha.com;
     frame-ancestors 'none'; 
