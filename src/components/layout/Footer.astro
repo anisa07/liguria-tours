@@ -36,7 +36,7 @@ export interface Props {
 }
 
 const {
-  locale = "en",
+  locale = "ru",
   translations = [],
   sections = [],
   socialLinks = [],
@@ -58,7 +58,7 @@ const defaultCopyright =
   copyrightText ||
   t(
     "footer.copyright",
-    `© ${currentYear} ${logoText || t("footer.company_name", "Your Company")}. ${t("footer.rights_reserved", "All rights reserved")}.`,
+    `© ${currentYear} ${logoText || t("footer.company_name", "Your Company")}. ${t("footer.rights_reserved", "All rights reserved")}.`
   );
 ---
 
@@ -204,23 +204,23 @@ const defaultCopyright =
         backToTopButton!.classList.remove(
           "opacity-0",
           "invisible",
-          "translate-y-4",
+          "translate-y-4"
         );
         backToTopButton!.classList.add(
           "opacity-100",
           "visible",
-          "translate-y-0",
+          "translate-y-0"
         );
       } else {
         backToTopButton!.classList.add(
           "opacity-0",
           "invisible",
-          "translate-y-4",
+          "translate-y-4"
         );
         backToTopButton!.classList.remove(
           "opacity-100",
           "visible",
-          "translate-y-0",
+          "translate-y-0"
         );
       }
     }
@@ -253,7 +253,7 @@ const defaultCopyright =
   // Newsletter form enhancement
   function initNewsletter() {
     const newsletterForm = document.querySelector(
-      'form[action="#"]',
+      'form[action="#"]'
     ) as HTMLFormElement;
     if (!newsletterForm) return;
 
@@ -261,10 +261,10 @@ const defaultCopyright =
       e.preventDefault();
 
       const emailInput = newsletterForm.querySelector(
-        'input[type="email"]',
+        'input[type="email"]'
       ) as HTMLInputElement;
       const submitButton = newsletterForm.querySelector(
-        'button[type="submit"]',
+        'button[type="submit"]'
       ) as HTMLButtonElement;
 
       if (!emailInput || !submitButton) return;
@@ -296,7 +296,7 @@ const defaultCopyright =
       setTimeout(() => {
         // Show success message using Alert component
         const alertContainer = (document.querySelector(
-          "#newsletter-alert-container",
+          "#newsletter-alert-container"
         ) || newsletterForm.parentElement) as HTMLElement;
 
         // Check if AlertUtils is available (from Alert.astro component)
@@ -308,7 +308,7 @@ const defaultCopyright =
               message: string;
               dismissible?: boolean;
               duration?: number;
-            },
+            }
           ) => HTMLElement | null;
         }
         const alertUtils = (

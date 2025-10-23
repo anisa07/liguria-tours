@@ -50,7 +50,7 @@ const {
   showLocation = false,
   columns = 3,
   class: className = "",
-  locale = "en",
+  locale = "ru",
 } = Astro.props;
 
 // Get translations
@@ -107,7 +107,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
               animationDelay={index > 0 ? Math.min(index, 5) : 0}
               className={cn(
                 "relative",
-                memberItem.featured && "ring-2 ring-primary/20",
+                memberItem.featured && "ring-2 ring-primary/20"
               )}
             >
               {/* Featured Badge */}
@@ -232,7 +232,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
       className={cn(
         "max-w-md mx-auto relative",
         singleMember.featured && "ring-2 ring-primary/20",
-        className,
+        className
       )}
     >
       {/* Featured Badge */}
@@ -250,7 +250,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
           "flex",
           variant === "minimal"
             ? "justify-center mb-6"
-            : "items-start space-x-6 mb-6",
+            : "items-start space-x-6 mb-6"
         )}
       >
         <div class="relative">
@@ -269,7 +269,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
                 ? "w-24 h-24"
                 : variant === "minimal"
                   ? "w-32 h-32 mx-auto"
-                  : "w-20 h-20",
+                  : "w-20 h-20"
             )}
             loading="lazy"
           />
@@ -345,7 +345,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
         <p
           class={cn(
             "text-muted-foreground leading-relaxed mb-6",
-            variant === "minimal" && "text-center",
+            variant === "minimal" && "text-center"
           )}
         >
           {singleMember.bio}
@@ -358,7 +358,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
           <h4
             class={cn(
               "font-semibold text-foreground mb-3",
-              variant === "minimal" && "text-center",
+              variant === "minimal" && "text-center"
             )}
           >
             {t("team.skills_expertise", "Skills & Expertise")}
@@ -366,7 +366,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
           <div
             class={cn(
               "flex flex-wrap gap-2",
-              variant === "minimal" && "justify-center",
+              variant === "minimal" && "justify-center"
             )}
           >
             {singleMember.skills.map((skill) => (
@@ -407,7 +407,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
     <div
       class={cn(
         "max-w-md mx-auto bg-muted border-2 border-dashed border-border rounded-lg p-8 text-center",
-        className,
+        className
       )}
     >
       <div class="text-4xl mb-4" aria-hidden="true">
@@ -419,7 +419,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
       <p class="text-muted-foreground">
         {t(
           "team.add_members_message",
-          "Add a member or members prop to display team information.",
+          "Add a member or members prop to display team information."
         )}
       </p>
     </div>

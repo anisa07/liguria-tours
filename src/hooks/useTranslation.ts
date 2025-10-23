@@ -9,7 +9,7 @@ import type { Locale } from "@/i18n/config";
  * @returns Object with translation function, loading state, and error state
  */
 export function useTranslation(
-  locale: Locale = "en",
+  locale: Locale = "ru",
   namespaces: string[] = ["common", "ui"]
 ) {
   const [t, setT] = useState<
