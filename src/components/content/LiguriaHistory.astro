@@ -1,0 +1,314 @@
+---
+import Container from "@/components/layout/Container.astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import { getCollection } from "astro:content";
+
+export interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Get the translation function
+const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
+
+// Load boat tours from content collection for images
+const boatToursCollection = await getCollection("boatTourCollection");
+const boatToursData = boatToursCollection && boatToursCollection[0]?.data;
+const allBoatTours = boatToursData?.tours || [];
+
+// Flatten all tour points into one array
+const allImages = allBoatTours.flatMap((tour: any) =>
+  tour.tourPoints.map((point: any) => ({
+    image: point.image,
+    alt: point.alt,
+    title: point.title,
+    description: point.description,
+  })),
+);
+---
+
+<!-- Liguria History Gallery Section -->
+<section
+  id="history"
+  class="py-24 bg-gradient-to-b from-background via-primary/5 to-background"
+>
+  <Container size="xl" padding="lg">
+    <div class="text-center mb-20">
+      <h2 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+        <span class="text-primary">Истории</span>
+        <span class="text-foreground"> Лигурии</span>
+      </h2>
+
+      <div
+        class="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-6"
+      >
+      </div>
+
+      <p class="text-xl text-foreground/70 max-w-3xl mx-auto">
+        Живописные места и легендарные города итальянской Ривьеры
+      </p>
+    </div>
+
+    <!-- Image Gallery Grid -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+    >
+      {
+        allImages.map((item: any, index: number) => (
+          <div
+            class="history-card group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            data-index={index}
+          >
+            <div class="aspect-[3/4] overflow-hidden">
+              <img
+                src={item.image.src}
+                alt={item.alt}
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                loading="lazy"
+              />
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-100 group-hover:opacity-90 transition-opacity duration-300">
+              <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <h3 class="text-xl font-bold mb-2 transform translate-y-0 group-hover:translate-y-[-4px] transition-transform duration-300">
+                  {item.title}
+                </h3>
+                <p class="text-sm leading-relaxed opacity-90 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div
+      id="lightbox"
+      class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4"
+    >
+      <button
+        id="close-lightbox"
+        class="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-10"
+        aria-label="Close"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <button
+        id="prev-slide"
+        class="absolute left-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all"
+        aria-label="Previous"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <div class="max-w-6xl w-full h-full flex items-center justify-center">
+        <div
+          class="relative w-full h-full flex flex-col items-center justify-center"
+        >
+          <img
+            id="lightbox-image"
+            src=""
+            alt=""
+            class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+          />
+          <div class="mt-6 text-center text-white max-w-2xl">
+            <h3 id="lightbox-title" class="text-3xl font-bold mb-3"></h3>
+            <p
+              id="lightbox-description"
+              class="text-lg leading-relaxed opacity-90"
+            >
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button
+        id="next-slide"
+        class="absolute right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all"
+        aria-label="Next"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+  </Container>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const historyCards = document.querySelectorAll(".history-card");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById(
+      "lightbox-image",
+    ) as HTMLImageElement;
+    const lightboxTitle = document.getElementById("lightbox-title");
+    const lightboxDescription = document.getElementById("lightbox-description");
+    const closeBtn = document.getElementById("close-lightbox");
+    const prevBtn = document.getElementById("prev-slide");
+    const nextBtn = document.getElementById("next-slide");
+
+    if (
+      !lightbox ||
+      !lightboxImage ||
+      !lightboxTitle ||
+      !lightboxDescription ||
+      !closeBtn ||
+      !prevBtn ||
+      !nextBtn
+    )
+      return;
+
+    let currentIndex = 0;
+    const images: Array<{
+      src: string;
+      alt: string;
+      title: string;
+      description: string;
+    }> = [];
+
+    // Collect all images data
+    historyCards.forEach((card) => {
+      const img = card.querySelector("img");
+      const title = card.querySelector("h3");
+      const description = card.querySelector("p");
+
+      if (img && title && description) {
+        images.push({
+          src: img.src,
+          alt: img.alt,
+          title: title.textContent || "",
+          description: description.textContent || "",
+        });
+      }
+    });
+
+    function showImage(index: number) {
+      if (index < 0) index = images.length - 1;
+      if (index >= images.length) index = 0;
+
+      currentIndex = index;
+      const image = images[currentIndex];
+
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt;
+      if (lightboxTitle) lightboxTitle.textContent = image.title;
+      if (lightboxDescription)
+        lightboxDescription.textContent = image.description;
+    }
+
+    function openLightbox(index: number) {
+      showImage(index);
+      if (lightbox) {
+        lightbox.classList.remove("hidden");
+        lightbox.classList.add("flex");
+        document.body.style.overflow = "hidden";
+      }
+    }
+
+    function closeLightbox() {
+      if (lightbox) {
+        lightbox.classList.add("hidden");
+        lightbox.classList.remove("flex");
+        document.body.style.overflow = "";
+      }
+    }
+
+    // Add click handlers to cards
+    historyCards.forEach((card, index) => {
+      card.addEventListener("click", () => openLightbox(index));
+    });
+
+    // Navigation
+    closeBtn.addEventListener("click", closeLightbox);
+    prevBtn.addEventListener("click", () => showImage(currentIndex - 1));
+    nextBtn.addEventListener("click", () => showImage(currentIndex + 1));
+
+    // Click outside to close
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Keyboard navigation
+    document.addEventListener("keydown", (e) => {
+      if (!lightbox.classList.contains("hidden")) {
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+        if (e.key === "ArrowRight") showImage(currentIndex + 1);
+      }
+    });
+  });
+</script>
+
+<style>
+  .history-card {
+    position: relative;
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  .history-card:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .history-card:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .history-card:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  .history-card:nth-child(4) {
+    animation-delay: 0.25s;
+  }
+  .history-card:nth-child(n + 5) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #lightbox {
+    backdrop-filter: blur(10px);
+  }
+</style>
