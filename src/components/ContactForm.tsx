@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -64,30 +64,6 @@ export const ContactForm = ({
   const onHCaptchaChange = (token: string) => {
     form.setValue("h-captcha-response", token);
   };
-
-  // Wait for hCaptcha to be available
-  useEffect(() => {
-    const checkHCaptcha = () => {
-      if (window.hcaptcha) {
-        hcaptchaLoaded.current = true;
-        return true;
-      }
-      return false;
-    };
-
-    if (!checkHCaptcha()) {
-      const interval = setInterval(() => {
-        if (checkHCaptcha()) {
-          clearInterval(interval);
-        }
-      }, 100);
-
-      // Clean up after 10 seconds
-      setTimeout(() => clearInterval(interval), 10000);
-
-      return () => clearInterval(interval);
-    }
-  }, []);
 
   const onSubmit = async (values: ContactFormValues) => {
     const botField = (
