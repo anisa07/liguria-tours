@@ -82,20 +82,18 @@ export const ContactForm = ({
     }
 
     await sendEmail(values, emailApiAccessKey);
-    if (status === "success") {
-      toast.success(
-        t?.("forms.message_sent", "Сообщение отправлено") ||
-          "Сообщение отправлено"
-      );
-      reset();
-      form.reset();
+    toast.success(
+      t?.("forms.message_sent", "Сообщение отправлено") ||
+        "Сообщение отправлено"
+    );
+    reset();
+    form.reset();
 
-      if (hcaptchaRef.current) {
-        hcaptchaRef.current.resetCaptcha();
-      }
-
-      form.setValue("h-captcha-response", "");
+    if (hcaptchaRef.current) {
+      hcaptchaRef.current.resetCaptcha();
     }
+
+    form.setValue("h-captcha-response", "");
   };
 
   if (error) {
