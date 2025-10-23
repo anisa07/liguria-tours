@@ -9,6 +9,9 @@ import purgecss from "astro-purgecss";
 // https://astro.build/config
 export default defineConfig({
   site: "https://liguria-tours.com",
+  build: {
+    inlineStylesheets: 'auto', // Reduces processing
+  },
   integrations: [
     tailwind({ applyBaseStyles: false }),
     react(),
@@ -47,11 +50,23 @@ export default defineConfig({
       ],
       sitemap: true, // Automatically includes sitemap reference
     }),
-    (await import("@playform/compress")).default(),
+    (await import("@playform/compress")).default({
+      Image: false, // Skip image compression - already optimized (AVIF/WebP)
+      CSS: true,
+      HTML: true,
+      JavaScript: true,
+      SVG: true,
+    }),
     purgecss({
       content: [
-        "./src/**/*.{astro,html,js,jsx,ts,tsx,vue,svelte}",
-        "./public/**/*.html",
+        "./src/**/*.{astro,html,js,jsx,ts,tsx}",
+        // Removed "./public/**/*.html" - not needed for build optimization
+      ],
+      extractors: [
+        {
+          extractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+          extensions: ['astro', 'html', 'js', 'ts', 'jsx', 'tsx']
+        }
       ],
       safelist: {
         // Preserve dynamic classes that might be added by JavaScript
@@ -82,11 +97,33 @@ export default defineConfig({
       variables: true,
       // Keep keyframes for animations
       keyframes: true,
-      // Tailwind-specific optimizations
-      defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
     }),
   ],
   vite: {
+    build: {
+      target: 'esnext',
+      cssCodeSplit: true, // Better caching
+      modulePreload: {
+        polyfill: false, // Faster builds
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Split vendor code for better caching
+            'react-vendor': ['react', 'react-dom'],
+            'radix-vendor': [
+              '@radix-ui/react-dialog',
+              '@radix-ui/react-label',
+              '@radix-ui/react-popover',
+              '@radix-ui/react-slot'
+            ],
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom'], // Pre-bundle dependencies
+    },
     resolve: {
       alias: {
         "@": "/src",
