@@ -3,10 +3,8 @@ import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import { defaultLocale, type Locale } from "@/i18n/config";
 import { getEntry } from "astro:content";
-import Container from "@/components/layout/Container.astro";
 import Hero from "@/components/content/Hero.astro";
 import ItalianToursGallery from "@/components/content/ItalianToursGallery.astro";
-import CallToAction from "@/components/content/CallToAction.astro";
 import { getCollection } from "astro:content";
 
 // Set locale to Russian
@@ -14,19 +12,6 @@ const locale: Locale = defaultLocale;
 
 // Get the translation function for this page
 const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
-
-const ctaActions = [
-  {
-    label: t("actions.book_now", "Забронировать тур"),
-    href: "/contact",
-    variant: "primary" as const,
-  },
-  {
-    label: t("actions.contact", "Узнать больше"),
-    href: "/contact",
-    variant: "outline" as const,
-  },
-];
 
 const heroEntry = await getEntry("hero", "hero");
 const heroData = heroEntry?.data;
@@ -60,7 +45,7 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
         actions={[
           {
             label: t("actions.book_now", "Забронировать"),
-            href: "/contact",
+            href: "/about-me",
             variant: "primary" as const,
           },
         ]}
@@ -79,28 +64,6 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
       />
     )
   }
-
-  <!-- CTA Section -->
-  <section class="py-20 relative overflow-hidden">
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-transparent to-primary/20"
-    >
-    </div>
-    <Container size="lg" padding="lg" class="relative z-10">
-      <CallToAction
-        title={t("cta.title", "Ready to Transform Your Workflow?")}
-        subtitle={t("cta.subtitle", "Join 10M+ developers building the future")}
-        description={t(
-          "cta.description",
-          "Свяжитесь со мной сегодня, и я помогу вам спланировать идеальную экскурсию по Лигурии.",
-        )}
-        actions={ctaActions}
-        backgroundColor="neutral"
-        class="animate-fade-up"
-        variant="centered"
-      />
-    </Container>
-  </section>
 </IntlBaseLayout>
 
 <style>

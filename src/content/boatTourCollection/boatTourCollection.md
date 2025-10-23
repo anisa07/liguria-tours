@@ -23,7 +23,7 @@ tours:
         image: /src/assets/images/boat_tour_page4.avif
         alt: "Рапалло"
         title: "РАПАЛЛО"
-        description: "Очаровательный курорт с гольф-парком и фуникулером на гору Монтеаллегро."
+        description: "Очаровательный курорт с гольф-парком и фуникулером на гору Монталлегро."
       - id: sestri-levante
         image: /src/assets/images/boat_tour_page5.avif
         alt: "Сестри Леванте"

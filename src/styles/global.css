@@ -10,9 +10,9 @@
   :root {
     /* ==== PRIMARY COLORS (Configurable) ==== */
     /* Main brand color - Ligurian Blue/Mint */
-    --primary: 37 204 190; /* #25CCBE - Ligurian blue-mint */
-    --primary-light: 87 229 216; /* Lighter version for gradients/decorative */
-    --primary-dark: 17 164 150; /* Darker version for gradients/decorative */
+    --primary: 19 145 135; /* #139187 - Ligurian teal */
+    --primary-light: 49 175 165; /* Lighter version for gradients/decorative */
+    --primary-dark: 12 120 110; /* Darker version for gradients/decorative */
     
     /* Secondary accent color */
     --secondary: 0 156 206; /* #009CCE - Ocean blue */
@@ -53,7 +53,7 @@
     --card-foreground: 0 0% 3%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3%;
-    --primary-hsl: 174 69% 47%; /* Primary in HSL */
+    --primary-hsl: 175 77% 32%; /* Primary in HSL */
     --primary-foreground: 0 0% 98%;
     --secondary-hsl: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;

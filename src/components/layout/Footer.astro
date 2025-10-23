@@ -79,20 +79,6 @@ const defaultCopyright =
           )
         }
 
-        <!-- Company description slot -->
-        <div class="text-foreground text-sm leading-relaxed">
-          <slot name="description">
-            <p>
-              {
-                t(
-                  "footer.company_description",
-                  "Building exceptional digital experiences with modern web technologies.",
-                )
-              }
-            </p>
-          </slot>
-        </div>
-
         <!-- Social Links -->
         {
           socialLinks.length > 0 && (
@@ -171,16 +157,16 @@ const defaultCopyright =
         <div class="flex items-center space-x-4 text-sm">
           <slot name="legal">
             <a
-              href="/privacy"
+              href="/privacy-policy"
               class="text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
             >
-              {t("footer.legal.privacy", "Privacy Policy")}
+              {t("footer.legal.privacy", "Политика конфиденциальности")}
             </a>
             <a
               href="/terms"
               class="text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
             >
-              {t("footer.legal.terms", "Terms of Service")}
+              {t("footer.legal.terms", "Условия использования")}
             </a>
           </slot>
         </div>
