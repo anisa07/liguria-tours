@@ -6,7 +6,8 @@ X-Frame-Options = "DENY"
 Referrer-Policy = "strict-origin-when-cross-origin"
 # Use one at a time:
 Cache-Control = "public, max-age=0, must-revalidate"
-Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'strict-dynamic' 'nonce-{nonce}' 'self' https: https://js.hcaptcha.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob: https://hcaptcha.com https://*.hcaptcha.com; font-src 'self' https: data:; connect-src 'self' https://api.web3forms.com https://hcaptcha.com https://*.hcaptcha.com; frame-src https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
+# Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'strict-dynamic' 'nonce-{nonce}' 'self' https: https://js.hcaptcha.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob: https://hcaptcha.com https://*.hcaptcha.com; font-src 'self' https: data:; connect-src 'self' https://api.web3forms.com https://hcaptcha.com https://*.hcaptcha.com; frame-src https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
+Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.hcaptcha.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob: https://hcaptcha.com https://*.hcaptcha.com; font-src 'self' https: data:; connect-src 'self' https://api.web3forms.com https://hcaptcha.com https://*.hcaptcha.com; frame-src https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
 
 [[headers]]
 for = "/sitemap*.xml"
