@@ -15,15 +15,6 @@ collections:
           - { label: "Main Title", name: "mainTitle", widget: "string" }
           - { label: "Subtitle", name: "subtitle", widget: "string" }
           - { label: "Description", name: "description", widget: "text" }
-          - {
-              label: "Theme Color (Hue)",
-              name: "themeColor",
-              widget: "number",
-              min: 0,
-              max: 360,
-              default: 260,
-              hint: "Brand color hue (0-360): 0=red, 60=yellow, 120=green, 180=cyan, 240=blue, 260=purple, 300=magenta",
-            }
           - label: "Gallery Images"
             name: "images"
             widget: "list"
@@ -40,15 +31,6 @@ collections:
         name: "italianToursGallery"
         file: "src/content/italianToursGallery/italianToursGallery.md"
         fields:
-          - {
-              label: "Theme Color (Hue)",
-              name: "themeColor",
-              widget: "number",
-              min: 0,
-              max: 360,
-              default: 260,
-              hint: "Brand color hue (0-360): 0=red, 60=yellow, 120=green, 180=cyan, 240=blue, 260=purple, 300=magenta",
-            }
           - label: "Tours"
             name: "tours"
             widget: "list"
@@ -62,11 +44,13 @@ collections:
                 }
               - { label: "Description", name: "description", widget: "text" }
               - {
-                  label: "Category",
-                  name: "category",
+                  label: "Categories",
+                  name: "categories",
                   widget: "select",
-                  options: ["city", "coastal", "cultural", "walking"],
-                  default: "city",
+                  multiple: true,
+                  min: 1,
+                  options: ["city", "coastal", "cultural", "history"],
+                  default: ["city"],
                 }
               - {
                   label: "Full Description",

@@ -17,15 +17,14 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
 
 // Use italianToursGalleryData directly
 const allTours =
-  italianToursGalleryData?.map((tour, index) => ({
+  italianToursGalleryData?.map((tour: any) => ({
     id: tour.slug,
     title: tour.title,
     image: tour.images[0]?.image?.src,
     price: tour.price,
     duration: tour.duration,
     href: `/tour/${tour.slug}`,
-    category: tour.category,
-    isInitiallyVisible: index < 3,
+    categories: tour.categories,
     description: tour.description,
   })) || [];
 ---
@@ -41,7 +40,7 @@ const allTours =
         {
           t(
             "tours.description",
-            "Откройте для себя самые красивые места Лигурии с гидом"
+            "Откройте для себя самые красивые места Лигурии с гидом",
           )
         }
       </p>
@@ -91,11 +90,10 @@ const allTours =
       id="tours-grid"
     >
       {
-        allTours.map((tour) => (
+        allTours.map((tour: any) => (
           <div
-            class={`tour-item h-full ${!tour.isInitiallyVisible ? "hidden load-more-item" : ""}`}
-            data-category={tour.category}
-            style={!tour.isInitiallyVisible ? "display: none;" : ""}
+            class="tour-item h-full"
+            data-categories={JSON.stringify(tour.categories)}
           >
             <TourCard
               tour={{
@@ -108,112 +106,14 @@ const allTours =
         ))
       }
     </div>
-
-    <!-- Load More Tours -->
-    <div class="text-center mt-12">
-      <button
-        id="load-more-btn"
-        class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl text-sm"
-      >
-        <span id="load-more-text"
-          >{t("tours.load_more", "Показать больше туров")}</span
-        >
-        <span class="ml-2">+</span>
-      </button>
-      <div id="loading-spinner" class="hidden mt-4">
-        <div class="inline-flex items-center gap-2 text-muted-foreground">
-          <div
-            class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
-          >
-          </div>
-          <span>{t("tours.loading", "Загрузка...")}</span>
-        </div>
-      </div>
-    </div>
   </Container>
 </section>
 
 <script>
-  // Tour Filter Functionality and Load More
+  // Tour Filter Functionality
   document.addEventListener("DOMContentLoaded", function () {
     const filterButtons = document.querySelectorAll(".filter-btn");
-    let tourItems = document.querySelectorAll(".tour-item");
-    const loadMoreBtn = document.getElementById("load-more-btn");
-    const loadingSpinner = document.getElementById("loading-spinner");
-    const loadMoreText = document.getElementById("load-more-text");
-
-    let additionalToursVisible = false;
-
-    // Load More Tours functionality - toggle visibility of hidden tours
-    loadMoreBtn?.addEventListener("click", function () {
-      if (additionalToursVisible) return;
-
-      // Show loading state briefly for UX feedback
-      loadingSpinner!.classList.remove("hidden");
-      loadMoreBtn!.style.opacity = "0.5";
-      loadMoreBtn!.style.pointerEvents = "none";
-
-      // Get current active filter
-      const currentActiveBtn = document.querySelector(".filter-btn.active");
-      const currentFilter =
-        currentActiveBtn?.getAttribute("data-filter") || "all";
-
-      // Show all hidden tours with staggered animation
-      const hiddenTours = document.querySelectorAll(".load-more-item");
-      const visibleHiddenTours: HTMLElement[] = [];
-
-      hiddenTours.forEach((tourElement) => {
-        const htmlTour = tourElement as HTMLElement;
-        htmlTour.classList.remove("hidden");
-        htmlTour.style.display = "block"; // Override the inline style
-
-        // Apply current filter to newly shown tours
-        const category = htmlTour.getAttribute("data-category");
-
-        let shouldShow = false;
-        if (currentFilter === "all") {
-          shouldShow = true;
-        } else if (
-          currentFilter === "coastal" ||
-          currentFilter === "city" ||
-          currentFilter === "cultural" ||
-          currentFilter === "history"
-        ) {
-          shouldShow = category === currentFilter;
-        }
-
-        if (shouldShow) {
-          // Prepare for animation
-          htmlTour.classList.add("fade-in");
-          visibleHiddenTours.push(htmlTour);
-        } else {
-          htmlTour.style.display = "none";
-        }
-      });
-
-      // Animate visible tours with staggered timing
-      visibleHiddenTours.forEach((tour, index) => {
-        setTimeout(() => {
-          tour.classList.add("fade-in-visible");
-        }, index * 150); // 150ms stagger between each card
-      });
-
-      // Update tour items list for filtering
-      tourItems = document.querySelectorAll(".tour-item");
-      additionalToursVisible = true;
-
-      // Hide loading and update button after animation completes
-      setTimeout(
-        () => {
-          loadingSpinner!.classList.add("hidden");
-          loadMoreText!.textContent = "Все туры загружены";
-          loadMoreBtn!.style.opacity = "1";
-          loadMoreBtn!.style.pointerEvents = "auto";
-          loadMoreBtn!.classList.add("opacity-50", "cursor-not-allowed");
-        },
-        visibleHiddenTours.length * 150 + 300
-      ); // Wait for all animations plus buffer
-    });
+    const tourItems = document.querySelectorAll(".tour-item");
 
     // Filter functionality
     function applyFilter() {
@@ -230,15 +130,16 @@ const allTours =
             btn.classList.remove(
               "active",
               "bg-primary",
-              "text-primary-foreground"
-            )
+              "text-primary-foreground",
+            ),
           );
           this.classList.add("active", "bg-primary", "text-primary-foreground");
 
-          // Filter and show/hide items instantly
+          // Filter and show/hide items
           tourItems.forEach((item) => {
             const htmlItem = item as HTMLElement;
-            const category = item.getAttribute("data-category");
+            const categoriesStr = item.getAttribute("data-categories");
+            const categories = categoriesStr ? JSON.parse(categoriesStr) : [];
 
             let shouldShow = false;
 
@@ -250,47 +151,16 @@ const allTours =
               filter === "cultural" ||
               filter === "history"
             ) {
-              shouldShow = category === filter;
+              shouldShow = categories.includes(filter);
             }
-
-            // Clear any inline styles and show/hide instantly
-            htmlItem.style.transition = "";
-            htmlItem.style.opacity = "";
-            htmlItem.style.transform = "";
 
             // Show items that match the filter
             if (shouldShow) {
               htmlItem.style.display = "block";
-              htmlItem.classList.remove("hidden");
             } else {
               htmlItem.style.display = "none";
             }
           });
-
-          // If no initially visible tours match the filter, show some load-more items
-          if (filter !== "all") {
-            const visibleTours = Array.from(tourItems).filter((item) => {
-              const htmlItem = item as HTMLElement;
-              return htmlItem.style.display === "block";
-            });
-
-            // If no tours are visible, show the first 1 matching tour from load-more items
-            if (visibleTours.length === 0) {
-              let shownCount = 0;
-              tourItems.forEach((item) => {
-                const htmlItem = item as HTMLElement;
-                const category = item.getAttribute("data-category");
-                const isLoadMoreItem =
-                  htmlItem.classList.contains("load-more-item");
-
-                if (shownCount < 1 && isLoadMoreItem && category === filter) {
-                  htmlItem.style.display = "block";
-                  htmlItem.classList.remove("hidden");
-                  shownCount++;
-                }
-              });
-            }
-          }
         });
       });
     }
@@ -315,28 +185,5 @@ const allTours =
   .tour-item {
     display: flex;
     height: 100%;
-    transition:
-      opacity 0.6s ease-in-out,
-      transform 0.6s ease-in-out;
-  }
-
-  .tour-item.fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  .tour-item.fade-in-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .animate-spin {
-    animation: spin 1s linear infinite;
   }
 </style>
