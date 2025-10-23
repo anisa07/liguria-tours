@@ -1,6 +1,5 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
@@ -40,9 +39,7 @@ const AlertTitle = React.forwardRef<
     ref={ref}
     className={cn("mb-1 font-medium leading-none tracking-tight", className)}
     {...props}
-  >
-    {props.children}
-  </h5>
+  />
 ));
 AlertTitle.displayName = "AlertTitle";
 

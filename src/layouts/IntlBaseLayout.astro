@@ -149,19 +149,16 @@ const url = new URL(Astro.url, site).href;
       logoHref={`/`}
       copyrightText={t(
         "footer.copyright",
-        "© 2025 Туры по Лигурии. Все права защищены."
+        "© 2025 Туры по Лигурии. Все права защищены.",
       )}
       showNewsletter={true}
       newsletterTitle={t("footer.newsletter.title", "Stay Updated")}
       newsletterDescription={t(
         "footer.newsletter.description",
-        "Get the latest updates and insights delivered to your inbox."
+        "Get the latest updates and insights delivered to your inbox.",
       )}
     />
 
     <Toaster client:load />
-
-    <!-- Simple Scroll Animations (fallback for older browsers) -->
-    <script src="/src/utils/scroll-animations.ts"></script>
   </body>
 </html>
