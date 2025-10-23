@@ -6,21 +6,7 @@ X-Frame-Options = "DENY"
 Referrer-Policy = "strict-origin-when-cross-origin"
 # Use one at a time:
 Cache-Control = "public, max-age=0, must-revalidate"
-Cross-Origin-Opener-Policy = "same-origin"
-Cross-Origin-Resource-Policy = "same-origin"
-Content-Security-Policy = """
-    default-src 'self'; 
-    script-src 'strict-dynamic' 'nonce-{nonce}' 'self' https: https://api.web3forms.com; 
-    style-src 'self' 'unsafe-inline'; 
-    img-src 'self' https: data:; 
-    font-src 'self' https: data:; 
-    connect-src 'self' https://api.web3forms.com https://web3forms.com; 
-    form-action 'self' https://api.web3forms.com https://web3forms.com; 
-    frame-src https://hcaptcha.com https://*.hcaptcha.com;
-    frame-ancestors 'none'; 
-    base-uri 'self'; 
-    object-src 'none'; upgrade-insecure-requests
-"""
+
 
 [[headers]]
 for = "/sitemap*.xml"
