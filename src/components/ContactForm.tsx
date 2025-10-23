@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,15 +24,27 @@ import type { ContactFormValues } from "@/types";
 import { contactFormSchema } from "@/types/forms";
 import type { Locale } from "@/i18n/config";
 
+// Declare hcaptcha on window
+declare global {
+  interface Window {
+    hcaptcha: {
+      getResponse(): string;
+      reset(): void;
+    };
+  }
+}
+
 // Define props interface locally
 interface ContactFormProps {
   locale: Locale;
   emailApiAccessKey: string;
+  capthaKey: string;
 }
 
 export const ContactForm = ({
   locale,
   emailApiAccessKey,
+  capthaKey,
 }: ContactFormProps) => {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -44,15 +57,79 @@ export const ContactForm = ({
   });
   const { t, isLoading, error } = useTranslation(locale, ["common", "ui"]);
   const { sendEmail, status, message, reset } = useSendEmail();
+  const hcaptchaLoaded = useRef(false);
+
+  // Wait for hCaptcha to be available
+  useEffect(() => {
+    const checkHCaptcha = () => {
+      if (window.hcaptcha) {
+        hcaptchaLoaded.current = true;
+        return true;
+      }
+      return false;
+    };
+
+    if (!checkHCaptcha()) {
+      const interval = setInterval(() => {
+        if (checkHCaptcha()) {
+          clearInterval(interval);
+        }
+      }, 100);
+
+      // Clean up after 10 seconds
+      setTimeout(() => clearInterval(interval), 10000);
+
+      return () => clearInterval(interval);
+    }
+  }, []);
 
   const onSubmit = async (values: ContactFormValues) => {
-    await sendEmail(values, emailApiAccessKey);
+    const botField = (
+      document.querySelector('[name="botcheck"]') as HTMLInputElement
+    )?.checked;
+    if (botField) return; // stop bots
+
+    // Check if hCaptcha is loaded and get token
+    if (!window.hcaptcha || !hcaptchaLoaded.current) {
+      toast.error(
+        "hCaptcha не загружен. Пожалуйста, подождите и попробуйте снова."
+      );
+      return;
+    }
+
+    let token = "";
+    try {
+      token = window.hcaptcha.getResponse();
+    } catch {
+      toast.error("Ошибка получения токена hCaptcha");
+      return;
+    }
+
+    if (!token) {
+      toast.error(
+        t?.(
+          "forms.captcha_required",
+          "Пожалуйста, подтвердите, что вы не робот"
+        )
+      );
+      return;
+    }
+
+    await sendEmail(values, emailApiAccessKey, token);
     toast(
       t?.("forms.message_sent", "Сообщение отправлено") ||
         "Сообщение отправлено"
     );
     reset();
     form.reset();
+    // Reset hCaptcha
+    try {
+      if (window.hcaptcha && hcaptchaLoaded.current) {
+        window.hcaptcha.reset();
+      }
+    } catch {
+      // Ignore reset errors
+    }
   };
 
   if (error) {
@@ -70,6 +147,13 @@ export const ContactForm = ({
         className="space-y-4"
         aria-live="polite"
       >
+        <input
+          type="checkbox"
+          name="botcheck"
+          tabIndex={-1}
+          aria-hidden="true"
+          className="hidden"
+        />
         <FormField
           control={form.control}
           name="name"
@@ -144,6 +228,13 @@ export const ContactForm = ({
             </FormItem>
           )}
         />
+
+        <div
+          className="h-captcha"
+          data-sitekey={capthaKey}
+          data-theme="light"
+          data-size="compact"
+        ></div>
 
         <Button
           disabled={status === "loading"}

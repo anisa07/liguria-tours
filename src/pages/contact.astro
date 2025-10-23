@@ -15,6 +15,7 @@ const { t } = await getPageTranslations(locale, ["common", "ui", "forms"]);
 
 // Email API access key (in production, this would come from environment variables)
 const emailApiAccessKey = import.meta.env.PUBLIC_EMAIL_API_KEY || "demo-key";
+const capthaKey = import.meta.env.PUBLIC_HCAPTCHA_SITEKEY || "demo-key";
 ---
 
 <IntlBaseLayout
@@ -161,6 +162,7 @@ const emailApiAccessKey = import.meta.env.PUBLIC_EMAIL_API_KEY || "demo-key";
             <ContactForm
               locale={locale}
               emailApiAccessKey={emailApiAccessKey}
+              capthaKey={capthaKey}
               client:load
             />
           </div>
