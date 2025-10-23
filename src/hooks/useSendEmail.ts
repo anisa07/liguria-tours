@@ -15,14 +15,12 @@ export const useSendEmail = () => {
 
   const sendEmail = (
     formValues: ContactFormValues,
-    ACCESS_KEY_HERE: string,
-    token: string
+    ACCESS_KEY_HERE: string
   ) => {
     return submit(() =>
       FetchService.post(url, {
         ...formValues,
         access_key: ACCESS_KEY_HERE,
-        "h-captcha-response": token,
       })
     );
   };

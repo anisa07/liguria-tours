@@ -6,6 +6,7 @@ export const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(120),
   email: z.string().email("Please enter a valid email"),
   subject: z.string().min(5, "Subject is required").max(200),
+  "h-captcha-response": z.string().min(20, "Token is required"),
   message: z.string().min(20, "Message is required").max(5000),
 });
 

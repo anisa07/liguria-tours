@@ -18,6 +18,7 @@ import { Loading } from "./ui/loading";
 import { Message } from "./ui/message";
 import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
 import { toast } from "sonner";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 // Import types from separate files
 import type { ContactFormValues } from "@/types";
@@ -53,11 +54,16 @@ export const ContactForm = ({
       email: "",
       subject: "",
       message: "",
+      "h-captcha-response": "",
     },
   });
   const { t, isLoading, error } = useTranslation(locale, ["common", "ui"]);
   const { sendEmail, status, message, reset } = useSendEmail();
   const hcaptchaLoaded = useRef(false);
+
+  const onHCaptchaChange = (token: string) => {
+    form.setValue("h-captcha-response", token);
+  };
 
   // Wait for hCaptcha to be available
   useEffect(() => {
@@ -89,23 +95,7 @@ export const ContactForm = ({
     )?.checked;
     if (botField) return; // stop bots
 
-    // Check if hCaptcha is loaded and get token
-    if (!window.hcaptcha || !hcaptchaLoaded.current) {
-      toast.error(
-        "hCaptcha не загружен. Пожалуйста, подождите и попробуйте снова."
-      );
-      return;
-    }
-
-    let token = "";
-    try {
-      token = window.hcaptcha.getResponse();
-    } catch {
-      toast.error("Ошибка получения токена hCaptcha");
-      return;
-    }
-
-    if (!token) {
+    if (!values["h-captcha-response"]) {
       toast.error(
         t?.(
           "forms.captcha_required",
@@ -115,7 +105,7 @@ export const ContactForm = ({
       return;
     }
 
-    await sendEmail(values, emailApiAccessKey, token);
+    await sendEmail(values, emailApiAccessKey);
     toast(
       t?.("forms.message_sent", "Сообщение отправлено") ||
         "Сообщение отправлено"
@@ -229,12 +219,11 @@ export const ContactForm = ({
           )}
         />
 
-        <div
-          className="h-captcha"
-          data-sitekey={capthaKey}
-          data-theme="light"
-          data-size="compact"
-        ></div>
+        <HCaptcha
+          sitekey={capthaKey}
+          reCaptchaCompat={false}
+          onVerify={onHCaptchaChange}
+        />
 
         <Button
           disabled={status === "loading"}
