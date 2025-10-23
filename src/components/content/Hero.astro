@@ -44,38 +44,70 @@ const {
 const { t } = await getPageTranslations(locale, ["hero", "common"]);
 ---
 
-<section class="relative border-none">
-  <!-- Gradient Background -->
+<section class="relative border-none overflow-hidden">
+  <!-- Enhanced Gradient Background -->
   <div
-    class="absolute inset-0 bg-gradient-to-b from-primary/20 to-transparent rounded-b-[150px]"
+    class="absolute inset-0 bg-gradient-to-b from-primary/15 via-primary/8 to-transparent"
+  >
+  </div>
+  <div
+    class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+  >
+  </div>
+  <div
+    class="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"
   >
   </div>
 
   <Container size="xl" padding="lg">
     <div
-      class="relative z-10 gap-8 md:gap-16 items-center min-h-screen pt-20 pb-8 flex flex-col w-full"
+      class="relative z-10 gap-12 md:gap-20 items-center min-h-screen pt-24 pb-12 flex flex-col w-full"
     >
-      <!-- Top Side - Content -->
+      <!-- Top Side - Enhanced Title -->
       <div
-        class="text-foreground/80 text-center flex flex-col items-center gap-8"
+        class="text-foreground text-center flex flex-col items-center gap-6 animate-fade-in"
       >
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <div
+          class="inline-flex items-center gap-2 px-6 py-2 bg-primary/10 rounded-full border border-primary/30 mb-4"
+        >
+          <svg
+            class="w-5 h-5 text-primary"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-semibold text-primary">Лигурия, Италия</span
+          >
+        </div>
+
+        <h1
+          class="text-5xl md:text-7xl font-bold mb-2 tracking-tight bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text"
+        >
           {mainTitle}
         </h1>
+
+        <div
+          class="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"
+        >
+        </div>
       </div>
 
-      <!-- Down Side - Gallery Preview -->
-      <div class="relative flex flex-col gap-6 w-full items-start">
+      <!-- Down Side - Gallery Preview with Enhanced Layout -->
+      <div class="relative flex flex-col gap-8 w-full items-start">
         <!-- Tour Info and Gallery Row -->
-        <div class="flex flex-col md:flex-row gap-4 w-full items-stretch">
-          <div class="w-full md:w-1/2">
+        <div class="flex flex-col lg:flex-row gap-8 w-full items-stretch">
+          <div class="w-full lg:w-1/2">
             <HeroText
               locale={locale}
               title={subtitle}
               description={description}
             />
           </div>
-          <div class="w-full md:w-1/2 flex flex-col">
+          <div class="w-full lg:w-1/2 flex flex-col">
             <HeroGallery galleryImages={galleryImages} locale={locale} />
           </div>
         </div>
@@ -97,5 +129,21 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
 
   .focus\:ring-secondary:focus {
     --tw-ring-color: rgb(var(--secondary) / var(--tw-ring-opacity));
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
   }
 </style>

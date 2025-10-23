@@ -18,70 +18,105 @@ const descriptionLines = description
 ---
 
 <div
-  class="bg-background text-foreground rounded-3xl p-8 w-full h-full shadow-2xl border border-primary-foreground/20 flex flex-col"
+  class="bg-gradient-to-br from-background via-background to-primary/5 text-foreground rounded-3xl p-8 w-full h-full shadow-2xl border-2 border-primary/20 flex flex-col hover:shadow-3xl transition-all duration-300 hover:border-primary/40"
 >
   <!-- Photo and Title section -->
   <div class="mb-6 flex-grow">
-    <div class="flex gap-4 items-start mb-4">
-      <!-- Rounded Photo -->
-      <div class="flex-shrink-0">
+    <div class="flex gap-5 items-start mb-6">
+      <!-- Rounded Photo with verified badge -->
+      <div class="flex-shrink-0 relative">
         <Image
           src={svetlanaPhoto}
           alt="Светлана Жукова"
-          class="w-32 h-32 rounded-full object-cover shadow-lg ring-4 ring-primary/20"
-          width={128}
-          height={128}
+          class="w-36 h-36 rounded-full object-cover shadow-xl ring-4 ring-primary/30"
+          width={144}
+          height={144}
         />
+        <div
+          class="absolute -bottom-1 -right-1 w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg ring-2 ring-background"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
       </div>
 
       <!-- Title -->
       <div class="flex-1 min-w-0">
         <h2
-          class="text-3xl lg:text-4xl font-bold text-foreground/80 leading-tight"
+          class="text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-2"
         >
           {title}
         </h2>
+        <div class="flex items-center gap-2 text-primary/80">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-semibold"
+            >Официальный патентованный гид</span
+          >
+        </div>
       </div>
     </div>
 
     <!-- Full Description (Below Photo and Title) -->
-    {
-      descriptionLines.map((line) => (
-        <p class="text-foreground/90 text-base leading-relaxed mb-3">{line}</p>
-      ))
-    }
+    <div class="space-y-3">
+      {
+        descriptionLines.map((line) => (
+          <p class="text-foreground/80 text-lg leading-relaxed">{line}</p>
+        ))
+      }
+    </div>
   </div>
 
-  <!-- Chips -->
-  <div class="flex flex-wrap gap-2">
+  <!-- Enhanced Chips -->
+  <div class="flex flex-wrap gap-2.5">
     <span
-      class="px-3 py-1 bg-primary/20 text-dark text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
-      >Патентованный гид
+      class="group px-4 py-2 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-sm rounded-full border border-primary/30 font-semibold hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-default"
+    >
+      <span class="group-hover:text-white transition-colors"
+        >25 лет в туризме</span
+      >
     </span>
     <span
-      class="px-3 py-1 bg-primary/20 text-dark text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
+      class="group px-4 py-2 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-sm rounded-full border border-primary/30 font-semibold hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-default"
     >
-      25 лет в туризме
+      <span class="group-hover:text-white transition-colors"
+        >С 1992 в Италии</span
+      >
     </span>
     <span
-      class="px-3 py-1 bg-primary/20 text-dark text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
+      class="group px-4 py-2 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-sm rounded-full border border-primary/30 font-semibold hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-default"
     >
-      Авторские туры
+      <span class="group-hover:text-white transition-colors"
+        >Авторские туры</span
+      >
     </span>
     <span
-      class="px-3 py-1 bg-primary/20 text-dark text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
+      class="group px-4 py-2 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-sm rounded-full border border-primary/30 font-semibold hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-default"
     >
-      С 1992 в Италии
+      <span class="group-hover:text-white transition-colors"
+        >Гид-переводчик</span
+      >
     </span>
     <span
-      class="px-3 py-1 bg-primary/20 text-dark text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
+      class="group px-4 py-2 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-sm rounded-full border border-primary/30 font-semibold hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-default"
     >
-      Гид-переводчик
-    </span>
-    <span
-      class="px-3 py-1 bg-primary/20 text-dark text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
-    >
-      Историк-практик
+      <span class="group-hover:text-white transition-colors"
+        >Историк-практик</span
+      >
     </span>
   </div>
 </div>

@@ -30,13 +30,41 @@ const allTours =
 ---
 
 <!-- Italian Tours Gallery -->
-<section class="pt-0 pb-20 bg-gradient-to-b from-muted/30 to-background">
+<section
+  class="pt-0 pb-24 bg-gradient-to-b from-primary/5 via-background to-background"
+>
   <Container size="xl" padding="lg">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-primary mb-6">
-        {t("tours.title", "Авторские туры по Лигурии")}
+    <div class="text-center mb-20">
+      <div
+        class="inline-flex items-center gap-2 px-6 py-2 bg-primary/10 rounded-full border border-primary/30 mb-6"
+      >
+        <svg
+          class="w-5 h-5 text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+          ></path>
+        </svg>
+        <span class="text-sm font-semibold text-primary">Экскурсии</span>
+      </div>
+
+      <h2 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+        <span class="text-primary">{t("tours.title", "Авторские туры")}</span>
+        <span class="text-foreground"> по Лигурии</span>
       </h2>
-      <p class="text-xl text-muted-foreground">
+
+      <div
+        class="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-6"
+      >
+      </div>
+
+      <p class="text-xl text-foreground/70 max-w-3xl mx-auto">
         {
           t(
             "tours.description",
@@ -46,42 +74,113 @@ const allTours =
       </p>
     </div>
 
-    <!-- Tour Filters -->
-    <div class="mb-12">
-      <div class="flex flex-wrap justify-center gap-4 mb-8">
-        <!-- Category Filters -->
-        <div class="flex flex-wrap gap-2">
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground active bg-primary text-primary-foreground"
-            data-filter="all"
-          >
+    <!-- Enhanced Tour Filters -->
+    <div class="mb-16">
+      <div class="flex flex-wrap justify-center gap-3">
+        <button
+          class="filter-btn px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-white text-sm font-bold shadow-lg border-2 border-primary transition-all duration-300 hover:shadow-xl hover:scale-105 active"
+          data-filter="all"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+            </svg>
             {t("filters.all", "Все туры")}
-          </button>
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="coastal"
-          >
+          </span>
+        </button>
+        <button
+          class="filter-btn px-6 py-3 rounded-xl bg-background text-foreground text-sm font-bold border-2 border-primary/30 transition-all duration-300 hover:bg-primary/10 hover:border-primary/50 hover:scale-105 shadow-md"
+          data-filter="coastal"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+              ></path>
+            </svg>
             {t("filters.coastal", "Побережье")}
-          </button>
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="city"
-          >
+          </span>
+        </button>
+        <button
+          class="filter-btn px-6 py-3 rounded-xl bg-background text-foreground text-sm font-bold border-2 border-primary/30 transition-all duration-300 hover:bg-primary/10 hover:border-primary/50 hover:scale-105 shadow-md"
+          data-filter="city"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              ></path>
+            </svg>
             {t("filters.city", "Городские")}
-          </button>
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="cultural"
-          >
+          </span>
+        </button>
+        <button
+          class="filter-btn px-6 py-3 rounded-xl bg-background text-foreground text-sm font-bold border-2 border-primary/30 transition-all duration-300 hover:bg-primary/10 hover:border-primary/50 hover:scale-105 shadow-md"
+          data-filter="cultural"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              ></path>
+            </svg>
             {t("filters.cultural", "Культурные")}
-          </button>
-          <button
-            class="filter-btn px-4 py-2 rounded-full border border-primary/20 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground"
-            data-filter="history"
-          >
+          </span>
+        </button>
+        <button
+          class="filter-btn px-6 py-3 rounded-xl bg-background text-foreground text-sm font-bold border-2 border-primary/30 transition-all duration-300 hover:bg-primary/10 hover:border-primary/50 hover:scale-105 shadow-md"
+          data-filter="history"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              ></path>
+            </svg>
             {t("filters.history", "Исторические")}
-          </button>
-        </div>
+          </span>
+        </button>
       </div>
     </div>
 
@@ -125,15 +224,38 @@ const allTours =
           // Don't process if same button is clicked
           if (currentActive === this) return;
 
-          // Update active button
-          filterButtons.forEach((btn) =>
+          // Update active button - remove active state from all
+          filterButtons.forEach((btn) => {
+            btn.classList.remove("active");
+            // Reset to inactive state
             btn.classList.remove(
-              "active",
-              "bg-primary",
-              "text-primary-foreground",
-            ),
+              "from-primary",
+              "to-primary/80",
+              "text-white",
+              "shadow-lg",
+            );
+            btn.classList.add(
+              "bg-background",
+              "text-foreground",
+              "border-primary/30",
+              "shadow-md",
+            );
+          });
+
+          // Add active state to clicked button
+          this.classList.add("active");
+          this.classList.remove(
+            "bg-background",
+            "text-foreground",
+            "border-primary/30",
+            "shadow-md",
           );
-          this.classList.add("active", "bg-primary", "text-primary-foreground");
+          this.classList.add(
+            "from-primary",
+            "to-primary/80",
+            "text-white",
+            "shadow-lg",
+          );
 
           // Filter and show/hide items
           tourItems.forEach((item) => {
@@ -172,18 +294,52 @@ const allTours =
 
 <style>
   .filter-btn {
-    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .filter-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .filter-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
   }
+
+  .filter-btn:hover::before {
+    left: 100%;
+  }
+
   .filter-btn.active {
-    transform: none !important;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--primary)) 0%,
+      rgb(var(--primary-dark)) 100%
+    ) !important;
   }
 
   .tour-item {
     display: flex;
     height: 100%;
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
