@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,21 +18,34 @@ import { Loading } from "./ui/loading";
 import { Message } from "./ui/message";
 import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
 import { toast } from "sonner";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 // Import types from separate files
 import type { ContactFormValues } from "@/types";
 import { contactFormSchema } from "@/types/forms";
 import type { Locale } from "@/i18n/config";
 
+// Declare hcaptcha on window
+declare global {
+  interface Window {
+    hcaptcha: {
+      getResponse(): string;
+      reset(): void;
+    };
+  }
+}
+
 // Define props interface locally
 interface ContactFormProps {
   locale: Locale;
   emailApiAccessKey: string;
+  capthaKey: string;
 }
 
 export const ContactForm = ({
   locale,
   emailApiAccessKey,
+  capthaKey,
 }: ContactFormProps) => {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -40,19 +54,46 @@ export const ContactForm = ({
       email: "",
       subject: "",
       message: "",
+      "h-captcha-response": "",
     },
   });
   const { t, isLoading, error } = useTranslation(locale, ["common", "ui"]);
   const { sendEmail, status, message, reset } = useSendEmail();
+  const hcaptchaRef = useRef<HCaptcha>(null);
+
+  const onHCaptchaChange = (token: string) => {
+    form.setValue("h-captcha-response", token);
+  };
 
   const onSubmit = async (values: ContactFormValues) => {
+    const botField = (
+      document.querySelector('[name="botcheck"]') as HTMLInputElement
+    )?.checked;
+    if (botField) return;
+
+    if (!values["h-captcha-response"]) {
+      toast.error(
+        t?.(
+          "forms.captcha_required",
+          "Пожалуйста, подтвердите, что вы не робот"
+        )
+      );
+      return;
+    }
+
     await sendEmail(values, emailApiAccessKey);
-    toast(
+    toast.success(
       t?.("forms.message_sent", "Сообщение отправлено") ||
         "Сообщение отправлено"
     );
     reset();
     form.reset();
+
+    if (hcaptchaRef.current) {
+      hcaptchaRef.current.resetCaptcha();
+    }
+
+    form.setValue("h-captcha-response", "");
   };
 
   if (error) {
@@ -70,6 +111,13 @@ export const ContactForm = ({
         className="space-y-4"
         aria-live="polite"
       >
+        <input
+          type="checkbox"
+          name="botcheck"
+          tabIndex={-1}
+          aria-hidden="true"
+          className="hidden"
+        />
         <FormField
           control={form.control}
           name="name"
@@ -143,6 +191,13 @@ export const ContactForm = ({
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        <HCaptcha
+          ref={hcaptchaRef}
+          sitekey={capthaKey}
+          reCaptchaCompat={false}
+          onVerify={onHCaptchaChange}
         />
 
         <Button

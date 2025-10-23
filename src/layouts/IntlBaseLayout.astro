@@ -5,7 +5,7 @@ import "@/styles/animations.css";
 import SiteData from "@/config/siteData.json";
 import { THEME_KEY } from "@/config/variables";
 // If you already have config files, import them here:
-import { locales, defaultLocale, type Locale } from "@/i18n/config";
+import { defaultLocale, type Locale } from "@/i18n/config";
 import { getPageTranslations } from "@/i18n/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { SEO, type SEOProps } from "astro-seo";
@@ -145,13 +145,13 @@ const url = new URL(Astro.url, site).href;
       logoHref={`/`}
       copyrightText={t(
         "footer.copyright",
-        "© 2025 Туры по Лигурии. Все права защищены.",
+        "© 2025 Туры по Лигурии. Все права защищены."
       )}
       showNewsletter={true}
       newsletterTitle={t("footer.newsletter.title", "Stay Updated")}
       newsletterDescription={t(
         "footer.newsletter.description",
-        "Get the latest updates and insights delivered to your inbox.",
+        "Get the latest updates and insights delivered to your inbox."
       )}
     />
 

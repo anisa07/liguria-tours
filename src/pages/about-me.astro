@@ -1,7 +1,6 @@
 ---
 import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
-import Section from "@/components/layout/Section.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
 import { ContactForm } from "@/components/ContactForm";
 import { getPageTranslations } from "@/i18n/i18n";
@@ -28,6 +27,7 @@ const cmsData = aboutMeData;
 
 // Email API access key
 const emailApiAccessKey = import.meta.env.PUBLIC_EMAIL_API_KEY || "demo-key";
+const capthaKey = import.meta.env.PUBLIC_HCAPTCHA_SITEKEY || "demo-key";
 
 const cta = {
   title: cmsData.cta.title,
@@ -59,12 +59,12 @@ const { guide, story, personalTouch } = cmsData;
   <Container class="pt-24 pb-16">
     <!-- Top Row: Photo + Name/Title/Contact -->
     <div class="flex flex-col md:flex-row gap-10 md:gap-16 mb-16">
-    <!-- Profile Image -->
+      <!-- Profile Image -->
       <div class="flex-shrink-0">
         <div class="relative">
-        <img
-          src={guide.profileImage.src}
-          alt={guide.alt}
+          <img
+            src={guide.profileImage.src}
+            alt={guide.alt}
             class="w-56 h-56 rounded-full object-cover shadow-2xl border-4 border-primary/10"
           />
           <div
@@ -83,8 +83,8 @@ const { guide, story, personalTouch } = cmsData;
                 d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
+        </div>
       </div>
-    </div>
 
       <!-- Name, Title, and Contact Info -->
       <div class="flex-1 flex flex-col justify-center">
@@ -94,8 +94,8 @@ const { guide, story, personalTouch } = cmsData;
         <h2
           class="text-2xl md:text-3xl text-primary font-semibold mb-8 leading-tight"
         >
-        {guide.title}
-      </h2>
+          {guide.title}
+        </h2>
 
         <!-- Contact Information -->
         <div class="space-y-3">
@@ -209,8 +209,8 @@ const { guide, story, personalTouch } = cmsData;
         class="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent p-8 rounded-2xl border-l-4 border-primary"
       >
         <p class="text-xl text-foreground leading-relaxed">
-        {guide.introduction}
-      </p>
+          {guide.introduction}
+        </p>
       </div>
 
       <!-- Chips -->
@@ -254,33 +254,33 @@ const { guide, story, personalTouch } = cmsData;
             story.sections.map((item: any, index: number) => (
               <div
                 class={`flex flex-col ${index === 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-10 mb-16 items-center`}
-            >
-              <div class="flex-1">
+              >
+                <div class="flex-1">
                   <div class="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-xl border-l-4 border-primary">
                     <h3 class="text-2xl font-bold text-foreground mb-4 flex items-center gap-3">
                       <span class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
                         {index + 1}
                       </span>
-                  {item.title}
-                </h3>
+                      {item.title}
+                    </h3>
                     <p class="text-lg text-foreground/80 leading-relaxed">
                       {item.content}
                     </p>
                   </div>
-              </div>
-              <div class="flex-shrink-0">
+                </div>
+                <div class="flex-shrink-0">
                   <div class="relative group">
                     <div class="absolute inset-0 bg-primary/20 rounded-2xl blur-xl group-hover:bg-primary/30 transition-all duration-300" />
-                <img
-                  src={item.image.src}
-                  alt={item.alt}
+                    <img
+                      src={item.image.src}
+                      alt={item.alt}
                       class="relative w-80 h-60 object-cover rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-300"
-                />
+                    />
                   </div>
+                </div>
               </div>
-            </div>
-          ))
-        }
+            ))
+          }
 
           <div
             class="text-center bg-gradient-to-r from-primary/10 via-primary/15 to-primary/10 p-10 rounded-3xl border-2 border-primary/30 shadow-xl mt-12"
@@ -297,8 +297,8 @@ const { guide, story, personalTouch } = cmsData;
             <blockquote
               class="text-2xl font-medium text-foreground italic leading-relaxed"
             >
-            "{personalTouch.citation}"
-          </blockquote>
+              "{personalTouch.citation}"
+            </blockquote>
             <cite
               class="block mt-6 text-lg text-foreground/70 not-italic font-semibold"
               >— Светлана Жукова</cite
@@ -340,6 +340,7 @@ const { guide, story, personalTouch } = cmsData;
 
           <ContactForm
             locale={locale}
+            capthaKey={capthaKey}
             emailApiAccessKey={emailApiAccessKey}
             client:load
           />
@@ -356,8 +357,8 @@ const { guide, story, personalTouch } = cmsData;
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-4xl font-bold mb-4">
-        {personalTouch.title}
-      </h2>
+          {personalTouch.title}
+        </h2>
         <div
           class="w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"
         >
@@ -387,8 +388,8 @@ const { guide, story, personalTouch } = cmsData;
               </svg>
             </div>
             <h3 class="text-2xl font-bold">
-            {personalTouch.interests.title}
-          </h3>
+              {personalTouch.interests.title}
+            </h3>
           </div>
           <div class="space-y-3">
             {
@@ -438,8 +439,8 @@ const { guide, story, personalTouch } = cmsData;
               </svg>
             </div>
             <h3 class="text-2xl font-bold">
-            {personalTouch.philosophy.title}
-          </h3>
+              {personalTouch.philosophy.title}
+            </h3>
           </div>
           <div class="space-y-4">
             {
@@ -472,7 +473,7 @@ const { guide, story, personalTouch } = cmsData;
     const storyContent = document.getElementById("story-content");
     const contactFormSection = document.getElementById("contact-form-section");
     const personalTouchSection = document.getElementById(
-      "personal-touch-section",
+      "personal-touch-section"
     );
     const contactTriggers = document.querySelectorAll(".contact-trigger");
 

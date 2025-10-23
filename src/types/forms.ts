@@ -7,6 +7,7 @@ export const contactFormSchema = z.object({
   email: z.string().email("Please enter a valid email"),
   subject: z.string().min(1, "Subject is required").max(200),
   message: z.string().min(1, "Message is required").max(5000),
+  "h-captcha-response": z.string(),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;
