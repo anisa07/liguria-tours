@@ -20,6 +20,31 @@ function walk(dir) {
   return out;
 }
 
+// HTML entity decode (minimal) for attribute values
+function htmlDecode(str) {
+  return str
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+// Find inline event handler attributes like onclick="..."
+// Note: we ignore <script src=...> etc. We only care about attributes on elements.
+function extractEventHandlerCodes(html) {
+  const codes = [];
+  // Matches on<name>="..."; tolerant of single/double quotes
+  const re = /\s(on[a-z]+)\s*=\s*("([^"]*)"|'([^']*)')/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const raw = m[3] ?? m[4] ?? "";
+    const code = htmlDecode(raw).trim();
+    if (code) codes.push(code);
+  }
+  return codes;
+}
+
 function extractInlineScripts(html) {
   const blocks = [];
   const re = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
@@ -50,10 +75,29 @@ for (const file of files) {
   const html = fs.readFileSync(file, "utf8");
   for (const code of extractInlineScripts(html)) hashSet.add(sha256Csp(code));
 }
+// ---- collect inline event handler hashes (onclick=, onload=, etc.) ----
+const evtHashSet = new Set();
+for (const file of files) {
+  const html = fs.readFileSync(file, "utf8");
+  for (const code of extractEventHandlerCodes(html)) {
+    const h = crypto.createHash("sha256").update(code).digest("base64");
+    evtHashSet.add(`'sha256-${h}'`);
+  }
+}
+
+const EVT_HASHES = [...evtHashSet].sort();
 const HASHES = [...hashSet].sort();
 
 // ---- build directives from config arrays (+ optional JSON env overrides) ----
-const SCRIPT_SRC = joinSources(true, cfg.scriptSrc, HASHES);
+// const SCRIPT_SRC = joinSources(true, cfg.scriptSrc, HASHES);
+// before: const SCRIPT_SRC = joinSources(true, cfg.scriptSrc, JSON_SCRIPT, HASHES);
+const SCRIPT_SRC = joinSources(
+  true,
+  ["'unsafe-hashes'"], // <-- allow hashes to apply to event handlers
+  cfg.scriptSrc,
+  HASHES,
+  EVT_HASHES // <-- add attribute-code hashes
+);
 const CONNECT_SRC = joinSources(true, cfg.connectSrc);
 const IMG_SRC = joinSources(true, cfg.imgSrc, ["https:", "data:", "blob:"]);
 const FRAME_SRC = joinSources(false, cfg.frameSrc);
