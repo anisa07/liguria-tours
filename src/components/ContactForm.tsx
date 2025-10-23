@@ -59,7 +59,7 @@ export const ContactForm = ({
   });
   const { t, isLoading, error } = useTranslation(locale, ["common", "ui"]);
   const { sendEmail, status, message, reset } = useSendEmail();
-  const hcaptchaLoaded = useRef(false);
+  const hcaptchaRef = useRef<HCaptcha>(null);
 
   const onHCaptchaChange = (token: string) => {
     form.setValue("h-captcha-response", token);
@@ -69,7 +69,7 @@ export const ContactForm = ({
     const botField = (
       document.querySelector('[name="botcheck"]') as HTMLInputElement
     )?.checked;
-    if (botField) return; // stop bots
+    if (botField) return;
 
     if (!values["h-captcha-response"]) {
       toast.error(
@@ -82,19 +82,19 @@ export const ContactForm = ({
     }
 
     await sendEmail(values, emailApiAccessKey);
-    toast(
-      t?.("forms.message_sent", "Сообщение отправлено") ||
-        "Сообщение отправлено"
-    );
-    reset();
-    form.reset();
-    // Reset hCaptcha
-    try {
-      if (window.hcaptcha && hcaptchaLoaded.current) {
-        window.hcaptcha.reset();
+    if (status === "success") {
+      toast.success(
+        t?.("forms.message_sent", "Сообщение отправлено") ||
+          "Сообщение отправлено"
+      );
+      reset();
+      form.reset();
+
+      if (hcaptchaRef.current) {
+        hcaptchaRef.current.resetCaptcha();
       }
-    } catch {
-      // Ignore reset errors
+
+      form.setValue("h-captcha-response", "");
     }
   };
 
@@ -196,6 +196,7 @@ export const ContactForm = ({
         />
 
         <HCaptcha
+          ref={hcaptchaRef}
           sitekey={capthaKey}
           reCaptchaCompat={false}
           onVerify={onHCaptchaChange}
