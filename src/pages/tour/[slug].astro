@@ -126,18 +126,6 @@ export async function getStaticPaths() {
           <!-- Price and Duration -->
           <div class="flex flex-wrap gap-6">
             {
-              tour.price && (
-                <div class="flex items-center gap-2">
-                  <span class="text-sm text-muted-foreground">
-                    {t("tours.price", "Цена")}:
-                  </span>
-                  <span class="text-2xl font-bold text-primary">
-                    {tour.price}
-                  </span>
-                </div>
-              )
-            }
-            {
               tour.duration && (
                 <div class="flex items-center gap-2">
                   <span class="text-sm text-muted-foreground">

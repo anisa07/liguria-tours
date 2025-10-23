@@ -6,434 +6,143 @@ import type { Locale } from "@/i18n/config";
 // Layout components
 import Container from "@/components/layout/Container.astro";
 
-// Content components
-import Hero from "@/components/content/Hero.astro";
-import CallToAction from "@/components/content/CallToAction.astro";
-import Card from "@/components/content/Card.astro";
-import LocationCard from "@/components/content/LocationCard.astro";
-import TeamMember from "@/components/content/TeamMember.astro";
+// Generate static paths for all supported locales
+export async function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
 
-// Icons
-import { Github, Twitter, Linkedin, Mail, MapPin } from "lucide-react";
-
-// Set locale to Russian
-const locale: Locale = "ru";
+// Get locale from dynamic route params
+const locale = "en";
 
 // Get the translation function for this page
-const { t } = await getPageTranslations(locale as Locale, [
-  "common",
-  "ui",
-  "team",
-]);
-
-// Transform data for TeamMember component
-const transformTeamMemberData = (members: any[]) => {
-  return members.map((member: any) => ({
-    name: member.name,
-    title: member.title,
-    bio: member.bio,
-    avatar: member.image,
-    email: member.social.email,
-    socialLinks: [
-      ...(member.social.twitter
-        ? [{ platform: "twitter", url: member.social.twitter }]
-        : []),
-      ...(member.social.linkedin
-        ? [{ platform: "linkedin", url: member.social.linkedin }]
-        : []),
-      ...(member.social.github
-        ? [{ platform: "github", url: member.social.github }]
-        : []),
-    ],
-    featured: member.featured,
-  }));
-};
-
-// Team members data
-const teamMembersRaw = [
-  {
-    id: "sarah-johnson",
-    name: t("members.sarah.name", "Sarah Johnson"),
-    title: t("members.sarah.title", "Chief Executive Officer"),
-    bio: t(
-      "members.sarah.bio",
-      "Serial entrepreneur with 15+ years building scalable tech companies. Previously led engineering teams at Google and founded two successful startups.",
-    ),
-    image:
-      "https://images.unsplash.com/photo-1494790108755-2616b9e91ce2?w=400&h=400&fit=crop&crop=face",
-    social: {
-      twitter: "https://twitter.com/sarahjohnson",
-      linkedin: "https://linkedin.com/in/sarahjohnson",
-      github: "https://github.com/sarahjohnson",
-      email: "sarah@techflow.com",
-    },
-    featured: true,
-  },
-  {
-    id: "marcus-rodriguez",
-    name: t("members.marcus.name", "Marcus Rodriguez"),
-    title: t("members.marcus.title", "Chief Technology Officer"),
-    bio: t(
-      "members.marcus.bio",
-      "Full-stack architect passionate about building developer tools. Expert in distributed systems and cloud infrastructure with 12+ years experience.",
-    ),
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-    social: {
-      twitter: "https://twitter.com/marcusrod",
-      linkedin: "https://linkedin.com/in/marcusrodriguez",
-      github: "https://github.com/marcusrod",
-      email: "marcus@techflow.com",
-    },
-    featured: true,
-  },
-  {
-    id: "emily-watson",
-    name: t("members.emily.name", "Emily Watson"),
-    title: t("members.emily.title", "Head of Product"),
-    bio: t(
-      "members.emily.bio",
-      "Product strategist focused on user experience and growth. Led product teams at Slack and Notion, bringing deep expertise in developer tools.",
-    ),
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
-    social: {
-      twitter: "https://twitter.com/emilywatson",
-      linkedin: "https://linkedin.com/in/emilywatson",
-      email: "emily@techflow.com",
-    },
-    featured: true,
-  },
-  {
-    id: "david-kim",
-    name: t("members.david.name", "David Kim"),
-    title: t("members.david.title", "Head of Engineering"),
-    bio: t(
-      "members.david.bio",
-      "Backend systems expert with a passion for performance optimization. Previously senior engineer at Netflix, specializing in high-scale distributed systems.",
-    ),
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-    social: {
-      twitter: "https://twitter.com/davidkim",
-      linkedin: "https://linkedin.com/in/davidkim",
-      github: "https://github.com/davidkim",
-      email: "david@techflow.com",
-    },
-    featured: false,
-  },
-  {
-    id: "lisa-chen",
-    name: t("members.lisa.name", "Lisa Chen"),
-    title: t("members.lisa.title", "Head of Design"),
-    bio: t(
-      "members.lisa.bio",
-      "UX/UI designer focused on creating intuitive developer experiences. Former design lead at Figma with expertise in design systems and accessibility.",
-    ),
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=face",
-    social: {
-      twitter: "https://twitter.com/lisachen",
-      linkedin: "https://linkedin.com/in/lisachen",
-      email: "lisa@techflow.com",
-    },
-    featured: false,
-  },
-  {
-    id: "alex-thompson",
-    name: t("members.alex.name", "Alex Thompson"),
-    title: t("members.alex.title", "DevOps Engineer"),
-    bio: t(
-      "members.alex.bio",
-      "Infrastructure automation specialist ensuring 99.9% uptime. Expert in Kubernetes, Docker, and cloud-native technologies with 8+ years experience.",
-    ),
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
-    social: {
-      linkedin: "https://linkedin.com/in/alexthompson",
-      github: "https://github.com/alexthompson",
-      email: "alex@techflow.com",
-    },
-    featured: false,
-  },
-];
-
-// Transform data for TeamMember component
-const teamMembers = transformTeamMemberData(teamMembersRaw);
-const featuredMembers = teamMembers.filter((member: any) => member.featured);
-const regularMembers = teamMembers.filter((member: any) => !member.featured);
-
-// Company values/culture
-const values = [
-  {
-    title: t("values.developer_first.title", "Developer First"),
-    description: t(
-      "values.developer_first.description",
-      "We build for developers, by developers. Every decision is made with the developer experience in mind.",
-    ),
-    icon: "🚀",
-  },
-  {
-    title: t("values.remote_culture.title", "Remote Culture"),
-    description: t(
-      "values.remote_culture.description",
-      "Distributed team across 15+ countries. We believe great talent exists everywhere and embrace async collaboration.",
-    ),
-    icon: "🌍",
-  },
-  {
-    title: t("values.open_source.title", "Open Source"),
-    description: t(
-      "values.open_source.description",
-      "Contributing back to the community that made us possible. Open source is in our DNA.",
-    ),
-    icon: "💻",
-  },
-  {
-    title: t("values.continuous_learning.title", "Continuous Learning"),
-    description: t(
-      "values.continuous_learning.description",
-      "Technology evolves fast, and so do we. We invest in our team's growth and encourage experimentation.",
-    ),
-    icon: "📚",
-  },
-];
-
-// Office locations
-const locations = [
-  {
-    city: "San Francisco",
-    country: "USA",
-    address: "123 Tech Street, SOMA District",
-    timezone: "PST",
-    employees: 25,
-    type: "Headquarters",
-  },
-  {
-    city: "Berlin",
-    country: "Germany",
-    address: "456 Innovation Ave, Mitte",
-    timezone: "CET",
-    employees: 18,
-    type: "European Hub",
-  },
-  {
-    city: "Singapore",
-    country: "Singapore",
-    address: "789 Digital Way, Marina Bay",
-    timezone: "SGT",
-    employees: 12,
-    type: "APAC Hub",
-  },
-];
-
-const heroActions = [
-  {
-    label: t("actions.join", "Join Our Team"),
-    href: `/${locale}/careers`,
-    variant: "primary" as const,
-    size: "lg" as const,
-  },
-  {
-    label: t("actions.contact", "Contact Us"),
-    href: `/about-me`,
-    variant: "outline" as const,
-    size: "lg" as const,
-  },
-];
-
-const ctaActions = [
-  {
-    label: t("actions.careers", "View Open Positions"),
-    href: `/${locale}/careers`,
-    variant: "primary" as const,
-    size: "lg" as const,
-  },
-];
+const { t } = await getPageTranslations(locale as Locale, ["common"]);
 ---
 
 <IntlBaseLayout
   locale={locale}
-  pageNS={["common", "ui", "team"]}
+  pageNS={["common"]}
   seo={{
-    title: t(
-      "seo.title",
-      "Meet Our Team - TechFlow | The People Building the Future",
-    ),
-    description: t(
-      "seo.description",
-      "Meet the passionate team behind TechFlow. Distributed across the globe, united by our mission to empower developers worldwide.",
-    ),
+    title:
+      "AI Friends Agency - Professional Website Development | Jasmine Tours",
+    description:
+      "This website was developed by AI Friends Agency - specialists in creating high-performance websites with perfect SEO for small businesses and entrepreneurs.",
   }}
 >
-  <!-- Hero Section -->
-  <section class="relative pt-20 pb-16">
-    <Container size="xl" padding="lg">
-      <Hero
-        title={t("hero.title", "Meet the Team Behind TechFlow")}
-        subtitle={t("hero.subtitle", "Passionate People, Global Impact")}
-        description={t(
-          "hero.description",
-          "We're a distributed team of developers, designers, and dreamers united by our mission to empower the next generation of software creators. Based across 15+ countries, we work together to build tools that make development faster, easier, and more enjoyable.",
-        )}
-        actions={heroActions}
-        variant="centered"
-        textAlign="center"
-        maxWidth="2xl"
-        class="animate-fade-in"
-      />
-    </Container>
-  </section>
-
-  <!-- Leadership Team -->
   <section class="py-20">
-    <Container size="xl" padding="lg">
-      <div class="text-center mb-16">
-        <h2
-          class="text-4xl md:text-5xl font-bold text-foreground mb-6 animate-fade-up"
-        >
-          {t("leadership.title", "Leadership Team")}
+    <Container size="md">
+      <div class="prose prose-lg max-w-none">
+        <h2 class="text-4xl font-bold text-foreground mb-6">
+          Developed by AI Friends Agency
         </h2>
-        <p
-          class="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-up animate-delay-1"
-        >
-          {
-            t(
-              "leadership.description",
-              "Meet the experienced leaders driving TechFlow's vision and growth.",
-            )
-          }
+
+        <p class="text-xl text-muted-foreground mb-8">
+          This professional website was designed and developed by{" "}
+          <a
+            href="https://www.ai-friends.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-bold text-foreground hover:text-primary transition-colors"
+          >
+            AI Friends Agency
+          </a>{" "}
+          - specialists in creating high-performance websites for small businesses,
+          freelancers, and entrepreneurs.
         </p>
-      </div>
 
-      <!-- Featured Leadership -->
-      <div class="mb-16">
-        <TeamMember
-          members={featuredMembers}
-          variant="grid"
-          columns={3}
-          showBio={true}
-          showSocial={true}
-          showEmail={true}
-          locale={locale}
-        />
-      </div>
-    </Container>
-  </section>
+        <h3 class="text-2xl font-semibold text-foreground mb-6 mt-12">
+          Why AI Friends Agency?
+        </h3>
 
-  <!-- Extended Team -->
-  <section class="py-20 bg-muted/30">
-    <Container size="xl" padding="lg">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-foreground mb-6 animate-fade-up">
-          {t("extended.title", "Our Amazing Team")}
-        </h2>
-        <p
-          class="text-xl text-muted-foreground animate-fade-up animate-delay-1"
-        >
-          {
-            t(
-              "extended.description",
-              "The talented individuals who make TechFlow possible.",
-            )
-          }
-        </p>
-      </div>
-
-      <TeamMember
-        members={regularMembers}
-        variant="grid"
-        columns={3}
-        showBio={true}
-        showSocial={true}
-        showEmail={false}
-        locale={locale}
-      />
-    </Container>
-  </section>
-
-  <!-- Company Values -->
-  <section class="py-20">
-    <Container size="xl" padding="lg">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-foreground mb-6 animate-fade-up">
-          {t("values.title", "Our Values")}
-        </h2>
-        <p
-          class="text-xl text-muted-foreground animate-fade-up animate-delay-1"
-        >
-          {
-            t(
-              "values.description",
-              "The principles that guide everything we do at TechFlow.",
-            )
-          }
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-8">
-        {
-          values.map((value, index) => (
-            <div
-              class={`flex items-start space-x-6 animate-fade-up animate-delay-${index + 2}`}
-            >
-              <div class="text-4xl">{value.icon}</div>
-              <div>
-                <h3 class="text-xl font-bold text-foreground mb-3">
-                  {value.title}
-                </h3>
-                <p class="text-muted-foreground">{value.description}</p>
-              </div>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-start gap-3">
+            <span class="text-primary text-xl font-bold">✓</span>
+            <div>
+              <strong class="text-foreground">Perfect SEO Rankings</strong>
+              <span class="text-muted-foreground">
+                {" "}
+                - Optimized for maximum visibility
+              </span>
             </div>
-          ))
-        }
-      </div>
-    </Container>
-  </section>
+          </div>
 
-  <!-- Office Locations -->
-  <section class="py-20 bg-muted/30">
-    <Container size="xl" padding="lg">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-foreground mb-6 animate-fade-up">
-          {t("locations.title", "Global Presence")}
-        </h2>
-        <p
-          class="text-xl text-muted-foreground animate-fade-up animate-delay-1"
-        >
-          {
-            t(
-              "locations.description",
-              "Our offices around the world, supporting our distributed team.",
-            )
-          }
-        </p>
-      </div>
+          <div class="flex items-start gap-3">
+            <span class="text-primary text-xl font-bold">✓</span>
+            <div>
+              <strong class="text-foreground">Top Performance Scores</strong>
+              <span class="text-muted-foreground">
+                {" "}
+                - Lightning-fast loading times
+              </span>
+            </div>
+          </div>
 
-      <div class="grid md:grid-cols-3 gap-8">
-        {
-          locations.map((location, index) => (
-            <LocationCard location={location} animationDelay={index + 2} />
-          ))
-        }
-      </div>
-    </Container>
-  </section>
+          <div class="flex items-start gap-3">
+            <span class="text-primary text-xl font-bold">✓</span>
+            <div>
+              <strong class="text-foreground">Professional Design</strong>
+              <span class="text-muted-foreground">
+                {" "}
+                - Custom, responsive UX design
+              </span>
+            </div>
+          </div>
 
-  <!-- CTA Section -->
-  <section class="py-20 bg-primary text-primary-foreground">
-    <Container size="lg" padding="lg">
-      <CallToAction
-        title={t("cta.title", "Join Our Growing Team")}
-        subtitle={t("cta.subtitle", "Shape the future of development")}
-        description={t(
-          "cta.description",
-          "We're always looking for passionate individuals who want to make a difference. Join us in building the tools that will power the next generation of software.",
-        )}
-        actions={ctaActions}
-        backgroundColor="primary"
-        class="animate-fade-up"
-      />
+          <div class="flex items-start gap-3">
+            <span class="text-primary text-xl font-bold">✓</span>
+            <div>
+              <strong class="text-foreground">Technical Excellence</strong>
+              <span class="text-muted-foreground">
+                {" "}
+                - We handle domains, hosting, and all technical details
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-semibold text-foreground mb-6 mt-12">
+          Our Services
+        </h3>
+
+        <ul class="space-y-4 mb-8 list-none">
+          <li class="pl-6 border-l-4 border-primary py-2">
+            <strong class="text-foreground">Business Website</strong>
+            <span class="text-muted-foreground">
+              {" "}
+              - Professional frontend-only sites
+            </span>
+          </li>
+
+          <li class="pl-6 border-l-4 border-primary py-2">
+            <strong class="text-foreground">Business Pro</strong>
+            <span class="text-muted-foreground">
+              {" "}
+              - Full-stack solutions with backend
+            </span>
+          </li>
+
+          <li class="pl-6 border-l-4 border-primary py-2">
+            <strong class="text-foreground">E-Commerce Pro</strong>
+            <span class="text-muted-foreground">
+              {" "}
+              - Complete online stores with CRM
+            </span>
+          </li>
+        </ul>
+
+        <div class="mt-12 text-center">
+          <p class="text-lg text-foreground">
+            <strong>Visit us:</strong>{" "}
+            <a
+              href="https://www.ai-friends.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
+            >
+              www.ai-friends.org
+            </a>
+          </p>
+        </div>
+      </div>
     </Container>
   </section>
 </IntlBaseLayout>
