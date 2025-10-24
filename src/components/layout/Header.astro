@@ -54,17 +54,17 @@ const getActionButtonClasses = (actionVariant: string = "primary") => {
     case "secondary":
       return cn(
         baseClasses,
-        "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary",
+        "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary"
       );
     case "outline":
       return cn(
         baseClasses,
-        "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary",
+        "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground focus:ring-primary"
       );
     default:
       return cn(
         baseClasses,
-        "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-foreground/75 focus:ring-primary",
+        "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-foreground/75 focus:ring-primary"
       );
   }
 };
@@ -96,7 +96,7 @@ const headerClasses = [
         >
           <img
             src="/images/flag_map_of_liguria.svg"
-            alt={logoText || "Liguria Tours"}
+            alt="Карта Лигурии"
             class="h-12 w-auto mt-2.5 opacity-60"
           />
           <span
@@ -127,7 +127,7 @@ const headerClasses = [
             href="/about-me"
             class={cn(
               getActionButtonClasses("primary"),
-              "hidden md:block mr-4",
+              "hidden md:block mr-4 text-light"
             )}
             target={undefined}
             rel={undefined}

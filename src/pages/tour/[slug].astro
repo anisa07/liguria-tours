@@ -5,6 +5,7 @@ import Section from "@/components/layout/Section.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
+import { ChevronLeft, Check } from "lucide-react";
 
 export interface Props {
   locale: Locale;
@@ -67,20 +68,9 @@ export async function getStaticPaths() {
       <div class="mb-8">
         <button
           id="back-button"
-          class="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          class="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors"
         >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"></path>
-          </svg>
+          <ChevronLeft className="w-5 h-5" />
           {t("common.back", "Назад")}
         </button>
       </div>
@@ -128,7 +118,7 @@ export async function getStaticPaths() {
             {
               tour.duration && (
                 <div class="flex items-center gap-2">
-                  <span class="text-sm text-muted-foreground">
+                  <span class="text-sm text-foreground/70">
                     {t("tours.duration", "Продолжительность")}:
                   </span>
                   <span class="font-semibold">{tour.duration}</span>
@@ -152,9 +142,35 @@ export async function getStaticPaths() {
       <!-- Description Section - Full Width -->
       <div class="mt-16">
         <div class="max-w-4xl mx-auto">
-          <p class="text-muted-foreground leading-relaxed text-lg text-justify">
-            {tour.fullDescription}
-          </p>
+          <div id="description-container">
+            <p class="text-foreground/80 leading-relaxed text-lg text-justify">
+              <span id="description-short">
+                {
+                  tour.fullDescription.length > 500
+                    ? tour.fullDescription.substring(0, 500) + "..."
+                    : tour.fullDescription
+                }
+              </span>
+              <span id="description-full" class="hidden">
+                {tour.fullDescription}
+              </span>
+            </p>
+            {
+              tour.fullDescription.length > 500 && (
+                <button
+                  id="toggle-description"
+                  class="mt-4 text-primary hover:text-primary/80 font-semibold transition-colors"
+                >
+                  <span id="show-more-text">
+                    {t("common.show_more", "Показать больше")}
+                  </span>
+                  <span id="show-less-text" class="hidden">
+                    {t("common.show_less", "Показать меньше")}
+                  </span>
+                </button>
+              )
+            }
+          </div>
         </div>
       </div>
 
@@ -168,18 +184,8 @@ export async function getStaticPaths() {
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tour.points.map((point) => (
                 <div class="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
-                  <svg
-                    class="w-5 h-5 text-primary mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <span class="text-muted-foreground">{point}</span>
+                  <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <span class="text-foreground/80">{point}</span>
                 </div>
               ))}
             </div>
@@ -192,10 +198,44 @@ export async function getStaticPaths() {
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // Back button functionality
     const backButton = document.getElementById("back-button");
     if (backButton) {
       backButton.addEventListener("click", function () {
         history.back();
+      });
+    }
+
+    // Description toggle functionality
+    const toggleButton = document.getElementById("toggle-description");
+    const shortDescription = document.getElementById("description-short");
+    const fullDescription = document.getElementById("description-full");
+    const showMoreText = document.getElementById("show-more-text");
+    const showLessText = document.getElementById("show-less-text");
+
+    if (
+      toggleButton &&
+      shortDescription &&
+      fullDescription &&
+      showMoreText &&
+      showLessText
+    ) {
+      toggleButton.addEventListener("click", function () {
+        const isShowing = !shortDescription.classList.contains("hidden");
+
+        if (isShowing) {
+          // Show full description
+          shortDescription.classList.add("hidden");
+          fullDescription.classList.remove("hidden");
+          showMoreText.classList.add("hidden");
+          showLessText.classList.remove("hidden");
+        } else {
+          // Show short description
+          shortDescription.classList.remove("hidden");
+          fullDescription.classList.add("hidden");
+          showMoreText.classList.remove("hidden");
+          showLessText.classList.add("hidden");
+        }
       });
     }
   });

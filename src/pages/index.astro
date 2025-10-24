@@ -27,11 +27,11 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
   seo={{
     title: t(
       "seo.title",
-      "TechFlow - Modern Development Platform | Build the Future",
+      "Туры по Лигурии и Генуе со Светланой Жуковой | Авторские экскурсии"
     ),
     description: t(
       "seo.description",
-      "Streamline your development workflow with our powerful, secure, and scalable platform. Join 10M+ developers building the future with TechFlow.",
+      "Откройте для себя красоты Лигурии и Генуи с опытным гидом Светланой Жуковой. Авторские экскурсии, Чинкве-Терре, Портофино. 25 лет опыта в туризме."
     ),
   }}
 >
@@ -43,6 +43,7 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
         mainTitle={heroData.mainTitle}
         subtitle={heroData.subtitle}
         description={heroData.description}
+        chips={heroData.chips}
         actions={[
           {
             label: t("actions.book_now", "Забронировать"),

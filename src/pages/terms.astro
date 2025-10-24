@@ -5,29 +5,47 @@ import Section from "@/components/layout/Section.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 
-// Get locale from URL
-const pathSegments = Astro.url.pathname.split("/").filter(Boolean);
-const locale = (pathSegments[0] as Locale) || "ru";
+// Set locale to Russian (only supported locale)
+const locale: Locale = "ru";
 
 // Get the translation function for this page
-const { t } = await getPageTranslations(locale, ["common", "ui"]);
+const { t } = await getPageTranslations(locale, ["common", "ui", "terms"]);
+
+// SEO data for this page
+const seoData = {
+  title: t("terms.title", "Условия использования"),
+  description: t(
+    "terms.description",
+    "Условия использования туристических услуг"
+  ),
+  canonical: `${Astro.site}terms`,
+  openGraph: {
+    title: t("terms.title", "Условия использования"),
+    description: t(
+      "terms.description",
+      "Условия использования туристических услуг"
+    ),
+    type: "article",
+  },
+};
 ---
 
 <IntlBaseLayout
-  title="Условия использования - Liguria Tours"
-  description="Условия использования туристических услуг"
   locale={locale}
+  pageNS={["common", "ui", "terms"]}
+  seoData={seoData}
 >
   <Section class="py-12">
     <Container>
       <div class="max-w-4xl mx-auto">
         <!-- Page Header -->
-        <div class="mb-12">
+        <header class="mb-12">
           <h1 class="text-4xl md:text-5xl font-bold mb-4">
-            Условия использования
+            {t("terms.title", "Условия использования")}
           </h1>
           <p class="text-lg text-muted-foreground">
-            Последнее обновление: {
+            {t("terms.last_updated", "Последнее обновление:")}
+            {
               new Date().toLocaleDateString("ru-RU", {
                 year: "numeric",
                 month: "long",
@@ -35,231 +53,507 @@ const { t } = await getPageTranslations(locale, ["common", "ui"]);
               })
             }
           </p>
-        </div>
+        </header>
 
         <!-- Content -->
-        <div class="prose prose-lg dark:prose-invert max-w-none space-y-8">
+        <article class="space-y-8">
           <section>
-            <h2 class="text-2xl font-bold mb-4">1. Общие положения</h2>
-            <p class="text-muted-foreground leading-relaxed">
-              Настоящие Условия использования регулируют отношения между
-              Светланой Зеленовой (индивидуальный гид по Лигурии) и клиентами,
-              использующими услуги, представленные на сайте liguria-tours.com.
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_1.title", "1. Общие положения")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed text-justify">
+              {
+                t(
+                  "terms.section_1.paragraph_1",
+                  "Настоящие Условия использования регулируют отношения между Светланой Зеленовой (индивидуальный гид по Лигурии) и клиентами, использующими услуги, представленные на сайте liguria-tours.com."
+                )
+              }
             </p>
-            <p class="text-muted-foreground leading-relaxed">
-              Используя наши услуги, вы принимаете настоящие условия в полном
-              объеме. Если вы не согласны с какими-либо положениями, пожалуйста,
-              не используйте наши услуги.
-            </p>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">2. Описание услуг</h2>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              Мы предоставляем следующие услуги:
-            </p>
-            <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Индивидуальные и групповые экскурсии по Генуе и Лигурии</li>
-              <li>Морские прогулки и туры</li>
-              <li>
-                Тематические экскурсии (исторические, культурные,
-                гастрономические)
-              </li>
-              <li>Индивидуальные туристические маршруты</li>
-              <li>Консультации по организации поездок в Лигурию</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">3. Бронирование и оплата</h2>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              <strong>3.1. Бронирование:</strong> Для бронирования экскурсии необходимо
-              связаться с нами через контактную форму, email или телефон. Бронирование
-              считается подтвержденным после получения от нас письменного подтверждения.
-            </p>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              <strong>3.2. Оплата:</strong> Условия оплаты обсуждаются индивидуально
-              для каждого тура. Обычно требуется предоплата для подтверждения бронирования,
-              а оставшаяся сумма оплачивается до начала экскурсии.
-            </p>
-            <p class="text-muted-foreground leading-relaxed">
-              <strong>3.3. Валюта:</strong> Оплата принимается в евро (EUR).
+            <p class="text-muted-foreground leading-relaxed text-justify">
+              {
+                t(
+                  "terms.section_1.paragraph_2",
+                  "Используя наши услуги, вы принимаете настоящие условия в полном объеме. Если вы не согласны с какими-либо положениями, пожалуйста, не используйте наши услуги."
+                )
+              }
             </p>
           </section>
 
           <section>
             <h2 class="text-2xl font-bold mb-4">
-              4. Отмена и изменение бронирования
+              {t("terms.section_2.title", "2. Описание услуг")}
             </h2>
             <p class="text-muted-foreground leading-relaxed mb-3">
-              <strong>4.1. Отмена клиентом:</strong>
-            </p>
-            <ul class="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
-              <li>
-                При отмене более чем за 7 дней до даты экскурсии - возврат 100%
-                предоплаты
-              </li>
-              <li>
-                При отмене за 3-7 дней до даты экскурсии - возврат 50%
-                предоплаты
-              </li>
-              <li>
-                При отмене менее чем за 3 дня до даты экскурсии - предоплата не
-                возвращается
-              </li>
-            </ul>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              <strong>4.2. Отмена гидом:</strong> Мы оставляем за собой право отменить
-              экскурсию по объективным причинам (погодные условия, форс-мажор, болезнь).
-              В этом случае предоплата возвращается в полном объеме или предлагается
-              перенос на другую дату.
-            </p>
-            <p class="text-muted-foreground leading-relaxed">
-              <strong>4.3. Изменение даты:</strong> Изменение даты экскурсии возможно
-              по согласованию сторон не позднее чем за 3 дня до назначенной даты.
-            </p>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">5. Ответственность клиента</h2>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              Клиент обязуется:
+              {
+                t(
+                  "terms.section_2.paragraph_1",
+                  "Мы предоставляем следующие услуги:"
+                )
+              }
             </p>
             <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>
-                Прибыть на экскурсию вовремя в согласованное место встречи
+                {
+                  t(
+                    "terms.section_2.services.0",
+                    "Индивидуальные и групповые экскурсии по Генуе и Лигурии"
+                  )
+                }
               </li>
-              <li>Предоставить точную контактную информацию</li>
-              <li>Соблюдать правила поведения во время экскурсии</li>
-              <li>Следовать рекомендациям гида по безопасности</li>
               <li>
-                Уважительно относиться к культурному наследию и местным жителям
+                {t("terms.section_2.services.1", "Морские прогулки и туры")}
               </li>
-              <li>Иметь действующую медицинскую страховку (рекомендуется)</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">6. Ответственность гида</h2>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              Гид обязуется:
-            </p>
-            <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Предоставить качественные экскурсионные услуги</li>
               <li>
-                Соблюдать согласованную программу и время проведения экскурсии
+                {
+                  t(
+                    "terms.section_2.services.2",
+                    "Тематические экскурсии (исторические, культурные, гастрономические)"
+                  )
+                }
               </li>
-              <li>Заботиться о безопасности клиентов во время экскурсии</li>
-              <li>Своевременно информировать об изменениях в программе</li>
+              <li>
+                {
+                  t(
+                    "terms.section_2.services.3",
+                    "Индивидуальные туристические маршруты"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_2.services.4",
+                    "Консультации по организации поездок в Лигурию"
+                  )
+                }
+              </li>
             </ul>
           </section>
 
           <section>
             <h2 class="text-2xl font-bold mb-4">
-              7. Ограничение ответственности
+              {t("terms.section_3.title", "3. Бронирование и оплата")}
             </h2>
-            <p class="text-muted-foreground leading-relaxed">
-              Гид не несет ответственности за:
+            <p class="text-muted-foreground leading-relaxed mb-3">
+              <strong
+                >{
+                  t("terms.section_3.booking_title", "3.1. Бронирование:")
+                }</strong
+              >
+              {
+                t(
+                  "terms.section_3.booking_text",
+                  "Для бронирования экскурсии необходимо связаться с нами через контактную форму, email или телефон. Бронирование считается подтвержденным после получения от нас письменного подтверждения."
+                )
+              }
             </p>
-            <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Личные вещи клиентов</li>
-              <li>
-                Медицинские проблемы, возникшие во время экскурсии (кроме
-                случаев прямой вины гида)
-              </li>
-              <li>
-                Задержки или изменения в работе музеев, транспорта и других
-                объектов
-              </li>
-              <li>
-                Форс-мажорные обстоятельства (стихийные бедствия, забастовки и
-                т.д.)
-              </li>
-              <li>Действия третьих лиц</li>
-            </ul>
+            <p class="text-muted-foreground leading-relaxed mb-3">
+              <strong
+                >{t("terms.section_3.payment_title", "3.2. Оплата:")}</strong
+              >
+              {
+                t(
+                  "terms.section_3.payment_text",
+                  "Условия оплаты обсуждаются индивидуально для каждого тура. Обычно требуется предоплата для подтверждения бронирования, а оставшаяся сумма оплачивается до начала экскурсии."
+                )
+              }
+            </p>
+            <p class="text-muted-foreground leading-relaxed">
+              <strong
+                >{t("terms.section_3.currency_title", "3.3. Валюта:")}</strong
+              >
+              {
+                t(
+                  "terms.section_3.currency_text",
+                  "Оплата принимается в евро (EUR)."
+                )
+              }
+            </p>
           </section>
 
           <section>
-            <h2 class="text-2xl font-bold mb-4">8. Что включено в стоимость</h2>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_4.title", "4. Отмена и изменение бронирования")}
+            </h2>
             <p class="text-muted-foreground leading-relaxed mb-3">
-              В стоимость экскурсии обычно включено:
+              <strong
+                >{
+                  t(
+                    "terms.section_4.client_cancellation_title",
+                    "4.1. Отмена клиентом:"
+                  )
+                }</strong
+              >
             </p>
             <ul class="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
-              <li>Услуги профессионального гида</li>
-              <li>Разработанный маршрут экскурсии</li>
-              <li>Информационное сопровождение</li>
+              <li>
+                {
+                  t(
+                    "terms.section_4.client_cancellation_rules.0",
+                    "При отмене более чем за 7 дней до даты экскурсии - возврат 100% предоплаты"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_4.client_cancellation_rules.1",
+                    "При отмене за 3-7 дней до даты экскурсии - возврат 50% предоплаты"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_4.client_cancellation_rules.2",
+                    "При отмене менее чем за 3 дня до даты экскурсии - предоплата не возвращается"
+                  )
+                }
+              </li>
             </ul>
-            <p class="text-muted-foreground leading-relaxed mb-3">
-              <strong>Дополнительно оплачивается:</strong>
+            <p class="text-muted-foreground leading-relaxed mb-3 text-justify">
+              <strong
+                >{
+                  t(
+                    "terms.section_4.guide_cancellation_title",
+                    "4.2. Отмена гидом:"
+                  )
+                }</strong
+              >
+              {
+                t(
+                  "terms.section_4.guide_cancellation_text",
+                  "Мы оставляем за собой право отменить экскурсию по объективным причинам (погодные условия, форс-мажор, болезнь). В этом случае предоплата возвращается в полном объеме или предлагается перенос на другую дату."
+                )
+              }
+            </p>
+            <p class="text-muted-foreground leading-relaxed text-justify">
+              <strong
+                >{
+                  t("terms.section_4.date_change_title", "4.3. Изменение даты:")
+                }</strong
+              >
+              {
+                t(
+                  "terms.section_4.date_change_text",
+                  "Изменение даты экскурсии возможно по согласованию сторон не позднее чем за 3 дня до назначенной даты."
+                )
+              }
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_5.title", "5. Ответственность клиента")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed mb-3 text-justify">
+              {t("terms.section_5.description", "Клиент обязуется:")}
             </p>
             <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Входные билеты в музеи и достопримечательности</li>
-              <li>Транспорт (если не указано иное)</li>
-              <li>Питание</li>
-              <li>Личные расходы</li>
+              <li>
+                {
+                  t(
+                    "terms.section_5.responsibilities.0",
+                    "Прибыть на экскурсию вовремя в согласованное место встречи"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_5.responsibilities.1",
+                    "Предоставить точную контактную информацию"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_5.responsibilities.2",
+                    "Соблюдать правила поведения во время экскурсии"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_5.responsibilities.3",
+                    "Следовать рекомендациям гида по безопасности"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_5.responsibilities.4",
+                    "Уважительно относиться к культурному наследию и местным жителям"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_5.responsibilities.5",
+                    "Иметь действующую медицинскую страховку (рекомендуется)"
+                  )
+                }
+              </li>
             </ul>
           </section>
 
           <section>
-            <h2 class="text-2xl font-bold mb-4">9. Погодные условия</h2>
-            <p class="text-muted-foreground leading-relaxed">
-              Для морских прогулок и некоторых пеших экскурсий погодные условия
-              могут влиять на проведение тура. В случае неблагоприятных погодных
-              условий экскурсия может быть перенесена или отменена с полным
-              возвратом средств.
-            </p>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">10. Фото и видео материалы</h2>
-            <p class="text-muted-foreground leading-relaxed">
-              Во время экскурсий могут проводиться фото и видео съемки для
-              использования в рекламных целях. Если вы не хотите появляться в
-              таких материалах, пожалуйста, сообщите об этом заранее.
-            </p>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">11. Разрешение споров</h2>
-            <p class="text-muted-foreground leading-relaxed">
-              Все споры и разногласия решаются путем переговоров. В случае
-              невозможности достижения соглашения спор подлежит рассмотрению в
-              соответствии с законодательством Италии.
-            </p>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">12. Изменения в условиях</h2>
-            <p class="text-muted-foreground leading-relaxed">
-              Мы оставляем за собой право изменять настоящие условия
-              использования. Все изменения вступают в силу с момента их
-              публикации на сайте. Продолжая использовать наши услуги после
-              внесения изменений, вы соглашаетесь с новыми условиями.
-            </p>
-          </section>
-
-          <section>
-            <h2 class="text-2xl font-bold mb-4">13. Контактная информация</h2>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_6.title", "6. Ответственность гида")}
+            </h2>
             <p class="text-muted-foreground leading-relaxed mb-3">
-              Если у вас есть вопросы относительно условий использования,
-              пожалуйста, свяжитесь с нами:
+              {t("terms.section_6.description", "Гид обязуется:")}
+            </p>
+            <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>
+                {
+                  t(
+                    "terms.section_6.responsibilities.0",
+                    "Предоставить качественные экскурсионные услуги"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_6.responsibilities.1",
+                    "Соблюдать согласованную программу и время проведения экскурсии"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_6.responsibilities.2",
+                    "Заботиться о безопасности клиентов во время экскурсии"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_6.responsibilities.3",
+                    "Своевременно информировать об изменениях в программе"
+                  )
+                }
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_7.title", "7. Ограничение ответственности")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed">
+              {
+                t(
+                  "terms.section_7.description",
+                  "Гид не несет ответственности за:"
+                )
+              }
+            </p>
+            <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>
+                {t("terms.section_7.limitations.0", "Личные вещи клиентов")}
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_7.limitations.1",
+                    "Медицинские проблемы, возникшие во время экскурсии (кроме случаев прямой вины гида)"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_7.limitations.2",
+                    "Задержки или изменения в работе музеев, транспорта и других объектов"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_7.limitations.3",
+                    "Форс-мажорные обстоятельства (стихийные бедствия, забастовки и т.д.)"
+                  )
+                }
+              </li>
+              <li>
+                {t("terms.section_7.limitations.4", "Действия третьих лиц")}
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_8.title", "8. Что включено в стоимость")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed mb-3">
+              {
+                t(
+                  "terms.section_8.included_description",
+                  "В стоимость экскурсии обычно включено:"
+                )
+              }
+            </p>
+            <ul class="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
+              <li>
+                {
+                  t(
+                    "terms.section_8.included_items.0",
+                    "Услуги профессионального гида"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_8.included_items.1",
+                    "Разработанный маршрут экскурсии"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_8.included_items.2",
+                    "Информационное сопровождение"
+                  )
+                }
+              </li>
+            </ul>
+            <p class="text-muted-foreground leading-relaxed mb-3">
+              <strong
+                >{
+                  t(
+                    "terms.section_8.additional_description",
+                    "Дополнительно оплачивается:"
+                  )
+                }</strong
+              >
+            </p>
+            <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>
+                {
+                  t(
+                    "terms.section_8.additional_items.0",
+                    "Входные билеты в музеи и достопримечательности"
+                  )
+                }
+              </li>
+              <li>
+                {
+                  t(
+                    "terms.section_8.additional_items.1",
+                    "Транспорт (если не указано иное)"
+                  )
+                }
+              </li>
+              <li>{t("terms.section_8.additional_items.2", "Питание")}</li>
+              <li>
+                {t("terms.section_8.additional_items.3", "Личные расходы")}
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_9.title", "9. Погодные условия")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed">
+              {
+                t(
+                  "terms.section_9.text",
+                  "Для морских прогулок и некоторых пеших экскурсий погодные условия могут влиять на проведение тура. В случае неблагоприятных погодных условий экскурсия может быть перенесена или отменена с полным возвратом средств."
+                )
+              }
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_10.title", "10. Фото и видео материалы")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed">
+              {
+                t(
+                  "terms.section_10.text",
+                  "Во время экскурсий могут проводиться фото и видео съемки для использования в рекламных целях. Если вы не хотите появляться в таких материалах, пожалуйста, сообщите об этом заранее."
+                )
+              }
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_11.title", "11. Разрешение споров")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed">
+              {
+                t(
+                  "terms.section_11.text",
+                  "Все споры и разногласия решаются путем переговоров. В случае невозможности достижения соглашения спор подлежит рассмотрению в соответствии с законодательством Италии."
+                )
+              }
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_12.title", "12. Изменения в условиях")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed">
+              {
+                t(
+                  "terms.section_12.text",
+                  "Мы оставляем за собой право изменять настоящие условия использования. Все изменения вступают в силу с момента их публикации на сайте. Продолжая использовать наши услуги после внесения изменений, вы соглашаетесь с новыми условиями."
+                )
+              }
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-2xl font-bold mb-4">
+              {t("terms.section_13.title", "13. Контактная информация")}
+            </h2>
+            <p class="text-muted-foreground leading-relaxed mb-3">
+              {
+                t(
+                  "terms.section_13.description",
+                  "Если у вас есть вопросы относительно условий использования, пожалуйста, свяжитесь с нами:"
+                )
+              }
             </p>
             <div class="bg-muted/50 p-6 rounded-lg space-y-2">
               <p class="text-muted-foreground">
-                <strong>Гид:</strong> Светлана Зеленова
+                <strong>{t("terms.section_13.guide_label", "Гид:")}</strong>
+                {t("terms.section_13.guide_name", "Светлана Зеленова")}
               </p>
               <p class="text-muted-foreground">
-                <strong>Email:</strong> genova.art.tour@gmail.com
+                <strong>{t("terms.section_13.email_label", "Email:")}</strong>
+                {t("terms.section_13.email", "genova.art.tour@gmail.com")}
               </p>
               <p class="text-muted-foreground">
-                <strong>Телефон:</strong> +39 3335787461
+                <strong>{t("terms.section_13.phone_label", "Телефон:")}</strong>
+                {t("terms.section_13.phone", "+39 3335787461")}
               </p>
               <p class="text-muted-foreground">
-                <strong>Местонахождение:</strong> Генуя, Лигурия, Италия
+                <strong
+                  >{
+                    t("terms.section_13.location_label", "Местонахождение:")
+                  }</strong
+                >
+                {t("terms.section_13.location", "Генуя, Лигурия, Италия")}
               </p>
             </div>
           </section>
-        </div>
+        </article>
       </div>
     </Container>
   </Section>

@@ -1,7 +1,6 @@
 ---
 import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
-import { getPageTranslations, getLocaleStaticPaths } from "@/i18n/i18n";
-import type { Locale } from "@/i18n/config";
+import { getLocaleStaticPaths } from "@/i18n/i18n";
 
 // Layout components
 import Container from "@/components/layout/Container.astro";
@@ -13,9 +12,6 @@ export async function getStaticPaths() {
 
 // Get locale from dynamic route params
 const locale = "en";
-
-// Get the translation function for this page
-const { t } = await getPageTranslations(locale as Locale, ["common"]);
 ---
 
 <IntlBaseLayout
@@ -23,7 +19,7 @@ const { t } = await getPageTranslations(locale as Locale, ["common"]);
   pageNS={["common"]}
   seo={{
     title:
-      "AI Friends Agency - Professional Website Development | Jasmine Tours",
+      "AI Friends Agency - Professional Website Development | Liguria Tours",
     description:
       "This website was developed by AI Friends Agency - specialists in creating high-performance websites with perfect SEO for small businesses and entrepreneurs.",
   }}

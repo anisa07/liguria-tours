@@ -7,6 +7,15 @@ import SkillChips from "@/components/ui/SkillChips.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
+import {
+  Check,
+  Phone,
+  Mail,
+  Heart,
+  Lightbulb,
+  CheckCircle,
+  Quote,
+} from "lucide-react";
 
 // Set locale to Russian
 const locale: Locale = "ru";
@@ -54,12 +63,13 @@ const { guide, story, personalTouch } = cmsData;
   seo={{
     title: seoData.title,
     description: seoData.description,
+    canonical: `${Astro.site}about-me`,
   }}
 >
   <!-- Hero Section - Professional Layout -->
   <Container class="pt-24 pb-16">
     <!-- Top Row: Photo + Name/Title/Contact -->
-    <div class="flex flex-col md:flex-row gap-10 md:gap-16 mb-16">
+    <div class="flex flex-col md:flex-row gap-10 md:gap-16 mb-16 items-center">
       <!-- Profile Image -->
       <div class="flex-shrink-0">
         <div class="relative">
@@ -71,18 +81,7 @@ const { guide, story, personalTouch } = cmsData;
           <div
             class="verified-badge absolute -bottom-2 -right-2 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg"
           >
-            <svg
-              class="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M5 13l4 4L19 7"></path>
-            </svg>
+            <Check className="w-8 h-8 text-primary-foreground" />
           </div>
         </div>
       </div>
@@ -104,24 +103,12 @@ const { guide, story, personalTouch } = cmsData;
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <!-- Phone -->
             <button
-              class="contact-trigger flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
+              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
             >
               <div
-                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110"
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
               >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  ></path>
-                </svg>
+                <Phone className="w-5 h-5" />
               </div>
               <span
                 class="font-semibold text-foreground group-hover:text-primary transition-colors"
@@ -134,21 +121,9 @@ const { guide, story, personalTouch } = cmsData;
               class="contact-trigger flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
             >
               <div
-                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110"
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
               >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  ></path>
-                </svg>
+                <Mail className="w-5 h-5" />
               </div>
               <span
                 class="font-semibold text-foreground group-hover:text-primary transition-colors text-sm sm:text-base truncate"
@@ -164,7 +139,7 @@ const { guide, story, personalTouch } = cmsData;
               class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 border border-primary/20 hover:border-primary/40 group"
             >
               <div
-                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110"
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
               >
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -186,7 +161,7 @@ const { guide, story, personalTouch } = cmsData;
               class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 border border-primary/20 hover:border-primary/40 group"
             >
               <div
-                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110"
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
               >
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -215,7 +190,7 @@ const { guide, story, personalTouch } = cmsData;
       </div>
 
       <!-- Chips -->
-      <SkillChips chips={guide.highlights} className="mt-8" />
+      <SkillChips chips={guide.highlights} className="mt-8" size="md" />
     </div>
   </Container>
 
@@ -228,13 +203,13 @@ const { guide, story, personalTouch } = cmsData;
           id="story-tab"
           class="tab-button active px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          Моя история
+          {t("about.tabs.story", "Моя история")}
         </button>
         <button
           id="form-tab"
           class="tab-button px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          Напишите мне
+          {t("about.tabs.contact_form", "Напишите мне")}
         </button>
       </div>
 
@@ -242,14 +217,14 @@ const { guide, story, personalTouch } = cmsData;
       <div id="story-content">
         <div class="prose prose-lg max-w-none">
           {
-            story.sections.map((item: any, index: number) => (
+            story.sections.map((item, index: number) => (
               <div
                 class={`flex flex-col ${index === 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-10 mb-16 items-center`}
               >
                 <div class="flex-1">
                   <div class="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-xl border-l-4 border-primary">
                     <h3 class="text-2xl font-bold text-foreground mb-4 flex items-center gap-3">
-                      <span class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      <span class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
                         {index + 1}
                       </span>
                       {item.title}
@@ -276,15 +251,7 @@ const { guide, story, personalTouch } = cmsData;
           <div
             class="text-center bg-gradient-to-r from-primary/10 via-primary/15 to-primary/10 p-10 rounded-3xl border-2 border-primary/30 shadow-xl mt-12"
           >
-            <svg
-              class="w-12 h-12 text-primary/60 mx-auto mb-4"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"
-              ></path>
-            </svg>
+            <Quote className="w-12 h-12 text-primary/60 mx-auto mb-4" />
             <blockquote
               class="text-2xl font-medium text-foreground italic leading-relaxed"
             >
@@ -292,14 +259,17 @@ const { guide, story, personalTouch } = cmsData;
             </blockquote>
             <cite
               class="block mt-6 text-lg text-foreground/70 not-italic font-semibold"
-              >— Светлана Жукова</cite
+              >{t("about.quote.author", "— Светлана Жукова")}</cite
             >
           </div>
         </div>
       </div>
 
       <!-- Contact Form (initially hidden) -->
-      <div id="contact-form-section" class="hidden">
+      <div
+        id="contact-form-section"
+        class="hidden max-w-full md:max-w-2xl mx-auto"
+      >
         <div
           class="bg-gradient-to-br from-background to-primary/5 border-2 border-primary/20 rounded-3xl p-10 shadow-2xl"
         >
@@ -307,24 +277,19 @@ const { guide, story, personalTouch } = cmsData;
             <div
               class="w-12 h-12 bg-primary rounded-full flex items-center justify-center"
             >
-              <svg
-                class="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                ></path>
-              </svg>
+              <Mail className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h2 class="text-3xl font-bold">Отправить сообщение</h2>
+              <h2 class="text-3xl font-bold">
+                {t("about.contact_form.title", "Отправить сообщение")}
+              </h2>
               <p class="text-muted-foreground">
-                Заполните форму ниже, и я свяжусь с вами в ближайшее время
+                {
+                  t(
+                    "about.contact_form.description",
+                    "Заполните форму ниже, и я свяжусь с вами в ближайшее время"
+                  )
+                }
               </p>
             </div>
           </div>
@@ -364,19 +329,7 @@ const { guide, story, personalTouch } = cmsData;
             <div
               class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"
             >
-              <svg
-                class="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                ></path>
-              </svg>
+              <Heart className="w-5 h-5 text-primary-foreground" />
             </div>
             <h3 class="text-2xl font-bold">
               {personalTouch.interests.title}
@@ -387,17 +340,7 @@ const { guide, story, personalTouch } = cmsData;
               personalTouch.interests.items.map((interest: string) => (
                 <div class="flex items-start gap-3 group">
                   <div class="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-primary transition-colors">
-                    <svg
-                      class="w-3 h-3 text-primary group-hover:text-white transition-colors"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
+                    <CheckCircle className="w-3 h-3 text-primary group-hover:text-primary-foreground transition-colors" />
                   </div>
                   <span class="text-foreground/80 leading-relaxed">
                     {interest}
@@ -415,19 +358,7 @@ const { guide, story, personalTouch } = cmsData;
             <div
               class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"
             >
-              <svg
-                class="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                ></path>
-              </svg>
+              <Lightbulb className="w-5 h-5 text-primary-foreground" />
             </div>
             <h3 class="text-2xl font-bold">
               {personalTouch.philosophy.title}

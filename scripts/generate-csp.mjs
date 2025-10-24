@@ -30,19 +30,29 @@ function htmlDecode(str) {
     .replace(/&#39;/g, "'");
 }
 
-// Find inline event handler attributes like onclick="..."
-// Note: we ignore <script src=...> etc. We only care about attributes on elements.
+// Find inline event handler attributes like onclick=...
+// Supports "..."  '...'  and unquoted values (onclick=doStuff())
+// Returns multiple normalization variants for safer matching.
 function extractEventHandlerCodes(html) {
-  const codes = [];
-  // Matches on<name>="..."; tolerant of single/double quotes
-  const re = /\s(on[a-z]+)\s*=\s*("([^"]*)"|'([^']*)')/gi;
+  const results = [];
+  // on<name>=("...")|('...')|(unquoted)
+  const re = /\s(on[a-z]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
   let m;
   while ((m = re.exec(html))) {
-    const raw = m[3] ?? m[4] ?? "";
-    const code = htmlDecode(raw).trim();
-    if (code) codes.push(code);
+    const raw = m[2] ?? m[3] ?? m[4] ?? "";
+    const decoded = htmlDecode(raw);
+
+    // Build normalization variants that different browsers may apply
+    const vRaw = decoded; // as-is
+    const vNoCR = decoded.replace(/\r\n?/g, "\n"); // CRLF → LF
+    const vTrim = vNoCR.trim(); // trimmed
+    const vCollapseWS = vTrim.replace(/\s+/g, " "); // collapse WS
+
+    // De-duplicate but keep all plausible forms
+    const set = new Set([vRaw, vNoCR, vTrim, vCollapseWS]);
+    for (const v of set) if (v) results.push(v);
   }
-  return codes;
+  return results;
 }
 
 function extractInlineScripts(html) {
