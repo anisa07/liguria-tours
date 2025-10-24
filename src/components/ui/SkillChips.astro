@@ -1,0 +1,43 @@
+---
+export interface Props {
+  chips: string[] | { label: string }[];
+  size?: "sm" | "lg" | "md";
+  gap?: "sm" | "md" | "lg";
+  className?: string;
+}
+
+const { chips, size = "lg", gap = "md", className = "" } = Astro.props;
+
+// Normalize chips to always have label property
+const normalizedChips = chips.map((chip) =>
+  typeof chip === "string" ? { label: chip } : chip
+);
+
+// Size variants
+const sizeClasses = {
+  sm: "px-2.5 py-1 text-xs",
+  md: "px-4 py-1 text-xs",
+  lg: "px-5 py-2.5 text-sm",
+};
+
+// Gap variants
+const gapClasses = {
+  sm: "gap-2",
+  md: "gap-3",
+  lg: "gap-4",
+};
+---
+
+<div class={`flex flex-wrap ${gapClasses[gap]} ${className}`}>
+  {
+    normalizedChips.map((chip) => (
+      <div
+        class={`group ${sizeClasses[size]} rounded-full bg-gradient-to-r from-primary/15 to-primary/25 border border-primary/30 hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium`}
+      >
+        <span class="font-semibold text-foreground group-hover:text-white transition-colors">
+          {chip.label}
+        </span>
+      </div>
+    ))
+  }
+</div>

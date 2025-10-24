@@ -2,6 +2,7 @@
 import type { Locale } from "@/types";
 import { Image } from "astro:assets";
 import svetlanaPhoto from "@/assets/images/Sveta.avif";
+import SkillChips from "@/components/ui/SkillChips.astro";
 
 export interface Props {
   title: string;
@@ -15,6 +16,15 @@ const { title, locale = "ru", description = "" } = Astro.props;
 const descriptionLines = description
   ? description.split("\n").filter((line) => line.trim())
   : [];
+
+// Chips data
+const chips = [
+  "25 лет в туризме",
+  "С 1992 в Италии",
+  "Авторские туры",
+  "Гид-переводчик",
+  "Историк",
+];
 ---
 
 <div
@@ -22,7 +32,7 @@ const descriptionLines = description
 >
   <!-- Photo and Title section -->
   <div class="mb-6 flex-grow">
-    <div class="flex gap-5 items-start mb-6">
+    <div class="flex flex-col md:flex-row gap-5 items-center mb-6">
       <!-- Rounded Photo with verified badge -->
       <div class="flex-shrink-0 relative">
         <Image
@@ -59,42 +69,7 @@ const descriptionLines = description
         </h2>
 
         <!-- Chips below title -->
-        <div class="flex flex-wrap gap-2">
-          <span
-            class="group px-2.5 py-1 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-xs rounded-full border border-primary/30 font-medium hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 cursor-default"
-          >
-            <span class="group-hover:text-white transition-colors"
-              >25 лет в туризме</span
-            >
-          </span>
-          <span
-            class="group px-2.5 py-1 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-xs rounded-full border border-primary/30 font-medium hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 cursor-default"
-          >
-            <span class="group-hover:text-white transition-colors"
-              >С 1992 в Италии</span
-            >
-          </span>
-          <span
-            class="group px-2.5 py-1 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-xs rounded-full border border-primary/30 font-medium hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 cursor-default"
-          >
-            <span class="group-hover:text-white transition-colors"
-              >Авторские туры</span
-            >
-          </span>
-          <span
-            class="group px-2.5 py-1 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-xs rounded-full border border-primary/30 font-medium hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 cursor-default"
-          >
-            <span class="group-hover:text-white transition-colors"
-              >Гид-переводчик</span
-            >
-          </span>
-          <span
-            class="group px-2.5 py-1 bg-gradient-to-r from-primary/15 to-primary/25 text-foreground text-xs rounded-full border border-primary/30 font-medium hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 cursor-default"
-          >
-            <span class="group-hover:text-white transition-colors">Историк</span
-            >
-          </span>
-        </div>
+        <SkillChips chips={chips} size="md" />
       </div>
     </div>
 
