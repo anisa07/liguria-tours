@@ -8,23 +8,15 @@ export interface Props {
   title: string;
   locale?: Locale;
   description?: string;
+  chips?: string[];
 }
 
-const { title, locale = "ru", description = "" } = Astro.props;
+const { title, locale = "ru", description = "", chips = [] } = Astro.props;
 
 // Split description into lines for layout
 const descriptionLines = description
   ? description.split("\n").filter((line) => line.trim())
   : [];
-
-// Chips data
-const chips = [
-  "25 лет в туризме",
-  "С 1992 в Италии",
-  "Авторские туры",
-  "Гид-переводчик",
-  "Историк",
-];
 ---
 
 <div
@@ -46,7 +38,7 @@ const chips = [
           class="absolute -bottom-1 -right-1 w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg ring-2 ring-background"
         >
           <svg
-            class="w-5 h-5 text-white"
+            class="w-5 h-5 text-primary-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -1,7 +1,4 @@
-// scripts/csp.config.mjs
 // Put *all* third-party hosts here. No quotes/commas issues, just arrays.
-// You can keep this minimal and add as you grow.
-
 export default {
   // External <script src> hosts (NOT inline hashes)
   scriptSrc: [
