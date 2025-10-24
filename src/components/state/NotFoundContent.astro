@@ -12,7 +12,7 @@ export interface Props {
 }
 
 const {
-  locale = "en",
+  locale = "ru",
   homeHref = `/${locale}`,
   dataAttributes = false,
   onBackClick = "history.back()",
@@ -98,7 +98,7 @@ const backText = t("404.back", "Go Back");
       </a>
 
       <button
-        onclick={onBackClick}
+        id="back-button"
         class="btn btn-secondary btn-md"
         data-back={dataAttributes ? "" : undefined}
       >
@@ -107,3 +107,14 @@ const backText = t("404.back", "Go Back");
     </div>
   </div>
 </main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", function () {
+        history.back();
+      });
+    }
+  });
+</script>

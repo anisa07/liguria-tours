@@ -3,6 +3,7 @@ import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
 import { ContactForm } from "@/components/ContactForm";
+import SkillChips from "@/components/ui/SkillChips.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
@@ -214,17 +215,7 @@ const { guide, story, personalTouch } = cmsData;
       </div>
 
       <!-- Chips -->
-      <div class="flex flex-wrap gap-3 mt-8">
-        {
-          guide.highlights.map((highlight: { label: string }) => (
-            <div class="group px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/15 to-primary/25 border border-primary/30 hover:from-primary hover:to-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <span class="text-sm font-semibold text-foreground group-hover:text-white transition-colors">
-                {highlight.label}
-              </span>
-            </div>
-          ))
-        }
-      </div>
+      <SkillChips chips={guide.highlights} className="mt-8" />
     </div>
   </Container>
 
@@ -314,7 +305,7 @@ const { guide, story, personalTouch } = cmsData;
         >
           <div class="flex items-center gap-4 mb-6">
             <div
-              class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center"
+              class="w-12 h-12 bg-primary rounded-full flex items-center justify-center"
             >
               <svg
                 class="w-6 h-6 text-white"
