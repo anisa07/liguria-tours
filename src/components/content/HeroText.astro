@@ -3,6 +3,7 @@ import type { Locale } from "@/types";
 import { Image } from "astro:assets";
 import svetlanaPhoto from "@/assets/images/Sveta.avif";
 import SkillChips from "@/components/ui/SkillChips.astro";
+import { Check } from "lucide-react";
 
 export interface Props {
   title: string;
@@ -37,18 +38,7 @@ const descriptionLines = description
         <div
           class="absolute -bottom-1 -right-1 w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg ring-2 ring-background"
         >
-          <svg
-            class="w-5 h-5 text-primary-foreground"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M5 13l4 4L19 7"></path>
-          </svg>
+          <Check className="w-5 h-5 text-primary-foreground" />
         </div>
       </div>
 
