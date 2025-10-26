@@ -21,13 +21,9 @@ export interface FooterSection {
 }
 
 export interface Props {
-  locale?: Locale;
   translations?: Record<string, any>[];
   sections?: FooterSection[];
   socialLinks?: SocialLink[];
-  showNewsletter?: boolean;
-  newsletterTitle?: string;
-  newsletterDescription?: string;
   copyrightText?: string;
   logoText?: string;
   logoHref?: string;
@@ -36,13 +32,9 @@ export interface Props {
 }
 
 const {
-  locale = "ru",
   translations = [],
   sections = [],
   socialLinks = [],
-  showNewsletter = false,
-  newsletterTitle,
-  newsletterDescription,
   copyrightText,
   logoText,
   logoHref = "/",

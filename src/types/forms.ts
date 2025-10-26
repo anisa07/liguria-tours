@@ -21,7 +21,7 @@ export interface FormSubmissionState {
 
 // Form submission hook return type
 export interface UseFormSubmissionReturn<T> {
-  submit: (data: T) => Promise<void>;
+  submit: (_data: T) => Promise<void>;
   state: FormSubmissionState;
   reset: () => void;
 }

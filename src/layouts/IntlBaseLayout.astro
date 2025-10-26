@@ -3,7 +3,6 @@
 import "@/styles/global.css";
 import "@/styles/animations.css";
 import SiteData from "@/config/siteData.json";
-import { THEME_KEY } from "@/config/variables";
 // If you already have config files, import them here:
 import { defaultLocale, type Locale } from "@/i18n/config";
 import { getPageTranslations } from "@/i18n/i18n";
@@ -43,7 +42,6 @@ const { t, dir } = await getPageTranslations(activeLocale, [
 
 // Build absolute URL for canonical
 const site = Astro.site?.origin ?? "https://example.com";
-const url = new URL(Astro.url, site).href;
 ---
 
 <html lang={activeLocale} dir={dir}>

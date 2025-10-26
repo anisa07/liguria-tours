@@ -2,13 +2,13 @@ export type Dict = Record<string, string>;
 
 // Define the translation function type with cleaner signature
 export type TranslationFunction = (
-  key: string,
-  fallback: string,
-  vars?: Record<string, string | number>
+  _key: string,
+  _fallback: string,
+  _vars?: Record<string, string | number>
 ) => string;
 
 // Define the createT function type
-export type CreateTFunction = (dicts: Dict[]) => TranslationFunction;
+export type CreateTFunction = (_dicts: Dict[]) => TranslationFunction;
 
 function get(obj: Dict, key: string, fallback?: string) {
   // Handle nested keys like "site.title"

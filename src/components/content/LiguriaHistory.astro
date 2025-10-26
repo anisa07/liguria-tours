@@ -1,6 +1,5 @@
 ---
 import Container from "@/components/layout/Container.astro";
-import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
 import { X, ChevronLeft, ChevronRight } from "@lucide/astro";
@@ -10,9 +9,6 @@ export interface Props {
 }
 
 const { locale } = Astro.props;
-
-// Get the translation function
-const { t } = await getPageTranslations(locale, ["common", "ui", "home"]);
 
 // Load boat tours from content collection for images
 const boatToursCollection = await getCollection("boatTourCollection");
@@ -53,7 +49,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
     title: point.title,
     description: point.description,
     story: locationStories[point.id] || point.description,
-  })),
+  }))
 );
 ---
 
@@ -186,7 +182,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
     const historyCards = document.querySelectorAll(".history-card");
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById(
-      "lightbox-image",
+      "lightbox-image"
     ) as HTMLImageElement;
     const lightboxTitle = document.getElementById("lightbox-title");
     const lightboxStory = document.getElementById("lightbox-story");
@@ -245,7 +241,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
         lightboxStory.innerHTML = paragraphs
           .map(
             (p) =>
-              `<p class="mb-5 text-justify leading-relaxed">${p.trim()}</p>`,
+              `<p class="mb-5 text-justify leading-relaxed">${p.trim()}</p>`
           )
           .join("");
 

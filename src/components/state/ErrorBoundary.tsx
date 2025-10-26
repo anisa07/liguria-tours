@@ -3,15 +3,15 @@ import {
   ErrorBoundary as ReactErrorBoundary,
   type FallbackProps,
 } from "react-error-boundary";
-import { AlertTriangle, RefreshCw, Bug, Copy, Check } from "lucide-react";
+import { AlertTriangle, RefreshCw, Bug, Copy, Check } from "@lucide/astro";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Locale } from "@/i18n/config";
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode | ((error: Error, errorInfo: ErrorInfo) => ReactNode);
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  fallback?: ReactNode | ((_error: Error, _errorInfo: ErrorInfo) => ReactNode);
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
   resetKeys?: Array<string | number>;
   locale?: Locale;
   mode?: "development" | "production";
@@ -81,7 +81,7 @@ function DefaultErrorFallback({
       )}
     >
       <div className="flex items-center gap-3 mb-4">
-        <AlertTriangle className="h-6 w-6 text-destructive" />
+        <AlertTriangle class="h-6 w-6 text-destructive" />
         <h2 className="text-lg font-semibold text-foreground">
           {t?.("errors.boundary.title", "Something went wrong")}
         </h2>
@@ -91,13 +91,13 @@ function DefaultErrorFallback({
         onClick={resetErrorBoundary}
         className="mb-4 px-4 py-2 bg-destructive text-destructive-foreground border-none rounded cursor-pointer text-sm font-medium hover:bg-destructive/90 transition-colors flex items-center gap-2"
       >
-        <RefreshCw className="h-4 w-4" />
+        <RefreshCw class="h-4 w-4" />
         {t?.("errors.boundary.tryAgain", "Try Again")}
       </button>
 
       <div className="mt-4">
         <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-          <Bug className="h-4 w-4" />
+          <Bug class="h-4 w-4" />
           {t?.("errors.boundary.details", "Error Details")}
         </h3>
 
@@ -123,9 +123,9 @@ function DefaultErrorFallback({
                 title={t?.("errors.boundary.copyError", "Copy error details")}
               >
                 {copied ? (
-                  <Check className="h-3 w-3 text-success" />
+                  <Check class="h-3 w-3 text-success" />
                 ) : (
-                  <Copy className="h-3 w-3" />
+                  <Copy class="h-3 w-3" />
                 )}
               </button>
             </div>

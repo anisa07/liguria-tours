@@ -16,7 +16,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useSendEmail } from "@/hooks/useSendEmail";
 import { Loading } from "./ui/loading";
 import { Message } from "./ui/message";
-import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
+import { AlertCircleIcon, CheckCircle2Icon } from "@lucide/astro";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 

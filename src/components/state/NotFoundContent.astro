@@ -8,21 +8,18 @@ export interface Props {
   homeHref?: string;
   // Optional props for client-side functionality
   dataAttributes?: boolean;
-  onBackClick?: string;
 }
 
 const {
   locale = "ru",
   homeHref = `/${locale}`,
   dataAttributes = false,
-  onBackClick = "history.back()",
 } = Astro.props;
 
 // Get translations
 const { t } = await getPageTranslations(locale, ["errors", "common"]);
 
 // Get translated messages from JSON using correct key structure
-const title = t("404.title", "Page Not Found");
 const heading = t("404.heading", "Page Not Found");
 const message = t(
   "404.message",

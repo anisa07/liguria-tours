@@ -1,5 +1,4 @@
 ---
-import type { Locale } from "@/types";
 import { Image } from "astro:assets";
 import svetlanaPhoto from "@/assets/images/Sveta.avif";
 import { Check } from "@lucide/astro";
@@ -7,12 +6,11 @@ import SkillChips from "@/components/ui/SkillChips.astro";
 
 export interface Props {
   title: string;
-  locale?: Locale;
   description?: string;
   chips?: string[];
 }
 
-const { title, locale = "ru", description = "", chips = [] } = Astro.props;
+const { title, description = "", chips = [] } = Astro.props;
 
 // Split description into lines for layout
 const descriptionLines = description
