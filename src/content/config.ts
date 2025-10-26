@@ -40,7 +40,6 @@ const italianToursGallery = defineCollection({
           fullDescription: z.string(),
           points: z.array(z.string()),
           duration: z.string().optional(),
-          price: z.string().optional(),
           images: z.array(
             z.object({
               image: image(),
@@ -64,7 +63,6 @@ const boatTourCollection = defineCollection({
           id: z.string(),
           title: z.string(),
           description: z.string(),
-          price: z.string().optional(),
           duration: z.string().optional(),
           badge: z.string().optional(),
           tourPoints: z.array(

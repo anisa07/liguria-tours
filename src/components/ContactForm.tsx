@@ -19,6 +19,10 @@ import { Message } from "./ui/message";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import CustomPhoneInput from "./ui/custom-phone-input";
+import Cookies from "js-cookie";
+import "react-phone-number-input/style.css";
+import "./ui/phone-input.css";
 
 // Import types from separate files
 import type { ContactFormValues } from "@/types";
@@ -47,11 +51,27 @@ const ContactForm = ({
   emailApiAccessKey,
   capthaKey,
 }: ContactFormProps) => {
+  // Load saved user data from cookies
+  const loadSavedUserData = () => {
+    const savedData = Cookies.get("liguria-tours-user-data");
+    if (savedData) {
+      try {
+        return JSON.parse(savedData);
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  };
+
+  const savedUserData = loadSavedUserData();
+
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      name: savedUserData.name || "",
+      email: savedUserData.email || "",
+      phone: savedUserData.phone || "",
       subject: "",
       message: "",
       "h-captcha-response": "",
@@ -71,13 +91,14 @@ const ContactForm = ({
   
   useEffect(() => {
     // Check if all required fields are filled and valid
-    const { name, email, subject, message } = watchedValues;
+    const { name, email, phone, subject, message } = watchedValues;
     
-    if (name && email && subject && message) {
+    if (name && email && phone && subject && message) {
       // Validate the current form state
       const result = contactFormSchema.safeParse({
         name,
-        email, 
+        email,
+        phone,
         subject,
         message,
         "h-captcha-response": ""
@@ -87,7 +108,7 @@ const ContactForm = ({
       if (result.success && !showCaptcha) {
         setShowCaptcha(true);
       }
-    } else if (showCaptcha && (!name || !email || !subject || !message)) {
+    } else if (showCaptcha && (!name || !email || !phone || !subject || !message)) {
       // Hide captcha if user clears required fields
       setShowCaptcha(false);
       if (hcaptchaRef.current) {
@@ -113,6 +134,19 @@ const ContactForm = ({
       return;
     }
 
+    // Save user data to cookies for future use
+    const userDataToSave = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+    };
+    
+    Cookies.set("liguria-tours-user-data", JSON.stringify(userDataToSave), {
+      expires: 365, // 1 year
+      secure: window.location.protocol === "https:",
+      sameSite: "lax",
+    });
+
     await sendEmail(values, emailApiAccessKey);
     toast.success(
       t?.("forms.message_sent", "Сообщение отправлено") ||
@@ -127,6 +161,11 @@ const ContactForm = ({
 
     form.setValue("h-captcha-response", "");
     setShowCaptcha(false);
+    
+    // Restore user data after form reset
+    form.setValue("name", userDataToSave.name);
+    form.setValue("email", userDataToSave.email);
+    form.setValue("phone", userDataToSave.phone);
   };
 
   if (error) {
@@ -181,6 +220,26 @@ const ContactForm = ({
                     "example@email.com"
                   )}
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("forms.phone", "Телефон")}</FormLabel>
+              <FormControl>
+                <CustomPhoneInput
+                  defaultCountry="IT"
+                  placeholder={t("forms.phone_placeholder", "+39 123 456 7890")}
+                  value={field.value}
+                  onChange={field.onChange}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 />
               </FormControl>
               <FormMessage />

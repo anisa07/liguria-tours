@@ -1,12 +1,27 @@
 {
+  "name": "Ваше Имя",
+  "email": "Ваш E-mail",
+  "phone": "Телефон",
+  "subject": "Тема",
+  "message": "Сообщение",
+  "name_placeholder": "Введите ваше имя",
+  "email_placeholder": "example@email.com",
+  "phone_placeholder": "+39 123 456 7890",
+  "subject_placeholder": "Тема сообщения",
+  "message_placeholder": "Напишите ваше сообщение",
+  "captcha_required": "Пожалуйста, подтвердите, что вы не робот",
+  "captcha_error": "Ошибка загрузки проверки безопасности",
+  "message_sent": "Сообщение отправлено",
   "labels": {
     "name": "Имя",
     "email": "Email",
+    "phone": "Телефон",
     "message": "Сообщение"
   },
   "placeholders": {
     "name": "Введите ваше имя",
     "email": "Введите ваш email",
+    "phone": "+39 123 456 7890",
     "message": "Напишите ваше сообщение"
   },
   "validation": {
@@ -14,6 +29,8 @@
     "name_min": "Имя должно содержать минимум 2 символа",
     "email_required": "Email обязателен",
     "email_invalid": "Некорректный email",
+    "phone_required": "Телефон обязателен",
+    "phone_invalid": "Некорректный номер телефона",
     "message_required": "Сообщение обязательно",
     "message_min": "Сообщение должно содержать минимум 10 символов",
     "captcha_required": "Пожалуйста, пройдите проверку"
@@ -25,9 +42,5 @@
     "success": "Сообщение успешно отправлено!",
     "error": "Ошибка при отправке сообщения",
     "loading": "Отправка..."
-  },
-  "captcha_privacy_notice": "Согласно нашей",
-  "captcha_error": "Ошибка загрузки проверки безопасности",
-  "captcha_loading": "Загружается проверка безопасности...",
-  "captcha_placeholder": "Пройдите пожалуйста проверку безопасности после заполнения формы. Спасибо!"
+  }
 }

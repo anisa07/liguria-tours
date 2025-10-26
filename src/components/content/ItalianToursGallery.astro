@@ -22,7 +22,6 @@ const allTours =
     id: tour.slug,
     title: tour.title,
     image: tour.images[0]?.image?.src,
-    price: tour.price,
     duration: tour.duration,
     href: `/tour/${tour.slug}`,
     categories: tour.categories,
@@ -121,7 +120,6 @@ const allTours =
             <TourCard
               tour={{
                 ...tour,
-                price: tour.price || "По запросу",
                 duration: tour.duration || "По запросу",
               }}
             />
