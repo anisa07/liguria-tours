@@ -276,13 +276,12 @@ const ContactForm = ({
               <FormItem>
                 <FormControl>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
                     <CustomPhoneInput
                       defaultCountry="IT"
                       placeholder={t("forms.phone_placeholder", "123 456 7890")}
                       value={field.value}
                       onChange={field.onChange}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-1 py-1 pl-10 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-1 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                     />
                   </div>
                 </FormControl>
@@ -317,6 +316,7 @@ const ContactForm = ({
               <FormLabel>{t("forms.message", "Сообщение")}</FormLabel>
               <FormControl>
                 <Textarea
+                  rows={6}
                   placeholder={t(
                     "forms.message_placeholder",
                     "Напишите ваше сообщение"
