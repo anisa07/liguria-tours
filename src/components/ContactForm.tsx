@@ -16,7 +16,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useSendEmail } from "@/hooks/useSendEmail";
 import { Loading } from "./ui/loading";
 import { Message } from "./ui/message";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Edit3, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import CustomPhoneInput from "./ui/custom-phone-input";
@@ -230,57 +230,67 @@ const ContactForm = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("forms.name", "Ваше Имя")}</FormLabel>
               <FormControl>
-                <Input
-                  placeholder={t("forms.name_placeholder", "Введите ваше имя")}
-                  {...field}
-                />
+                <div className="relative">
+                  <Edit3 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder={t("forms.name_placeholder", "Введите ваше имя")}
+                    className="pl-10"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("forms.email", "Ваш E-mail")}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t(
-                    "forms.email_placeholder",
-                    "example@email.com"
-                  )}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      placeholder={t(
+                        "forms.email_placeholder",
+                        "example@email.com"
+                      )}
+                      className="pl-10"
+                      {...field}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("forms.phone", "Телефон")}</FormLabel>
-              <FormControl>
-                <CustomPhoneInput
-                  defaultCountry="IT"
-                  placeholder={t("forms.phone_placeholder", "+39 123 456 7890")}
-                  value={field.value}
-                  onChange={field.onChange}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
+                    <CustomPhoneInput
+                      defaultCountry="IT"
+                      placeholder={t("forms.phone_placeholder", "123 456 7890")}
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-1 py-1 pl-10 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
