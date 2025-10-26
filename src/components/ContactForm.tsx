@@ -20,7 +20,6 @@ import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import CustomPhoneInput from "./ui/custom-phone-input";
-import Cookies from "js-cookie";
 import "react-phone-number-input/style.css";
 import "./ui/phone-input.css";
 
@@ -51,15 +50,25 @@ const ContactForm = ({
   emailApiAccessKey,
   capthaKey,
 }: ContactFormProps) => {
-  // Load saved user data from cookies
+  // Check if we're running on localhost
+  const isLocalhost = () => {
+    if (typeof window === 'undefined') return false;
+    return window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname === '::1';
+  };
+
+  const isOnLocalhost = isLocalhost();
+
+  // Load saved user data from localStorage
   const loadSavedUserData = () => {
-    const savedData = Cookies.get("liguria-tours-user-data");
-    if (savedData) {
-      try {
+    try {
+      const savedData = localStorage.getItem("liguria-tours-user-data");
+      if (savedData) {
         return JSON.parse(savedData);
-      } catch {
-        return {};
       }
+    } catch {
+      // Silently handle localStorage errors
     }
     return {};
   };
@@ -104,19 +113,19 @@ const ContactForm = ({
         "h-captcha-response": ""
       });
       
-      // Show captcha only when all required fields are valid
-      if (result.success && !showCaptcha) {
+      // Show captcha only when all required fields are valid and not on localhost
+      if (result.success && !showCaptcha && !isOnLocalhost) {
         setShowCaptcha(true);
       }
     } else if (showCaptcha && (!name || !email || !phone || !subject || !message)) {
       // Hide captcha if user clears required fields
       setShowCaptcha(false);
-      if (hcaptchaRef.current) {
+      if (hcaptchaRef.current && !isOnLocalhost) {
         hcaptchaRef.current.resetCaptcha();
       }
       form.setValue("h-captcha-response", "");
     }
-  }, [watchedValues, showCaptcha, form]);
+  }, [watchedValues, showCaptcha, form, isOnLocalhost]);
 
   const onSubmit = async (values: ContactFormValues) => {
     const botField = (
@@ -124,7 +133,7 @@ const ContactForm = ({
     )?.checked;
     if (botField) return;
 
-    if (!values["h-captcha-response"]) {
+    if (!values["h-captcha-response"] && !isOnLocalhost) {
       toast.error(
         t?.(
           "forms.captcha_required",
@@ -134,18 +143,18 @@ const ContactForm = ({
       return;
     }
 
-    // Save user data to cookies for future use
+    // Save user data to localStorage for future use
     const userDataToSave = {
       name: values.name,
       email: values.email,
       phone: values.phone,
     };
     
-    Cookies.set("liguria-tours-user-data", JSON.stringify(userDataToSave), {
-      expires: 365, // 1 year
-      secure: window.location.protocol === "https:",
-      sameSite: "lax",
-    });
+    try {
+      localStorage.setItem("liguria-tours-user-data", JSON.stringify(userDataToSave));
+    } catch {
+      // Silently handle localStorage errors (e.g., storage quota exceeded)
+    }
 
     await sendEmail(values, emailApiAccessKey);
     toast.success(
@@ -155,7 +164,7 @@ const ContactForm = ({
     reset();
     form.reset();
 
-    if (hcaptchaRef.current) {
+    if (hcaptchaRef.current && !isOnLocalhost) {
       hcaptchaRef.current.resetCaptcha();
     }
 
@@ -286,7 +295,7 @@ const ContactForm = ({
         />
 
         {/* Conditional hCaptcha Loading */}
-        {showCaptcha && (
+        {showCaptcha && !isOnLocalhost && (
           <HCaptcha
             ref={hcaptchaRef}
             sitekey={capthaKey}

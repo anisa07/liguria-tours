@@ -12,35 +12,35 @@ interface CustomPhoneInputProps {
 }
 
 // Define common countries for tours
-const COUNTRIES_DATA: Array<{ code: Country; name: string; dialCode: string }> = [
-  { code: "IT", name: "Italy", dialCode: getCountryCallingCode("IT") },
-  { code: "RU", name: "Russia", dialCode: getCountryCallingCode("RU") },
-  { code: "US", name: "United States", dialCode: getCountryCallingCode("US") },
-  { code: "GB", name: "United Kingdom", dialCode: getCountryCallingCode("GB") },
-  { code: "FR", name: "France", dialCode: getCountryCallingCode("FR") },
-  { code: "DE", name: "Germany", dialCode: getCountryCallingCode("DE") },
-  { code: "ES", name: "Spain", dialCode: getCountryCallingCode("ES") },
-  { code: "CH", name: "Switzerland", dialCode: getCountryCallingCode("CH") },
-  { code: "AT", name: "Austria", dialCode: getCountryCallingCode("AT") },
-  { code: "NL", name: "Netherlands", dialCode: getCountryCallingCode("NL") },
-  { code: "BE", name: "Belgium", dialCode: getCountryCallingCode("BE") },
-  { code: "SE", name: "Sweden", dialCode: getCountryCallingCode("SE") },
-  { code: "NO", name: "Norway", dialCode: getCountryCallingCode("NO") },
-  { code: "DK", name: "Denmark", dialCode: getCountryCallingCode("DK") },
-  { code: "FI", name: "Finland", dialCode: getCountryCallingCode("FI") },
-  { code: "PL", name: "Poland", dialCode: getCountryCallingCode("PL") },
-  { code: "CZ", name: "Czech Republic", dialCode: getCountryCallingCode("CZ") },
-  { code: "HU", name: "Hungary", dialCode: getCountryCallingCode("HU") },
-  { code: "GR", name: "Greece", dialCode: getCountryCallingCode("GR") },
-  { code: "PT", name: "Portugal", dialCode: getCountryCallingCode("PT") },
-  { code: "AU", name: "Australia", dialCode: getCountryCallingCode("AU") },
-  { code: "CA", name: "Canada", dialCode: getCountryCallingCode("CA") },
-  { code: "JP", name: "Japan", dialCode: getCountryCallingCode("JP") },
-  { code: "CN", name: "China", dialCode: getCountryCallingCode("CN") },
-  { code: "IN", name: "India", dialCode: getCountryCallingCode("IN") },
-  { code: "BR", name: "Brazil", dialCode: getCountryCallingCode("BR") },
-  { code: "AR", name: "Argentina", dialCode: getCountryCallingCode("AR") },
-  { code: "MX", name: "Mexico", dialCode: getCountryCallingCode("MX") },
+const COUNTRIES_DATA: Array<{ code: Country; name: string; nameRu: string; dialCode: string }> = [
+  { code: "IT", name: "Italy", nameRu: "Италия", dialCode: getCountryCallingCode("IT") },
+  { code: "RU", name: "Russia", nameRu: "Россия", dialCode: getCountryCallingCode("RU") },
+  { code: "US", name: "United States", nameRu: "США", dialCode: getCountryCallingCode("US") },
+  { code: "GB", name: "United Kingdom", nameRu: "Великобритания", dialCode: getCountryCallingCode("GB") },
+  { code: "FR", name: "France", nameRu: "Франция", dialCode: getCountryCallingCode("FR") },
+  { code: "DE", name: "Germany", nameRu: "Германия", dialCode: getCountryCallingCode("DE") },
+  { code: "ES", name: "Spain", nameRu: "Испания", dialCode: getCountryCallingCode("ES") },
+  { code: "CH", name: "Switzerland", nameRu: "Швейцария", dialCode: getCountryCallingCode("CH") },
+  { code: "AT", name: "Austria", nameRu: "Австрия", dialCode: getCountryCallingCode("AT") },
+  { code: "NL", name: "Netherlands", nameRu: "Нидерланды", dialCode: getCountryCallingCode("NL") },
+  { code: "BE", name: "Belgium", nameRu: "Бельгия", dialCode: getCountryCallingCode("BE") },
+  { code: "SE", name: "Sweden", nameRu: "Швеция", dialCode: getCountryCallingCode("SE") },
+  { code: "NO", name: "Norway", nameRu: "Норвегия", dialCode: getCountryCallingCode("NO") },
+  { code: "DK", name: "Denmark", nameRu: "Дания", dialCode: getCountryCallingCode("DK") },
+  { code: "FI", name: "Finland", nameRu: "Финляндия", dialCode: getCountryCallingCode("FI") },
+  { code: "PL", name: "Poland", nameRu: "Польша", dialCode: getCountryCallingCode("PL") },
+  { code: "CZ", name: "Czech Republic", nameRu: "Чехия", dialCode: getCountryCallingCode("CZ") },
+  { code: "HU", name: "Hungary", nameRu: "Венгрия", dialCode: getCountryCallingCode("HU") },
+  { code: "GR", name: "Greece", nameRu: "Греция", dialCode: getCountryCallingCode("GR") },
+  { code: "PT", name: "Portugal", nameRu: "Португалия", dialCode: getCountryCallingCode("PT") },
+  { code: "AU", name: "Australia", nameRu: "Австралия", dialCode: getCountryCallingCode("AU") },
+  { code: "CA", name: "Canada", nameRu: "Канада", dialCode: getCountryCallingCode("CA") },
+  { code: "JP", name: "Japan", nameRu: "Япония", dialCode: getCountryCallingCode("JP") },
+  { code: "CN", name: "China", nameRu: "Китай", dialCode: getCountryCallingCode("CN") },
+  { code: "IN", name: "India", nameRu: "Индия", dialCode: getCountryCallingCode("IN") },
+  { code: "BR", name: "Brazil", nameRu: "Бразилия", dialCode: getCountryCallingCode("BR") },
+  { code: "AR", name: "Argentina", nameRu: "Аргентина", dialCode: getCountryCallingCode("AR") },
+  { code: "MX", name: "Mexico", nameRu: "Мексика", dialCode: getCountryCallingCode("MX") },
 ];
 
 const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
@@ -65,6 +65,7 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
   // Filter countries based on search term
   const filteredCountries = COUNTRIES_DATA.filter(country =>
     country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    country.nameRu.toLowerCase().includes(searchTerm.toLowerCase()) ||
     country.dialCode.includes(searchTerm)
   );
 
@@ -176,7 +177,7 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
                           <CountryFlag title={country.name} />
                         </div>
                       )}
-                      <span className="flex-1 text-sm">{country.name} (+{country.dialCode})</span>
+                      <span className="flex-1 text-sm">{country.nameRu} (+{country.dialCode})</span>
                       {selectedCountry === country.code && (
                         <span className="text-primary">✓</span>
                       )}
