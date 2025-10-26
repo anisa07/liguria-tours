@@ -16,7 +16,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useSendEmail } from "@/hooks/useSendEmail";
 import { Loading } from "./ui/loading";
 import { Message } from "./ui/message";
-import { AlertCircle, CheckCircle2, Edit3, Mail, Phone } from "lucide-react";
+import { AlertCircle, CheckCircle2, Edit3, Mail } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import CustomPhoneInput from "./ui/custom-phone-input";
