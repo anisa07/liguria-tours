@@ -27,11 +27,11 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
   seo={{
     title: t(
       "seo.title",
-      "Туры по Лигурии - Экскурсии с профессиональным гидом"
+      "Туры по Лигурии - Экскурсии с профессиональным гидом",
     ),
     description: t(
       "seo.description",
-      "Откройте красоту Лигурии с профессиональным гидом Светланой Жуковой. Индивидуальные экскурсии по Генуе, Портофино, Чинкве-Терре и другим жемчужинам итальянской Ривьеры."
+      "Откройте красоту Лигурии с профессиональным гидом Светланой Жуковой. Индивидуальные экскурсии по Генуе, Портофино, Чинкве-Терре и другим жемчужинам итальянской Ривьеры.",
     ),
   }}
 >
@@ -43,10 +43,11 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
         mainTitle={heroData.mainTitle}
         subtitle={heroData.subtitle}
         description={heroData.description}
+        chips={heroData.chips}
         actions={[
           {
             label: t("actions.book_now", "Забронировать"),
-            href: "/about-me",
+            href: "/about-me?contact=true",
             variant: "primary" as const,
           },
         ]}

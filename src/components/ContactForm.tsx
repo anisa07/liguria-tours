@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -60,16 +60,52 @@ export const ContactForm = ({
   const { t, isLoading, error } = useTranslation(locale, ["common", "ui"]);
   const { sendEmail, status, message, reset } = useSendEmail();
   const hcaptchaRef = useRef<HCaptcha>(null);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
 
   const onHCaptchaChange = (token: string) => {
     form.setValue("h-captcha-response", token);
   };
+
+  // Add event listeners for form interaction
+  useEffect(() => {
+    const handleFormInteraction = () => {
+      if (!userInteracted) {
+        setUserInteracted(true);
+        setShowCaptcha(true);
+      }
+    };
+
+    const formElement = document.querySelector("form");
+    if (formElement && !userInteracted) {
+      const handleFocus = () => handleFormInteraction();
+      const handleInput = () => handleFormInteraction();
+
+      formElement.addEventListener("focusin", handleFocus);
+      formElement.addEventListener("input", handleInput);
+
+      return () => {
+        formElement.removeEventListener("focusin", handleFocus);
+        formElement.removeEventListener("input", handleInput);
+      };
+    }
+  }, [userInteracted]);
 
   const onSubmit = async (values: ContactFormValues) => {
     const botField = (
       document.querySelector('[name="botcheck"]') as HTMLInputElement
     )?.checked;
     if (botField) return;
+
+    // Show captcha if not already shown
+    if (!showCaptcha) {
+      setShowCaptcha(true);
+      toast.info(
+        t?.("forms.captcha_loading", "Загружается проверка безопасности...") ||
+          "Загружается проверка безопасности..."
+      );
+      return;
+    }
 
     if (!values["h-captcha-response"]) {
       toast.error(
@@ -193,12 +229,66 @@ export const ContactForm = ({
           )}
         />
 
-        <HCaptcha
-          ref={hcaptchaRef}
-          sitekey={capthaKey}
-          reCaptchaCompat={false}
-          onVerify={onHCaptchaChange}
-        />
+        {/* Privacy Notice for hCaptcha */}
+        <div className="text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg border border-border/50">
+          <p className="text-xs leading-relaxed">
+            {t(
+              "forms.captcha_privacy_notice",
+              "Для защиты от спама используется hCaptcha. При отправке формы будут загружены ресурсы hCaptcha, которые могут установить cookies. Это необходимо для проверки безопасности."
+            )}{" "}
+            <a
+              href="/privacy-policy"
+              className="underline hover:no-underline text-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("common.privacy_policy", "Политика конфиденциальности")}
+            </a>
+          </p>
+          {!showCaptcha && (
+            <p className="text-xs mt-2 text-muted-foreground/80">
+              {t(
+                "forms.captcha_delayed_loading",
+                "Проверка безопасности загрузится при взаимодействии с формой для минимизации использования cookies."
+              )}
+            </p>
+          )}
+        </div>
+
+        {/* Conditional hCaptcha Loading */}
+        {showCaptcha ? (
+          <HCaptcha
+            ref={hcaptchaRef}
+            sitekey={capthaKey}
+            reCaptchaCompat={false}
+            onVerify={onHCaptchaChange}
+            languageOverride="ru"
+            size="normal"
+            theme="light"
+            tabIndex={0}
+            onLoad={() => {
+              // hCaptcha loaded successfully - helps with third-party cookie management
+            }}
+            onError={() => {
+              // Handle hCaptcha loading errors gracefully
+              toast.error(
+                t(
+                  "forms.captcha_error",
+                  "Ошибка загрузки проверки безопасности"
+                )
+              );
+            }}
+          />
+        ) : (
+          <div className="p-4 bg-muted/30 rounded-lg border border-dashed border-muted-foreground/30 text-center">
+            <p className="text-sm text-muted-foreground">
+              {t(
+                "forms.captcha_placeholder",
+                "Проверка безопасности загрузится при заполнении формы"
+              )}
+            </p>
+          </div>
+        )}
 
         <Button
           disabled={status === "loading"}

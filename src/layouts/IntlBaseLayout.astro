@@ -57,8 +57,7 @@ const url = new URL(Astro.url, site).href;
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Canonical + hreflang -->
-    <link rel="canonical" href={url} />
+    <!-- hreflang -->
     {
       Object.entries(alternates).map(([lc, href]) => (
         <link rel="alternate" hreflang={lc} href={href} />

@@ -19,6 +19,7 @@ export interface Props {
   mainTitle: string;
   subtitle?: string;
   description?: string;
+  chips?: string[];
   actions?: HeroAction[];
   galleryImages?: Array<{
     image: ImageMetadata;
@@ -31,13 +32,12 @@ export interface Props {
 }
 
 const {
-  subtitle = "",
-  description,
-  actions = [],
-  galleryImages = [],
-  class: className = "",
-  locale = "ru",
   mainTitle,
+  subtitle,
+  description,
+  chips = [],
+  galleryImages = [],
+  locale = "ru",
 } = Astro.props;
 
 // Get translations
@@ -86,8 +86,9 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
           <div class="w-full lg:w-1/2">
             <HeroText
               locale={locale}
-              title={subtitle}
+              title={subtitle || ""}
               description={description}
+              chips={chips}
             />
           </div>
           <div class="w-full lg:w-1/2 flex flex-col">

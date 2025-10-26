@@ -9,23 +9,15 @@ export interface Props {
   title: string;
   locale?: Locale;
   description?: string;
+  chips?: string[];
 }
 
-const { title, locale = "ru", description = "" } = Astro.props;
+const { title, locale = "ru", description = "", chips = [] } = Astro.props;
 
 // Split description into lines for layout
 const descriptionLines = description
   ? description.split("\n").filter((line) => line.trim())
   : [];
-
-// Chips data
-const chips = [
-  "25 лет в туризме",
-  "С 1992 в Италии",
-  "Авторские туры",
-  "Гид-переводчик",
-  "Историк",
-];
 ---
 
 <div

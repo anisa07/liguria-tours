@@ -9,6 +9,7 @@ const heroCollection = defineCollection({
       mainTitle: z.string(),
       subtitle: z.string(),
       description: z.string(),
+      chips: z.array(z.string()),
       images: z.array(
         z.object({
           image: image(),
