@@ -104,34 +104,40 @@ const { guide, story, personalTouch } = cmsData;
           <!-- Contact Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <!-- Phone -->
-            <button
-              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
+            <div
+              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 group"
             >
-              <div
-                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
+              <a
+                href="https://wa.me/393335787461"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+                title="Open WhatsApp"
               >
                 <Phone class="w-5 h-5" />
-              </div>
+              </a>
               <span
-                class="font-semibold text-foreground group-hover:text-primary transition-colors"
+                class="font-semibold text-foreground select-text cursor-text"
                 >+39 3335787461</span
               >
-            </button>
+            </div>
 
             <!-- Email -->
-            <button
-              class="contact-trigger flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
+            <div
+              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 group"
             >
-              <div
-                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
+              <button
+                class="contact-trigger w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110 cursor-pointer"
+                title="Open contact form"
+                onclick="showContactForm()"
               >
                 <Mail class="w-5 h-5" />
-              </div>
+              </button>
               <span
-                class="font-semibold text-foreground group-hover:text-primary transition-colors text-sm sm:text-base truncate"
-                >genova.art.tour@gmail.com</span
+                class="font-semibold text-foreground text-sm sm:text-base truncate select-text cursor-text"
+                >joukova.svetlana@gmail.com</span
               >
-            </button>
+            </div>
 
             <!-- Facebook -->
             <a
@@ -382,6 +388,47 @@ const { guide, story, personalTouch } = cmsData;
 </IntlBaseLayout>
 
 <script>
+  // Function to show form tab and scroll
+  function showContactForm() {
+    const formTab = document.getElementById("form-tab");
+    const storyTab = document.getElementById("story-tab");
+    const contactFormSection = document.getElementById("contact-form-section");
+    const storyContent = document.getElementById("story-content");
+    const personalTouchSection = document.getElementById(
+      "personal-touch-section"
+    );
+
+    if (
+      !formTab ||
+      !storyTab ||
+      !contactFormSection ||
+      !storyContent ||
+      !personalTouchSection
+    ) {
+      return;
+    }
+
+    // Update tabs
+    formTab.classList.add("active");
+    storyTab.classList.remove("active");
+
+    // Update content
+    contactFormSection.classList.remove("hidden");
+    storyContent.classList.add("hidden");
+    personalTouchSection.classList.add("hidden");
+
+    // Smooth scroll to form
+    setTimeout(() => {
+      contactFormSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  }
+
+  // Make function globally available
+  Object.assign(window, { showContactForm });
+
   // Tab toggle functionality
   function initTabs() {
     const storyTab = document.getElementById("story-tab");
@@ -391,7 +438,6 @@ const { guide, story, personalTouch } = cmsData;
     const personalTouchSection = document.getElementById(
       "personal-touch-section"
     );
-    const contactTriggers = document.querySelectorAll(".contact-trigger");
 
     if (
       !storyTab ||
@@ -401,38 +447,6 @@ const { guide, story, personalTouch } = cmsData;
       !personalTouchSection
     ) {
       return;
-    }
-
-    // Function to show form tab and scroll
-    function showContactForm() {
-      if (
-        !formTab ||
-        !storyTab ||
-        !contactFormSection ||
-        !storyContent ||
-        !personalTouchSection
-      ) {
-        return;
-      }
-
-      // Update tabs
-      formTab.classList.add("active");
-      storyTab.classList.remove("active");
-
-      // Update content
-      contactFormSection.classList.remove("hidden");
-      storyContent.classList.add("hidden");
-      personalTouchSection.classList.add("hidden");
-
-      // Smooth scroll to form
-      setTimeout(() => {
-        if (contactFormSection) {
-          contactFormSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-      }, 100);
     }
 
     // Show story tab
@@ -450,13 +464,6 @@ const { guide, story, personalTouch } = cmsData;
     // Show form tab
     formTab.addEventListener("click", () => {
       showContactForm();
-    });
-
-    // Add click listeners to phone and email icons
-    contactTriggers.forEach((trigger) => {
-      trigger.addEventListener("click", () => {
-        showContactForm();
-      });
     });
 
     // Check URL parameters to automatically open contact form

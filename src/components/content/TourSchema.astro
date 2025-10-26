@@ -1,0 +1,119 @@
+---
+export interface TourSchemaProps {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+  duration?: string;
+  provider?: {
+    name: string;
+    url: string;
+  };
+  location?: {
+    name: string;
+    address?: string;
+    geo?: {
+      latitude: number;
+      longitude: number;
+    };
+  };
+  offers?: {
+    price?: string;
+    currency?: string;
+    availability?: string;
+    validFrom?: string;
+    validThrough?: string;
+  };
+  category?: string[];
+  accessibility?: string;
+}
+
+const {
+  name,
+  description,
+  url,
+  image,
+  duration,
+  provider = {
+    name: "Светлана Жукова - Гид по Лигурии",
+    url: "https://liguria-tours.com",
+  },
+  location,
+  offers,
+  category = [],
+  accessibility,
+} = Astro.props;
+
+const tourSchema = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "@id": `${url}#tour`,
+  name: name,
+  description: description,
+  url: url,
+  ...(image && {
+    image: {
+      "@type": "ImageObject",
+      url: image,
+    },
+  }),
+  ...(duration && {
+    estimatedDuration: duration.includes("ISO") ? duration : `PT${duration}H`,
+  }),
+  provider: {
+    "@type": "TravelAgency",
+    name: provider.name,
+    url: provider.url,
+  },
+  ...(location && {
+    itinerary: {
+      "@type": "TouristDestination",
+      name: location.name,
+      ...(location.address && {
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: location.address,
+          addressRegion: "Лигурия",
+          addressCountry: "IT",
+        },
+      }),
+      ...(location.geo && {
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: location.geo.latitude,
+          longitude: location.geo.longitude,
+        },
+      }),
+    },
+  }),
+  ...(category.length > 0 && {
+    touristType: category.map((cat: string) => `https://schema.org/${cat}`),
+  }),
+  ...(offers && {
+    offers: {
+      "@type": "Offer",
+      "@id": `${url}#offer`,
+      ...(offers.price && {
+        price: offers.price,
+        priceCurrency: offers.currency || "EUR",
+      }),
+      availability: offers.availability || "https://schema.org/InStock",
+      ...(offers.validFrom && { validFrom: offers.validFrom }),
+      ...(offers.validThrough && { validThrough: offers.validThrough }),
+      seller: {
+        "@type": "TravelAgency",
+        name: provider.name,
+      },
+    },
+  }),
+  ...(accessibility && {
+    accessibilityFeature: accessibility,
+  }),
+  audience: {
+    "@type": "PeopleAudience",
+    audienceType: "Tourist",
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(tourSchema)} />

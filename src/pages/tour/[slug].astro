@@ -2,10 +2,11 @@
 import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
 import Section from "@/components/layout/Section.astro";
+import TourSchema from "@/components/content/TourSchema.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
-import { ChevronLeft, Check } from "@lucide/astro";
+import { Check, ChevronRight } from "@lucide/astro";
 
 export interface Props {
   locale: Locale;
@@ -33,6 +34,18 @@ const tour = allTours.find((t) => t.slug === slug);
 if (!tour) {
   return Astro.redirect("/404");
 }
+
+// Get related tours (same categories, different from current)
+const getRelatedTours = (currentTour: any, allTours: any[], limit = 3) => {
+  return allTours
+    .filter((t) => 
+      t.slug !== currentTour.slug && 
+      t.categories.some((cat: string) => currentTour.categories.includes(cat))
+    )
+    .slice(0, limit);
+};
+
+const relatedTours = getRelatedTours(tour, allTours, 3);
 
 // Static paths generation for pre-rendering
 export async function getStaticPaths() {
@@ -65,26 +78,43 @@ export async function getStaticPaths() {
     description: tour.description,
     canonical: `${Astro.site}tour/${tour.slug}`,
     openGraph: {
-      title: tour.title,
-      description: tour.description,
-      image: "/images/og-image.jpg",
-      type: "article",
+      basic: {
+        title: tour.title,
+        type: "article",
+        image: "/images/og-image.jpg",
+        url: `${Astro.site}tour/${tour.slug}`,
+      },
+      optional: {
+        description: tour.description,
+        siteName: "Туры по Лигурии",
+      },
     },
   }}
 >
+  <!-- Add structured data for this tour -->
+  <TourSchema
+    name={tour.title}
+    description={tour.fullDescription || tour.description}
+    url={`${Astro.site}tour/${tour.slug}`}
+    image={tour.images && tour.images[0] ? `${Astro.site}${tour.images[0].image}` : undefined}
+    duration={tour.duration}
+    category={tour.categories}
+    location={{
+      name: "Лигурия",
+      address: "Лигурия, Италия",
+      geo: {
+        latitude: 44.4056,
+        longitude: 8.9463,
+      }
+    }}
+    offers={{
+      price: "80",
+      currency: "EUR",
+      availability: "https://schema.org/InStock",
+    }}
+  />
   <Section class="py-12">
     <Container>
-      <!-- Back Button -->
-      <div class="mb-8">
-        <button
-          id="back-button"
-          class="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors"
-        >
-          <ChevronLeft class="w-5 h-5" />
-          {t("common.back", "Назад")}
-        </button>
-      </div>
-
       <!-- Title -->
       <div class="mb-12">
         <h1 class="text-3xl md:text-4xl font-bold text-center">{tour.title}</h1>
@@ -198,6 +228,61 @@ export async function getStaticPaths() {
                   <span class="text-foreground/80">{point}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Related Tours Section -->
+      {
+        relatedTours.length > 0 && (
+          <div class="mt-20">
+            <h3 class="text-2xl font-bold mb-8 text-center">
+              {t("tours.related", "Похожие туры")}
+            </h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedTours.map((relatedTour) => (
+                <a
+                  href={`/tour/${relatedTour.slug}`}
+                  class="group bg-background border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/50 flex flex-col h-full"
+                >
+                  <div class="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={relatedTour.images[0]?.image?.src}
+                      alt={relatedTour.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h4 class="font-semibold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2 min-h-[3rem] leading-6">
+                      {relatedTour.title}
+                    </h4>
+                    <p class="text-sm text-muted-foreground line-clamp-2 mb-3 flex-grow min-h-[2.5rem] leading-5">
+                      {relatedTour.description}
+                    </p>
+                    <div class="mt-auto">
+                      {relatedTour.duration ? (
+                        <div class="flex items-center gap-2 text-xs text-primary truncate">
+                          <span class="truncate">Продолжительность: {relatedTour.duration}</span>
+                        </div>
+                      ) : (
+                        <div class="h-4"></div>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+            
+            <!-- Link back to all tours -->
+            <div class="text-center mt-8">
+              <a
+                href="/#tours"
+                class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
+              >
+                {t("tours.view_all", "Посмотреть все туры")}
+                <ChevronRight class="w-4 h-4" />
+              </a>
             </div>
           </div>
         )

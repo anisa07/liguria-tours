@@ -1,5 +1,5 @@
 ---
-import { Clock, Mail } from "@lucide/astro";
+import { Clock } from "@lucide/astro";
 
 export interface Props {
   tour: {
@@ -63,11 +63,11 @@ const { tour } = Astro.props;
       </span>
       <a
         href={`/about-me?contact=true&subject=${encodeURIComponent(`Хочу записаться на тур "${tour.title}"`)}&message=${encodeURIComponent(`Я хочу попасть на тур "${tour.title}". Мечтаю увидеть эту красоту.\nНе подскажите сколько стоит экскурсия и в какие дни можно записаться на нее?\nСпасибо!`)}`}
-        class="group/book p-2 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+        class="px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-white hover:text-white focus:text-white text-sm font-bold shadow-lg border-2 border-primary transition-all duration-300 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         title="Забронировать"
         aria-label={`Забронировать тур ${tour.title}`}
       >
-        <Mail class="w-4 h-4" />
+        Хочу!
       </a>
     </div>
   </div>
