@@ -3,6 +3,7 @@ import Container from "@/components/layout/Container.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
+import { X, ChevronLeft, ChevronRight } from "@lucide/astro";
 
 export interface Props {
   locale: Locale;
@@ -52,7 +53,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
     title: point.title,
     description: point.description,
     story: locationStories[point.id] || point.description,
-  })),
+  }))
 );
 ---
 
@@ -122,18 +123,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
         class="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all z-10"
         aria-label="Close"
       >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
+        <X class="w-6 h-6" />
       </button>
 
       <button
@@ -141,18 +131,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
         class="absolute left-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all"
         aria-label="Previous"
       >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"></path>
-        </svg>
+        <ChevronLeft class="w-6 h-6" />
       </button>
 
       <div
@@ -196,18 +175,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
         class="absolute right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all"
         aria-label="Next"
       >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5l7 7-7 7"></path>
-        </svg>
+        <ChevronRight class="w-6 h-6" />
       </button>
     </div>
   </Container>
@@ -218,7 +186,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
     const historyCards = document.querySelectorAll(".history-card");
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById(
-      "lightbox-image",
+      "lightbox-image"
     ) as HTMLImageElement;
     const lightboxTitle = document.getElementById("lightbox-title");
     const lightboxStory = document.getElementById("lightbox-story");
@@ -277,7 +245,7 @@ const allImages = allBoatTours.flatMap((tour: any) =>
         lightboxStory.innerHTML = paragraphs
           .map(
             (p) =>
-              `<p class="mb-5 text-justify leading-relaxed">${p.trim()}</p>`,
+              `<p class="mb-5 text-justify leading-relaxed">${p.trim()}</p>`
           )
           .join("");
 

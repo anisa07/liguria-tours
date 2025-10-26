@@ -4,6 +4,7 @@ import Container from "../layout/Container.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import type { CollectionEntry } from "astro:content";
+import { Menu, Mountain, Building2, Palette, BookOpen } from "@lucide/astro";
 
 export interface Props {
   locale: Locale;
@@ -50,7 +51,7 @@ const allTours =
         {
           t(
             "tours.description",
-            "Откройте для себя самые красивые места Лигурии со Светланой Жуковой",
+            "Откройте для себя самые красивые места Лигурии со Светланой Жуковой"
           )
         }
       </p>
@@ -214,13 +215,13 @@ const allTours =
               "from-primary",
               "to-primary/80",
               "text-white",
-              "shadow-lg",
+              "shadow-lg"
             );
             btn.classList.add(
               "bg-background",
               "text-foreground",
               "border-primary/30",
-              "shadow-md",
+              "shadow-md"
             );
           });
 
@@ -230,13 +231,13 @@ const allTours =
             "bg-background",
             "text-foreground",
             "border-primary/30",
-            "shadow-md",
+            "shadow-md"
           );
           this.classList.add(
             "from-primary",
             "to-primary/80",
             "text-white",
-            "shadow-lg",
+            "shadow-lg"
           );
 
           // Filter and show/hide items

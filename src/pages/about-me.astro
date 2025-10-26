@@ -237,13 +237,13 @@ const { guide, story, personalTouch } = cmsData;
           id="story-tab"
           class="tab-button active px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          Моя история
+          {t("about.tabs.story", "Моя история")}
         </button>
         <button
           id="form-tab"
           class="tab-button px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          Напишите мне
+          {t("about.tabs.contact", "Напишите мне")}
         </button>
       </div>
 
@@ -301,7 +301,7 @@ const { guide, story, personalTouch } = cmsData;
             </blockquote>
             <cite
               class="block mt-6 text-lg text-foreground/70 not-italic font-semibold"
-              >— Светлана Жукова</cite
+              >{t("about.quote.attribution", "— Светлана Жукова")}</cite
             >
           </div>
         </div>
@@ -331,9 +331,16 @@ const { guide, story, personalTouch } = cmsData;
               </svg>
             </div>
             <div>
-              <h2 class="text-3xl font-bold">Отправить сообщение</h2>
+              <h2 class="text-3xl font-bold">
+                {t("about.contact_form.title", "Отправить сообщение")}
+              </h2>
               <p class="text-muted-foreground">
-                Заполните форму ниже, и я свяжусь с вами в ближайшее время
+                {
+                  t(
+                    "about.contact_form.description",
+                    "Заполните форму ниже, и я свяжусь с вами в ближайшее время"
+                  )
+                }
               </p>
             </div>
           </div>
