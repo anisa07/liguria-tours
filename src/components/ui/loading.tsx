@@ -1,4 +1,4 @@
-import { Loader2 } from "@lucide/astro";
+import { Loader2 } from "lucide-react";
 
 export const Loading = () => (
   <button
@@ -6,6 +6,6 @@ export const Loading = () => (
     disabled
     aria-label="Toggle theme"
   >
-    <Loader2 class="h-4 w-4 animate-spin" />
+    <Loader2 className="h-4 w-4 animate-spin" />
   </button>
 );

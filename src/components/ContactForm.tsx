@@ -16,7 +16,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useSendEmail } from "@/hooks/useSendEmail";
 import { Loading } from "./ui/loading";
 import { Message } from "./ui/message";
-import { AlertCircleIcon, CheckCircle2Icon } from "@lucide/astro";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 
@@ -42,7 +42,7 @@ interface ContactFormProps {
   capthaKey: string;
 }
 
-export const ContactForm = ({
+const ContactForm = ({
   locale,
   emailApiAccessKey,
   capthaKey,
@@ -304,9 +304,9 @@ export const ContactForm = ({
             title={message}
             icon={
               status === "success" ? (
-                <CheckCircle2Icon />
+                <CheckCircle2 />
               ) : status === "error" ? (
-                <AlertCircleIcon />
+                <AlertCircle />
               ) : undefined
             }
           />
@@ -315,3 +315,5 @@ export const ContactForm = ({
     </Form>
   );
 };
+
+export default ContactForm;
