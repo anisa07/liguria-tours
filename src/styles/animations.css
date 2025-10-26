@@ -12,7 +12,8 @@
  * 1. Scroll-based animations (fade-up, fade-in, slide-left)
  * 2. Component animations (slide-down/up, fade-in/out, spin)
  * 3. Progress animations (countdown, stripes, indeterminate, shimmer, pulse)
- * 4. Utility classes with delays and controls
+ * 4. Form-specific animations (focus, validation, loading)
+ * 5. Utility classes with delays and controls
  * 
  * ACCESSIBILITY:
  * - All animations respect prefers-reduced-motion
@@ -22,6 +23,59 @@
  * Progressive enhancement for scroll-based animations using modern CSS
  * Fallback handled by Tailwind classes + scroll-animations.ts
  */
+
+/* Form-specific animations for enhanced UX */
+@keyframes form-field-focus {
+  0% {
+    border-color: rgba(var(--primary), 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    border-color: rgb(var(--primary));
+    box-shadow: 0 4px 20px rgba(var(--primary), 0.15);
+  }
+}
+
+@keyframes form-success-pulse {
+  0%, 100% {
+    background-color: rgba(34, 197, 94, 0.05);
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    background-color: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.6);
+  }
+}
+
+@keyframes form-error-shake {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  40%, 60% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
 
 /* Modern browsers: Use CSS animation-timeline for scroll-based animations */
 @supports (animation-timeline: view()) {
@@ -45,7 +99,10 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-fade-in,
-  .animate-slide-left {
+  .animate-slide-left,
+  .animate-form-focus,
+  .animate-float,
+  .animate-gradient-shift {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -375,6 +432,44 @@
 
 .animate-fade-out-scale {
   animation: fadeOutScale 0.2s ease-in forwards;
+}
+
+/* ==============================================
+   FORM-SPECIFIC ANIMATIONS
+   ============================================== */
+
+.animate-form-focus {
+  animation: form-field-focus 0.2s ease-out;
+}
+
+.animate-form-success {
+  animation: form-success-pulse 2s ease-in-out infinite;
+}
+
+.animate-form-error {
+  animation: form-error-shake 0.5s ease-in-out;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Form field states with smooth transitions */
+.form-field-enhanced {
+  transition: all 0.2s ease;
+}
+
+.form-field-enhanced:focus-within {
+  transform: translateY(-2px);
+}
+
+.form-field-enhanced:hover:not(:focus-within) {
+  transform: translateY(-1px);
 }
 
 /* ==============================================

@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { type Country, getCountryCallingCode, parsePhoneNumber } from "react-phone-number-input";
+import { type Country, getCountryCallingCode } from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";
 import { ChevronDown, Search } from "lucide-react";
 
 interface CustomPhoneInputProps {
   value?: string;
   onChange: (value: string | undefined) => void;
+  onCountryChange?: (countryCode: Country, dialCode: string) => void;
   placeholder?: string;
   className?: string;
   defaultCountry?: Country;
@@ -46,6 +47,7 @@ const COUNTRIES_DATA: Array<{ code: Country; name: string; nameRu: string; dialC
 const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
   value,
   onChange,
+  onCountryChange,
   placeholder,
   className,
   defaultCountry = "IT",
@@ -71,11 +73,16 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
 
   // Handle phone number input
   const handlePhoneNumberChange = (inputValue: string) => {
-    setPhoneNumber(inputValue);
+    // Only allow digits
+    const digitsOnly = inputValue.replaceAll(/\D/g, '');
     
-    // Format with country code
-    const fullNumber = `+${currentCountry.dialCode}${inputValue}`;
-    onChange(fullNumber);
+    // Limit the length to prevent overly long numbers (max 10 digits)
+    if (digitsOnly.length <= 10) {
+      setPhoneNumber(digitsOnly);
+      
+      // Pass only the digits to the form (without country code)
+      onChange(digitsOnly);
+    }
   };
 
   // Handle country selection
@@ -84,32 +91,21 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
     setIsDropdownOpen(false);
     setSearchTerm("");
     
-    // Update the phone number with new country code
-    if (phoneNumber) {
-      const fullNumber = `+${country.dialCode}${phoneNumber}`;
-      onChange(fullNumber);
+    // Notify parent component about country change
+    if (onCountryChange) {
+      onCountryChange(country.code, country.dialCode);
     }
   };
 
-  // Parse existing value to extract country and number
+  // Parse existing value to extract only the phone number part
   useEffect(() => {
-    if (value) {
-      try {
-        const parsed = parsePhoneNumber(value);
-        if (parsed) {
-          setSelectedCountry(parsed.country || defaultCountry);
-          setPhoneNumber(parsed.nationalNumber);
-        }
-      } catch {
-        // If parsing fails, just use the raw value
-        if (value.startsWith('+')) {
-          setPhoneNumber(value.substring(value.indexOf(currentCountry.dialCode) + currentCountry.dialCode.length));
-        } else {
-          setPhoneNumber(value);
-        }
+    if (value && value !== phoneNumber) {
+      // If value contains only digits, use it directly
+      if (/^\d+$/.test(value)) {
+        setPhoneNumber(value);
       }
     }
-  }, [value, currentCountry.dialCode, defaultCountry]);
+  }, [value, phoneNumber]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -192,6 +188,9 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
         {/* Phone Number Input */}
         <input
           type="tel"
+          inputMode="numeric"
+          pattern="\d+"
+          maxLength={10}
           value={phoneNumber}
           onChange={(e) => handlePhoneNumberChange(e.target.value)}
           placeholder={placeholder}

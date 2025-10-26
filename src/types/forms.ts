@@ -3,11 +3,14 @@ import { z } from "zod";
 
 // Contact form schema and types
 export const contactFormSchema = z.object({
-  name: z.string().min(1, "Name is required").max(120),
-  email: z.string().email("Please enter a valid email"),
-  phone: z.string().min(1, "Phone is required"),
-  subject: z.string().min(1, "Subject is required").max(200),
-  message: z.string().min(1, "Message is required").max(5000),
+  name: z.string().min(1, "Введите ваше имя").max(120),
+  email: z.string().email("Введите ваш Email"),
+  phone: z.string()
+    .min(7, "Минимум 7 цифр")
+    .max(15, "Максимум 15 цифр")
+    .regex(/^[0-9]+$/, "Только цифры"),
+  subject: z.string().min(1, "Введите тему сообщения").max(200),
+  message: z.string().min(10, "Введите сообщение минимум 10 символов").max(5000),
   "h-captcha-response": z.string(),
 });
 

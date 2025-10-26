@@ -725,4 +725,80 @@
     -webkit-line-clamp: 3;
     line-clamp: 3;
   }
+
+  /* Enhanced form styling */
+  .form-field-glass {
+    background: rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(var(--primary), 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .form-field-glass:focus {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgb(var(--primary));
+    box-shadow: 0 8px 32px rgba(var(--primary), 0.15);
+  }
+
+  .form-field-glass:hover:not(:focus) {
+    border-color: rgba(var(--primary), 0.4);
+    box-shadow: 0 4px 16px rgba(var(--primary), 0.1);
+  }
+
+  /* Contact form specific enhancements */
+  .contact-form-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-form-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(var(--primary), 0.05) 50%,
+      transparent 70%
+    );
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes shimmer {
+    0%, 100% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    50% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+  }
+
+  /* Success states */
+  .form-success-indicator {
+    border-color: #22c55e;
+    background-color: rgba(34, 197, 94, 0.05);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  }
+
+  /* Error states */
+  .form-error-indicator {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.05);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+
+  /* Progress bar utilities */
+  .progress-bar {
+    width: var(--progress-width, 0%);
+  }
+
+  /* Dynamic width utilities */
+  .w-progress {
+    width: var(--tw-width, 0%);
+  }
 }
