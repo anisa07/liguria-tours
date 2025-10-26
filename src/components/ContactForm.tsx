@@ -229,34 +229,8 @@ const ContactForm = ({
           )}
         />
 
-        {/* Privacy Notice for hCaptcha */}
-        <div className="text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg border border-border/50">
-          <p className="text-xs leading-relaxed">
-            {t(
-              "forms.captcha_privacy_notice",
-              "Для защиты от спама используется hCaptcha. При отправке формы будут загружены ресурсы hCaptcha, которые могут установить cookies. Это необходимо для проверки безопасности."
-            )}{" "}
-            <a
-              href="/privacy-policy"
-              className="underline hover:no-underline text-primary"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t("common.privacy_policy", "Политика конфиденциальности")}
-            </a>
-          </p>
-          {!showCaptcha && (
-            <p className="text-xs mt-2 text-muted-foreground/80">
-              {t(
-                "forms.captcha_delayed_loading",
-                "Проверка безопасности загрузится при взаимодействии с формой для минимизации использования cookies."
-              )}
-            </p>
-          )}
-        </div>
-
         {/* Conditional hCaptcha Loading */}
-        {showCaptcha ? (
+        {showCaptcha && (
           <HCaptcha
             ref={hcaptchaRef}
             sitekey={capthaKey}
@@ -279,15 +253,6 @@ const ContactForm = ({
               );
             }}
           />
-        ) : (
-          <div className="p-4 bg-muted/30 rounded-lg border border-dashed border-muted-foreground/30 text-center">
-            <p className="text-sm text-muted-foreground">
-              {t(
-                "forms.captcha_placeholder",
-                "Проверка безопасности загрузится при заполнении формы"
-              )}
-            </p>
-          </div>
         )}
 
         <Button
