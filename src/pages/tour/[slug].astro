@@ -58,9 +58,19 @@ export async function getStaticPaths() {
 ---
 
 <IntlBaseLayout
-  title={`${tour.title} - ${t("tours.title", "Туры по Италии")}`}
-  description={tour.description}
   locale={locale}
+  pageNS={["common", "ui", "tours"]}
+  seo={{
+    title: `${tour.title} - ${t("tours.title", "Туры по Италии")}`,
+    description: tour.description,
+    canonical: `${Astro.site}tour/${tour.slug}`,
+    openGraph: {
+      title: tour.title,
+      description: tour.description,
+      image: "/images/og-image.jpg",
+      type: "article",
+    },
+  }}
 >
   <Section class="py-12">
     <Container>
