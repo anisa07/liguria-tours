@@ -66,7 +66,7 @@ export async function getStaticPaths() {
       <!-- Back Button -->
       <div class="mb-8">
         <button
-          onclick="history.back()"
+          id="back-button"
           class="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <svg
@@ -189,3 +189,14 @@ export async function getStaticPaths() {
     </Container>
   </Section>
 </IntlBaseLayout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", function () {
+        history.back();
+      });
+    }
+  });
+</script>

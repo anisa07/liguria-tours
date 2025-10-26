@@ -1,13 +1,4 @@
 [[headers]]
-for = "/*"
-[headers.values]
-X-Content-Type-Options = "nosniff"
-X-Frame-Options = "DENY"
-Referrer-Policy = "strict-origin-when-cross-origin"
-Cache-Control = "public, max-age=0, must-revalidate"
-Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.hcaptcha.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob: https://hcaptcha.com https://*.hcaptcha.com https://www.google-analytics.com https://www.googletagmanager.com; font-src 'self' https: data:; connect-src 'self' https://api.web3forms.com https://hcaptcha.com https://*.hcaptcha.com https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com; frame-src https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
-
-[[headers]]
 for = "/sitemap*.xml"
 [headers.values]
 Content-Type = "application/xml; charset=UTF-8"
