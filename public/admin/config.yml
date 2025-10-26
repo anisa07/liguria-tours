@@ -70,6 +70,105 @@ collections:
                   - { label: "Image", name: "image", widget: "image" }
                   - { label: "Alt Text", name: "alt", widget: "string" }
 
+  - name: "historyCollection"
+    label: "History Collection"
+    files:
+      - label: "History Collection Content"
+        name: "historyCollection"
+        file: "src/content/historyCollection/historyCollection.md"
+        fields:
+          - label: "Location Stories"
+            name: "locationStories"
+            widget: "list"
+            fields:
+              - { label: "ID", name: "id", widget: "string" }
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Alt Text", name: "alt", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+
+  - name: "aboutMe"
+    label: "About Me"
+    files:
+      - label: "About Me Content"
+        name: "aboutMe"
+        file: "src/content/aboutMe/aboutMe.md"
+        fields:
+          - label: "Guide"
+            name: "guide"
+            widget: "object"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - {
+                  label: "Profile Image",
+                  name: "profileImage",
+                  widget: "image",
+                }
+              - { label: "Alt Text", name: "alt", widget: "string" }
+              - { label: "Introduction", name: "introduction", widget: "text" }
+              - label: "Highlights"
+                name: "highlights"
+                widget: "list"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+          - label: "Story"
+            name: "story"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Sections"
+                name: "sections"
+                widget: "list"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Content", name: "content", widget: "text" }
+                  - { label: "Image", name: "image", widget: "image" }
+                  - { label: "Alt Text", name: "alt", widget: "string" }
+              - label: "Quote"
+                name: "quote"
+                widget: "object"
+                fields:
+                  - { label: "Text", name: "text", widget: "text" }
+                  - { label: "Author", name: "author", widget: "string" }
+          - label: "Personal Touch"
+            name: "personalTouch"
+            widget: "object"
+            fields:
+              - { label: "Citation", name: "citation", widget: "text" }
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Interests"
+                name: "interests"
+                widget: "object"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - label: "Items"
+                    name: "items"
+                    widget: "list"
+                    field: { label: "Item", name: "item", widget: "string" }
+              - label: "Philosophy"
+                name: "philosophy"
+                widget: "object"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - label: "Paragraphs"
+                    name: "paragraphs"
+                    widget: "list"
+                    field:
+                      { label: "Paragraph", name: "paragraph", widget: "text" }
+          - label: "Call to Action"
+            name: "cta"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+          - label: "SEO Data"
+            name: "seoData"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+
 backend:
   name: git-gateway
   repo: anisa07/liguria-tours

@@ -52,30 +52,20 @@ const italianToursGallery = defineCollection({
     }),
 });
 
-const boatTourCollection = defineCollection({
+const historyCollection = defineCollection({
   loader: glob({
     pattern: "**/*.md",
-    base: "./src/content/boatTourCollection",
+    base: "./src/content/historyCollection",
   }),
   schema: ({ image }) =>
     z.object({
-      tours: z.array(
+      locationStories: z.array(
         z.object({
           id: z.string(),
+          image: image(),
+          alt: z.string(),
           title: z.string(),
           description: z.string(),
-          price: z.string().optional(),
-          duration: z.string().optional(),
-          badge: z.string().optional(),
-          tourPoints: z.array(
-            z.object({
-              id: z.string(),
-              image: image(),
-              alt: z.string(),
-              title: z.string(),
-              description: z.string(),
-            })
-          ),
         })
       ),
     }),
@@ -141,6 +131,6 @@ const aboutMeCollection = defineCollection({
 export const collections = {
   hero: heroCollection,
   italianToursGallery,
-  boatTourCollection,
+  historyCollection,
   aboutMe: aboutMeCollection,
 };
