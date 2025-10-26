@@ -61,35 +61,41 @@ const ContactForm = ({
   const { sendEmail, status, message, reset } = useSendEmail();
   const hcaptchaRef = useRef<HCaptcha>(null);
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
 
   const onHCaptchaChange = (token: string) => {
     form.setValue("h-captcha-response", token);
   };
 
-  // Add event listeners for form interaction
+  // Watch form values and show captcha when all required fields are valid
+  const watchedValues = form.watch();
+  
   useEffect(() => {
-    const handleFormInteraction = () => {
-      if (!userInteracted) {
-        setUserInteracted(true);
+    // Check if all required fields are filled and valid
+    const { name, email, subject, message } = watchedValues;
+    
+    if (name && email && subject && message) {
+      // Validate the current form state
+      const result = contactFormSchema.safeParse({
+        name,
+        email, 
+        subject,
+        message,
+        "h-captcha-response": ""
+      });
+      
+      // Show captcha only when all required fields are valid
+      if (result.success && !showCaptcha) {
         setShowCaptcha(true);
       }
-    };
-
-    const formElement = document.querySelector("form");
-    if (formElement && !userInteracted) {
-      const handleFocus = () => handleFormInteraction();
-      const handleInput = () => handleFormInteraction();
-
-      formElement.addEventListener("focusin", handleFocus);
-      formElement.addEventListener("input", handleInput);
-
-      return () => {
-        formElement.removeEventListener("focusin", handleFocus);
-        formElement.removeEventListener("input", handleInput);
-      };
+    } else if (showCaptcha && (!name || !email || !subject || !message)) {
+      // Hide captcha if user clears required fields
+      setShowCaptcha(false);
+      if (hcaptchaRef.current) {
+        hcaptchaRef.current.resetCaptcha();
+      }
+      form.setValue("h-captcha-response", "");
     }
-  }, [userInteracted]);
+  }, [watchedValues, showCaptcha, form]);
 
   const onSubmit = async (values: ContactFormValues) => {
     const botField = (
@@ -97,22 +103,12 @@ const ContactForm = ({
     )?.checked;
     if (botField) return;
 
-    // Show captcha if not already shown
-    if (!showCaptcha) {
-      setShowCaptcha(true);
-      toast.info(
-        t?.("forms.captcha_loading", "Загружается проверка безопасности...") ||
-          "Загружается проверка безопасности..."
-      );
-      return;
-    }
-
     if (!values["h-captcha-response"]) {
       toast.error(
         t?.(
           "forms.captcha_required",
           "Пожалуйста, подтвердите, что вы не робот"
-        )
+        ) || "Пожалуйста, подтвердите, что вы не робот"
       );
       return;
     }
@@ -130,6 +126,7 @@ const ContactForm = ({
     }
 
     form.setValue("h-captcha-response", "");
+    setShowCaptcha(false);
   };
 
   if (error) {
@@ -264,17 +261,22 @@ const ContactForm = ({
         </Button>
 
         {message && (
-          <Message
-            type={status === "error" ? "error" : "default"}
-            title={message}
-            icon={
-              status === "success" ? (
-                <CheckCircle2 />
-              ) : status === "error" ? (
-                <AlertCircle />
-              ) : undefined
+          (() => {
+            let icon;
+            if (status === "success") {
+              icon = <CheckCircle2 />;
+            } else if (status === "error") {
+              icon = <AlertCircle />;
             }
-          />
+            
+            return (
+              <Message
+                type={status === "error" ? "error" : "default"}
+                title={message}
+                icon={icon}
+              />
+            );
+          })()
         )}
       </form>
     </Form>
