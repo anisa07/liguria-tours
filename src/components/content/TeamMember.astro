@@ -50,7 +50,7 @@ const {
   showLocation = false,
   columns = 3,
   class: className = "",
-  locale = "en",
+  locale = "ru",
 } = Astro.props;
 
 // Get translations
@@ -189,7 +189,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
                     </h4>
                     <div class="flex flex-wrap gap-2">
                       {memberItem.skills.slice(0, 5).map((skill) => (
-                        <span class="inline-flex items-center px-2 py-1 bg-surface-1 text-muted-foreground rounded-full text-xs">
+                        <span class="inline-flex items-center px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs">
                           {skill}
                         </span>
                       ))}
@@ -205,7 +205,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
                     {memberItem.socialLinks.map((social) => (
                       <a
                         href={social.url}
-                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-1 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         aria-label={`${memberItem.name} on ${social.platform}`}
                         title={social.handle || social.platform}
                         target="_blank"
@@ -370,7 +370,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
             )}
           >
             {singleMember.skills.map((skill) => (
-              <span class="inline-flex items-center px-3 py-1 bg-surface-1 text-muted-foreground rounded-full text-sm">
+              <span class="inline-flex items-center px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
                 {skill}
               </span>
             ))}
@@ -388,7 +388,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
             {singleMember.socialLinks.map((social) => (
               <a
                 href={social.url}
-                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-1 text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label={`${singleMember.name} on ${social.platform}`}
                 title={social.handle || social.platform}
                 target="_blank"
@@ -406,7 +406,7 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
     // Placeholder
     <div
       class={cn(
-        "max-w-md mx-auto bg-surface-1 border-2 border-dashed border-border rounded-lg p-8 text-center",
+        "max-w-md mx-auto bg-muted border-2 border-dashed border-border rounded-lg p-8 text-center",
         className
       )}
     >
@@ -431,16 +431,16 @@ const sectionClasses = cn(isMultipleMembers && "py-16 md:py-20", className);
 
   /* Hover effects for social links */
   .hover\:bg-primary:hover {
-    background-color: rgb(var(--color-primary));
+    background-color: rgb(var(--primary));
   }
 
   .hover\:text-primary-foreground:hover {
-    color: rgb(var(--color-primary-foreground));
+    color: rgb(var(--text-light));
   }
 
   /* Focus styles */
   .focus\:ring-primary:focus {
-    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--primary) / var(--tw-ring-opacity));
   }
 
   /* Online status indicator uses CSS variable bg-success */

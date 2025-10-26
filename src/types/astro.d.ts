@@ -2,9 +2,9 @@
 declare namespace App {
   interface Locals {
     t?: (
-      key: string,
-      vars?: Record<string, string | number>,
-      fallback?: string
+      _key: string,
+      _vars?: Record<string, string | number>,
+      _fallback?: string
     ) => string;
     locale?: string;
     dir?: "ltr" | "rtl";
@@ -20,9 +20,9 @@ declare module "*.astro" {
 
 // Global type for translation function
 export type TranslationFunction = (
-  key: string,
-  vars?: Record<string, string | number>,
-  fallback?: string
+  _key: string,
+  _vars?: Record<string, string | number>,
+  _fallback?: string
 ) => string;
 
 // Props that layouts can provide to pages

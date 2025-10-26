@@ -1,7 +1,7 @@
 ---
 import { createT } from "@/i18n/t";
 import type { Locale } from "@/i18n/config";
-import LanguageSwitcher from "../LanguageSwitcher.astro";
+import { Menu, X } from "@lucide/astro";
 
 export interface MenuItem {
   label: string;
@@ -41,16 +41,15 @@ const t = createT(translations);
 <div class={`md:hidden ${className}`}>
   <button
     type="button"
-    class="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-subtle mr-2"
+    class="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted mr-2"
     aria-controls={menuId}
     aria-expanded="false"
     aria-label={t("mobile_menu.toggle", "Toggle mobile menu")}
     id={`${menuId}-button`}
   >
     <span class="sr-only">{t("mobile_menu.open", "Open main menu")}</span>
-    <span class="menu-icon text-xl" aria-hidden="true">{trigger}</span>
-    <span class="close-icon text-xl hidden" aria-hidden="true">{closeText}</span
-    >
+    <Menu class="menu-icon w-6 h-6" aria-hidden="true" />
+    <X class="close-icon w-6 h-6 hidden" aria-hidden="true" />
   </button>
 </div>
 
@@ -133,8 +132,8 @@ const t = createT(translations);
                         href={child.href}
                         class={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
                           child.active
-                            ? "bg-surface-2 text-foreground font-medium"
-                            : "text-muted-foreground hover:text-foreground hover:bg-surface-1"
+                            ? "bg-muted text-foreground font-medium"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
                         } ${child.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                         tabindex={child.disabled ? -1 : undefined}
                         aria-disabled={child.disabled ? "true" : undefined}

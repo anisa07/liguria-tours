@@ -1,17 +1,34 @@
 ---
 import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
-import Section from "@/components/layout/Section.astro";
 import CallToAction from "@/components/content/CallToAction.astro";
+import ContactForm from "@/components/ContactForm";
+import SkillChips from "@/components/ui/SkillChips.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
+import {
+  Check,
+  Phone,
+  Mail,
+  Heart,
+  Lightbulb,
+  CheckCircle,
+  Quote,
+  Facebook,
+  Instagram,
+} from "@lucide/astro";
 
 // Set locale to Russian
 const locale: Locale = "ru";
 
 // Get the translation function for this page
-const { t } = await getPageTranslations(locale, ["common", "ui", "about"]);
+const { t } = await getPageTranslations(locale, [
+  "common",
+  "ui",
+  "about",
+  "forms",
+]);
 
 // Load about me data from content collection
 const aboutMeCollection = await getCollection("aboutMe");
@@ -19,6 +36,10 @@ const aboutMeData = aboutMeCollection && aboutMeCollection[0]?.data;
 
 // Use content collection data or fallback
 const cmsData = aboutMeData;
+
+// Email API access key
+const emailApiAccessKey = import.meta.env.PUBLIC_EMAIL_API_KEY || "demo-key";
+const capthaKey = import.meta.env.PUBLIC_HCAPTCHA_SITEKEY || "demo-key";
 
 const cta = {
   title: cmsData.cta.title,
@@ -28,11 +49,6 @@ const cta = {
       label: t("common.choose_tour", "Выбрать экскурсию"),
       href: "/#tours",
       variant: "primary" as const,
-    },
-    {
-      label: t("common.contact_me", "Связаться со мной"),
-      href: "/contact",
-      variant: "outline" as const,
     },
   ],
 };
@@ -45,121 +61,307 @@ const { guide, story, personalTouch } = cmsData;
 
 <IntlBaseLayout
   locale={locale}
-  pageNS={["common", "ui", "about"]}
+  pageNS={["common", "ui", "about", "forms"]}
   seo={{
     title: seoData.title,
     description: seoData.description,
+    canonical: `${Astro.site}about-me`,
   }}
 >
-  <!-- Hero Section -->
-  <Container class="text-center pt-24">
-    <!-- Profile Image -->
-    <div class="mb-8">
-      <div class="relative inline-block">
-        <img
-          src={guide.profileImage.src}
-          alt={guide.alt}
-          class="w-48 h-48 rounded-full object-cover mx-auto shadow-xl border-4 border-liguria-mint"
-        />
+  <!-- Hero Section - Professional Layout -->
+  <Container class="pt-24 pb-16">
+    <!-- Top Row: Photo + Name/Title/Contact -->
+    <div class="flex flex-col md:flex-row gap-10 md:gap-16 mb-16 items-center">
+      <!-- Profile Image -->
+      <div class="flex-shrink-0">
+        <div class="relative">
+          <img
+            src={guide.profileImage.src}
+            alt={guide.alt}
+            class="w-56 h-56 rounded-full object-cover shadow-2xl border-4 border-primary/10"
+          />
+          <div
+            class="verified-badge absolute -bottom-2 -right-2 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg"
+          >
+            <Check class="w-8 h-8 text-primary-foreground" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Name, Title, and Contact Info -->
+      <div class="flex-1 flex flex-col justify-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight">
+          {guide.name}
+        </h1>
+        <h2
+          class="text-2xl md:text-3xl text-primary font-semibold mb-8 leading-tight"
+        >
+          {guide.title}
+        </h2>
+
+        <!-- Contact Information -->
+        <div class="space-y-3">
+          <!-- Contact Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Phone -->
+            <button
+              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
+            >
+              <div
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
+              >
+                <Phone class="w-5 h-5" />
+              </div>
+              <span
+                class="font-semibold text-foreground group-hover:text-primary transition-colors"
+                >+39 3335787461</span
+              >
+            </button>
+
+            <!-- Email -->
+            <button
+              class="contact-trigger flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 cursor-pointer border border-primary/20 hover:border-primary/40 group"
+            >
+              <div
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
+              >
+                <Mail class="w-5 h-5" />
+              </div>
+              <span
+                class="font-semibold text-foreground group-hover:text-primary transition-colors text-sm sm:text-base truncate"
+                >genova.art.tour@gmail.com</span
+              >
+            </button>
+
+            <!-- Facebook -->
+            <a
+              href="https://www.facebook.com/gen.vkusa/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 border border-primary/20 hover:border-primary/40 group"
+            >
+              <div
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
+              >
+                <Facebook class="w-5 h-5" />
+              </div>
+              <span
+                class="font-semibold text-foreground group-hover:text-primary transition-colors"
+                >gen.vkusa</span
+              >
+            </a>
+
+            <!-- Instagram -->
+            <a
+              href="https://www.instagram.com/svetlana_gidvgenue/#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-300 border border-primary/20 hover:border-primary/40 group"
+            >
+              <div
+                class="w-11 h-11 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110"
+              >
+                <Instagram class="w-5 h-5" />
+              </div>
+              <span
+                class="font-semibold text-foreground group-hover:text-primary transition-colors truncate"
+                >svetlana_gidvgenue</span
+              >
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Introduction -->
-    <div class="max-w-3xl mx-auto">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4">{guide.name}</h1>
-      <h2 class="text-xl md:text-2xl text-primary font-semibold mb-6">
-        {guide.title}
-      </h2>
-      <p class="text-lg text-muted-foreground leading-relaxed mb-8">
-        {guide.introduction}
-      </p>
-
-      <div class="flex flex-wrap justify-center gap-4 mb-12">
-        {
-          guide.highlights.map((highlight: { label: string }) => (
-            <div class="px-4 py-2 rounded-full bg-primary/20">
-              <span class="text-sm font-medium text-foreground/80">
-                {highlight.label}
-              </span>
-            </div>
-          ))
-        }
+    <!-- Full-Width Introduction Text -->
+    <div class="max-w-5xl">
+      <div
+        class="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent p-8 rounded-2xl border-l-4 border-primary"
+      >
+        <p class="text-xl text-foreground leading-relaxed">
+          {guide.introduction}
+        </p>
       </div>
+
+      <!-- Chips -->
+      <SkillChips chips={guide.highlights} className="mt-8" size="md" />
     </div>
   </Container>
 
-  <!-- My Story -->
+  <!-- Content Section with Tabs -->
+  <Container class="py-20">
+    <div class="max-w-5xl mx-auto">
+      <!-- Tabs -->
+      <div class="flex justify-center gap-3 mb-16">
+        <button
+          id="story-tab"
+          class="tab-button active px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
+        >
+          {t("about.tabs.story", "Моя история")}
+        </button>
+        <button
+          id="form-tab"
+          class="tab-button px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
+        >
+          {t("about.tabs.contact", "Напишите мне")}
+        </button>
+      </div>
 
-  <Container class="py-16">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold text-center mb-12">Моя история</h2>
+      <!-- Story Content -->
+      <div id="story-content">
+        <div class="prose prose-lg max-w-none">
+          {
+            story.sections.map((item, index: number) => (
+              <div
+                class={`flex flex-col ${index === 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-10 mb-16 items-center`}
+              >
+                <div class="flex-1">
+                  <div class="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-xl border-l-4 border-primary">
+                    <h3 class="text-2xl font-bold text-foreground mb-4 flex items-center gap-3">
+                      <span class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
+                        {index + 1}
+                      </span>
+                      {item.title}
+                    </h3>
+                    <p class="text-lg text-foreground/80 leading-relaxed">
+                      {item.content}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex-shrink-0">
+                  <div class="relative group">
+                    <div class="absolute inset-0 bg-primary/20 rounded-2xl blur-xl group-hover:bg-primary/30 transition-all duration-300" />
+                    <img
+                      src={item.image.src}
+                      alt={item.alt}
+                      class="relative w-80 h-60 object-cover rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))
+          }
 
-      <div class="prose prose-lg max-w-none text-foreground/80">
-        {
-          story.sections.map((item, index: number) => (
-            <div
-              class={`flex flex-col ${index === 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-8 mb-12 items-center`}
+          <div
+            class="text-center bg-gradient-to-r from-primary/10 via-primary/15 to-primary/10 p-10 rounded-3xl border-2 border-primary/30 shadow-xl mt-12"
+          >
+            <Quote class="w-12 h-12 text-primary/60 mx-auto mb-4" />
+            <blockquote
+              class="text-2xl font-medium text-foreground italic leading-relaxed"
             >
-              <div class="flex-1">
-                <h3 class="text-xl font-semibold text-foreground mb-4">
-                  {item.title}
-                </h3>
-                <p class="text-justify">{item.content}</p>
-              </div>
-              <div class="flex-shrink-0">
-                <img
-                  src={item.image.src}
-                  alt={item.alt}
-                  class="w-80 h-60 object-cover rounded-2xl shadow-lg"
-                />
-              </div>
-            </div>
-          ))
-        }
+              "{personalTouch.citation}"
+            </blockquote>
+            <cite
+              class="block mt-6 text-lg text-foreground/70 not-italic font-semibold"
+              >{t("about.quote.attribution", "— Светлана Жукова")}
+            </cite>
+          </div>
+        </div>
+      </div>
 
-        <div class="text-center bg-primary/20 p-8 rounded-2xl">
-          <blockquote class="text-xl italic text-foreground">
-            "{personalTouch.citation}"
-          </blockquote>
-          <cite class="block mt-4 text-foreground/80">- Светлана Жукова</cite>
+      <!-- Contact Form (initially hidden) -->
+      <div
+        id="contact-form-section"
+        class="hidden max-w-full md:max-w-2xl mx-auto"
+      >
+        <div
+          class="bg-gradient-to-br from-background to-primary/5 border-2 border-primary/20 rounded-3xl p-10 shadow-2xl"
+        >
+          <div class="flex items-center gap-4 mb-6">
+            <div
+              class="w-12 h-12 bg-primary rounded-full flex items-center justify-center"
+            >
+              <Mail class="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h2 class="text-3xl font-bold">
+                {t("about.contact_form.title", "Отправить сообщение")}
+              </h2>
+              <p class="text-muted-foreground">
+                {
+                  t(
+                    "about.contact_form.description",
+                    "Заполните форму ниже, и я свяжусь с вами в ближайшее время"
+                  )
+                }
+              </p>
+            </div>
+          </div>
+
+          <ContactForm
+            locale={locale}
+            capthaKey={capthaKey}
+            emailApiAccessKey={emailApiAccessKey}
+            client:load
+          />
         </div>
       </div>
     </div>
   </Container>
 
-  <!-- Personal Touch -->
+  <!-- Personal Touch (shown only with story) -->
+  <Container
+    id="personal-touch-section"
+    class="py-20 bg-gradient-to-b from-primary/5 to-transparent"
+  >
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold mb-4">
+          {personalTouch.title}
+        </h2>
+        <div
+          class="w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto"
+        >
+        </div>
+      </div>
 
-  <Container class="py-16">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold text-center mb-12">
-        {personalTouch.title}
-      </h2>
-
-      <div class="grid md:grid-cols-2 gap-12">
-        <div>
-          <h3 class="text-xl font-semibold mb-6">
-            {personalTouch.interests.title}
-          </h3>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div
+          class="bg-gradient-to-br from-background to-primary/5 p-8 rounded-2xl border-2 border-primary/20 shadow-lg hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"
+            >
+              <Heart class="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 class="text-2xl font-bold">
+              {personalTouch.interests.title}
+            </h3>
+          </div>
           <div class="space-y-3">
             {
               personalTouch.interests.items.map((interest: string) => (
-                <div class="flex items-center gap-3">
-                  <div class="w-2 h-2 bg-liguria-mint rounded-full" />
-                  <span class="text-muted-foreground">{interest}</span>
+                <div class="flex items-start gap-3 group">
+                  <div class="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-primary transition-colors">
+                    <CheckCircle class="w-3 h-3 text-primary group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <span class="text-foreground/80 leading-relaxed">
+                    {interest}
+                  </span>
                 </div>
               ))
             }
           </div>
         </div>
 
-        <div>
-          <h3 class="text-xl font-semibold mb-6">
-            {personalTouch.philosophy.title}
-          </h3>
-          <div class="space-y-4 text-muted-foreground">
+        <div
+          class="bg-gradient-to-br from-background to-primary/5 p-8 rounded-2xl border-2 border-primary/20 shadow-lg hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"
+            >
+              <Lightbulb class="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 class="text-2xl font-bold">
+              {personalTouch.philosophy.title}
+            </h3>
+          </div>
+          <div class="space-y-4">
             {
               personalTouch.philosophy.paragraphs.map((paragraph: string) => (
-                <p>{paragraph}</p>
+                <p class="text-foreground/80 leading-relaxed">{paragraph}</p>
               ))
             }
           </div>
@@ -178,3 +380,180 @@ const { guide, story, personalTouch } = cmsData;
     size="sm"
   />
 </IntlBaseLayout>
+
+<script>
+  // Tab toggle functionality
+  function initTabs() {
+    const storyTab = document.getElementById("story-tab");
+    const formTab = document.getElementById("form-tab");
+    const storyContent = document.getElementById("story-content");
+    const contactFormSection = document.getElementById("contact-form-section");
+    const personalTouchSection = document.getElementById(
+      "personal-touch-section"
+    );
+    const contactTriggers = document.querySelectorAll(".contact-trigger");
+
+    if (
+      !storyTab ||
+      !formTab ||
+      !storyContent ||
+      !contactFormSection ||
+      !personalTouchSection
+    ) {
+      return;
+    }
+
+    // Function to show form tab and scroll
+    function showContactForm() {
+      if (
+        !formTab ||
+        !storyTab ||
+        !contactFormSection ||
+        !storyContent ||
+        !personalTouchSection
+      ) {
+        return;
+      }
+
+      // Update tabs
+      formTab.classList.add("active");
+      storyTab.classList.remove("active");
+
+      // Update content
+      contactFormSection.classList.remove("hidden");
+      storyContent.classList.add("hidden");
+      personalTouchSection.classList.add("hidden");
+
+      // Smooth scroll to form
+      setTimeout(() => {
+        if (contactFormSection) {
+          contactFormSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100);
+    }
+
+    // Show story tab
+    storyTab.addEventListener("click", () => {
+      // Update tabs
+      storyTab.classList.add("active");
+      formTab.classList.remove("active");
+
+      // Update content
+      storyContent.classList.remove("hidden");
+      contactFormSection.classList.add("hidden");
+      personalTouchSection.classList.remove("hidden");
+    });
+
+    // Show form tab
+    formTab.addEventListener("click", () => {
+      showContactForm();
+    });
+
+    // Add click listeners to phone and email icons
+    contactTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        showContactForm();
+      });
+    });
+
+    // Check URL parameters to automatically open contact form
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("contact") === "true") {
+      showContactForm();
+    }
+  }
+
+  // Initialize on page load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTabs);
+  } else {
+    initTabs();
+  }
+</script>
+
+<style>
+  /* Tab styles - Modern Design */
+  .tab-button {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted) / 0.8) 100%
+    );
+    color: hsl(var(--foreground));
+    border: 2px solid hsl(var(--border));
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tab-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--primary) / 0.1),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .tab-button:hover::before {
+    left: 100%;
+  }
+
+  .tab-button:hover {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.1) 0%,
+      hsl(var(--primary) / 0.05) 100%
+    );
+    border-color: rgb(var(--primary) / 0.5);
+    transform: translateY(-2px);
+  }
+
+  .tab-button.active {
+    background: linear-gradient(
+      135deg,
+      rgb(var(--primary)) 0%,
+      rgb(var(--primary-dark)) 100%
+    );
+    color: rgb(var(--text-light));
+    border-color: rgb(var(--primary));
+    box-shadow: 0 8px 16px rgb(var(--primary) / 0.3);
+  }
+
+  .tab-button.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgb(var(--primary) / 0.4);
+  }
+
+  /* Smooth transitions for content toggle */
+  #story-content,
+  #contact-form-section,
+  #personal-touch-section {
+    transition:
+      opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
+  }
+
+  /* Verified badge pulse animation */
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgb(var(--primary) / 0.5);
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgb(var(--primary) / 0);
+    }
+  }
+
+  .verified-badge {
+    animation: pulse-ring 2s infinite;
+  }
+</style>

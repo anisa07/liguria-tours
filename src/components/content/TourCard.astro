@@ -1,10 +1,11 @@
 ---
+import { Clock, Mail } from "@lucide/astro";
+
 export interface Props {
   tour: {
     id: string;
     title: string;
     image: string;
-    price: string;
     duration: string;
     rating?: number;
     href: string;
@@ -15,46 +16,87 @@ export interface Props {
 const { tour } = Astro.props;
 ---
 
-<a
-  href={tour.href}
-  class="bg-muted rounded-2xl w-full lg:max-w-md min-w-64 shadow-md hover:shadow-lg group flex flex-col h-full"
+<div
+  class="tour-card bg-gradient-to-br from-background to-primary/5 rounded-3xl w-full lg:max-w-md min-w-64 shadow-lg hover:shadow-2xl group flex flex-col h-full border-2 border-primary/10 hover:border-primary/30 transition-all duration-300 overflow-hidden"
 >
-  <div class="aspect-video overflow-hidden rounded-t-xl mb-4 flex-shrink-0">
-    <img
-      src={tour.image}
-      alt={tour.title}
-      class="w-full h-full object-cover"
-      loading="lazy"
-    />
+  <a href={tour.href} class="block">
+    <div
+      class="aspect-video overflow-hidden rounded-t-2xl flex-shrink-0 relative"
+    >
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+      >
+      </div>
+      <img
+        src={tour.image}
+        alt={tour.title}
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="px-5 pt-5">
+      <h3
+        class="text-xl font-bold mb-3 group-hover:text-primary transition-colors leading-tight"
+        style="height: 3.5rem; line-height: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;"
+      >
+        {tour.title}
+      </h3>
+      {
+        tour.description && (
+          <p class="text-sm text-foreground/70 mb-4 line-clamp-3 text-justify leading-relaxed">
+            {tour.description}
+          </p>
+        )
+      }
+    </div>
+  </a>
+
+  <div class="flex flex-col flex-grow px-5 pb-5">
+    <div class="flex-grow"></div>
+    <div
+      class="flex justify-between items-center pt-4 border-t-2 border-primary/10"
+    >
+      <span class="flex items-center gap-2 text-sm text-foreground/80">
+        <Clock class="w-4 h-4 text-primary" />
+        <span class="font-semibold">{tour.duration}</span>
+      </span>
+      <a
+        href={`/about-me?contact=true&subject=${encodeURIComponent(`Хочу записаться на тур "${tour.title}"`)}&message=${encodeURIComponent(`Я хочу попасть на тур "${tour.title}". Мечтаю увидеть эту красоту.\nНе подскажите сколько стоит экскурсия и в какие дни можно записаться на нее?\nСпасибо!`)}`}
+        class="group/book p-2 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+        title="Забронировать"
+        aria-label={`Забронировать тур ${tour.title}`}
+      >
+        <Mail class="w-4 h-4" />
+      </a>
+    </div>
   </div>
-  <h3
-    class="text-xl font-semibold px-3"
-    style="height: 3.5rem; line-height: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.75rem;"
-  >
-    {tour.title}
-  </h3>
-  {
-    tour.description && (
-      <p class="text-sm text-foreground/70 px-3 mb-3 line-clamp-3 text-justify">
-        {tour.description}
-      </p>
-    )
+</div>
+
+<style>
+  .tour-card {
+    position: relative;
   }
-  <div class="flex-grow"></div>
-  <div
-    class="flex justify-between items-center text-sm text-foreground/80 mb-4 px-3"
-  >
-    <span class="flex items-center gap-1">
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-        <path
-          fill-rule="evenodd"
-          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-          clip-rule="evenodd"></path>
-      </svg>
-      {tour.duration}
-    </span>
-    <span class="text-sm font-bold text-foreground">
-      {tour.price}
-    </span>
-  </div>
-</a>
+
+  .tour-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--primary) / 0.05) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .tour-card:hover::after {
+    opacity: 1;
+  }
+</style>

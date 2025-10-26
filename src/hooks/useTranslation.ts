@@ -9,14 +9,14 @@ import type { Locale } from "@/i18n/config";
  * @returns Object with translation function, loading state, and error state
  */
 export function useTranslation(
-  locale: Locale = "en",
+  locale: Locale = "ru",
   namespaces: string[] = ["common", "ui"]
 ) {
   const [t, setT] = useState<
     | ((
-        key: string,
-        fallback: string,
-        vars?: Record<string, string | number>
+        _key: string,
+        _fallback: string,
+        _vars?: Record<string, string | number>
       ) => string)
     | null
   >(null);

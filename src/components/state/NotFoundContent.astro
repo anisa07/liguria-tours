@@ -8,21 +8,18 @@ export interface Props {
   homeHref?: string;
   // Optional props for client-side functionality
   dataAttributes?: boolean;
-  onBackClick?: string;
 }
 
 const {
-  locale = "en",
+  locale = "ru",
   homeHref = `/${locale}`,
   dataAttributes = false,
-  onBackClick = "history.back()",
 } = Astro.props;
 
 // Get translations
 const { t } = await getPageTranslations(locale, ["errors", "common"]);
 
 // Get translated messages from JSON using correct key structure
-const title = t("404.title", "Page Not Found");
 const heading = t("404.heading", "Page Not Found");
 const message = t(
   "404.message",
@@ -98,7 +95,7 @@ const backText = t("404.back", "Go Back");
       </a>
 
       <button
-        onclick={onBackClick}
+        id="back-button"
         class="btn btn-secondary btn-md"
         data-back={dataAttributes ? "" : undefined}
       >
@@ -107,3 +104,14 @@ const backText = t("404.back", "Go Back");
     </div>
   </div>
 </main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", function () {
+        history.back();
+      });
+    }
+  });
+</script>

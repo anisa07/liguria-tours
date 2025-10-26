@@ -1,146 +1,65 @@
 ---
-import { getPageTranslations } from "@/i18n/i18n";
-import type { Locale } from "@/types";
-import { cn } from "@/lib/utils";
-import type { HeroAction } from "./Hero.astro";
-import { MapPin, Users, Clock } from "@lucide/astro";
+import { Image } from "astro:assets";
+import svetlanaPhoto from "@/assets/images/Sveta.avif";
+import { Check } from "@lucide/astro";
+import SkillChips from "@/components/ui/SkillChips.astro";
 
 export interface Props {
   title: string;
-  locale?: Locale;
   description?: string;
-  actions?: HeroAction[];
+  chips?: string[];
 }
 
-const { title, locale = "ru", actions = [], description = "" } = Astro.props;
-const { t } = await getPageTranslations(locale, ["hero", "common"]);
+const { title, description = "", chips = [] } = Astro.props;
 
-const getActionButtonClasses = (actionVariant: string = "primary") => {
-  const baseClasses =
-    "inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm shadow-lg hover:shadow-xl transform hover:scale-105";
-
-  switch (actionVariant) {
-    case "secondary":
-      return cn(
-        baseClasses,
-        "bg-primary-foreground/20 text-foreground border border-primary-foreground/30 hover:bg-primary-foreground/30 focus:ring-primary-foreground/50"
-      );
-    case "outline":
-      return cn(
-        baseClasses,
-        "border-2 border-primary-foreground text-foreground bg-transparent hover:bg-primary-foreground hover:text-primary focus:ring-primary-foreground"
-      );
-    default:
-      return cn(
-        baseClasses,
-        "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary hover:text-foreground/90"
-      );
-  }
-};
+// Split description into lines for layout
+const descriptionLines = description
+  ? description.split("\n").filter((line) => line.trim())
+  : [];
 ---
 
 <div
-  class="bg-background text-foreground rounded-3xl p-8 w-full max-w-2xl shadow-2xl border border-primary-foreground/20"
+  class="bg-gradient-to-br from-background via-background to-primary/5 text-foreground rounded-3xl p-8 w-full h-full shadow-2xl border-2 border-primary/20 flex flex-col hover:shadow-3xl transition-all duration-300 hover:border-primary/40"
 >
-  <!-- Header with emotional hook -->
-  <div class="mb-6">
-    <h2
-      class="text-3xl lg:text-4xl font-bold text-foreground/80 mb-3 leading-tight"
-    >
-      {title}
-    </h2>
-  </div>
-
-  <!-- Key value proposition -->
-  <div class="mb-6">
-    <p class="text-foreground/90 text-base leading-relaxed mb-4">
-      {description}
-    </p>
-  </div>
-
-  <!-- Social proof & highlights -->
-  <div class="grid grid-cols-3 gap-4 mb-6">
-    <div class="text-center group">
-      <div
-        class="flex items-center justify-center w-12 h-12 bg-primary/20 rounded-full mx-auto mb-2 group-hover:bg-primary/30 transition-colors"
-      >
-        <MapPin class="w-6 h-6 text-primary" />
+  <!-- Photo and Title section -->
+  <div class="mb-6 flex-grow">
+    <div class="flex flex-col md:flex-row gap-5 items-center mb-6">
+      <!-- Rounded Photo with verified badge -->
+      <div class="flex-shrink-0 relative">
+        <Image
+          src={svetlanaPhoto}
+          alt="Светлана Жукова"
+          class="w-36 h-36 rounded-full object-cover shadow-xl ring-4 ring-primary/30"
+          width={144}
+          height={144}
+        />
+        <div
+          class="absolute -bottom-1 -right-1 w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg ring-2 ring-background"
+        >
+          <Check class="w-5 h-5 text-white" />
+        </div>
       </div>
-      <div class="text-foreground font-semibold text-sm">5+ городов</div>
-      <div class="text-muted-foreground text-xs">Лигурии</div>
-    </div>
-    <div class="text-center group">
-      <div
-        class="flex items-center justify-center w-12 h-12 bg-secondary/20 rounded-full mx-auto mb-2 group-hover:bg-secondary/30 transition-colors"
-      >
-        <Users class="w-6 h-6 text-secondary" />
-      </div>
-      <div class="text-foreground font-semibold text-sm">1000+ туристов</div>
-      <div class="text-muted-foreground text-xs">довольны</div>
-    </div>
-    <div class="text-center group">
-      <div
-        class="flex items-center justify-center w-12 h-12 bg-accent/20 rounded-full mx-auto mb-2 group-hover:bg-accent/30 transition-colors"
-      >
-        <Clock class="w-6 h-6 text-accent" />
-      </div>
-      <div class="text-foreground font-semibold text-sm">Авторские</div>
-      <div class="text-muted-foreground text-xs">маршруты</div>
-    </div>
-  </div>
 
-  <!-- Popular destinations -->
-  <div class="mb-6">
-    <p class="text-foreground text-sm mb-3 font-semibold">
-      Популярные направления:
-    </p>
-    <div class="flex flex-wrap gap-2">
-      <span
-        class="px-3 py-1 bg-primary/20 text-primary text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
-      >
-        Чинкве-Терре
-      </span>
-      <span
-        class="px-3 py-1 bg-primary/20 text-primary text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
-      >
-        Портофино
-      </span>
-      <span
-        class="px-3 py-1 bg-primary/20 text-primary text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
-      >
-        Камольи
-      </span>
-      <span
-        class="px-3 py-1 bg-primary/20 text-primary text-sm rounded-full border border-primary/40 font-medium hover:bg-primary/30 transition-colors"
-      >
-        Генуя
-      </span>
-    </div>
-  </div>
+      <!-- Title -->
+      <div class="flex-1 min-w-0">
+        <h2
+          class="text-xl lg:text-2xl font-bold text-foreground leading-tight mb-3"
+        >
+          {title}
+        </h2>
 
-  <!-- Call to action -->
-  {
-    actions.length > 0 && (
-      <div class="flex flex-wrap gap-3 justify-center">
-        {actions.map((action) => (
-          <a
-            href={action.href}
-            class={getActionButtonClasses(action.variant)}
-            target={action.external ? "_blank" : undefined}
-            rel={action.external ? "noopener noreferrer" : undefined}
-          >
-            {action.label}
-          </a>
-        ))}
+        <!-- Chips below title -->
+        <SkillChips chips={chips} size="md" />
       </div>
-    )
-  }
+    </div>
 
-  <!-- Trust signal -->
-  <div class="mt-6 pt-4 border-t border-primary-foreground/20">
-    <p class="text-foreground/70 text-xs text-center">
-      ✨ Индивидуальный подход • 🎯 Авторские маршруты • 💫 Незабываемые
-      впечатления
-    </p>
+    <!-- Full Description (Below Photo and Title) -->
+    <div class="space-y-3">
+      {
+        descriptionLines.map((line) => (
+          <p class="text-foreground/80 text-lg leading-relaxed">{line}</p>
+        ))
+      }
+    </div>
   </div>
 </div>

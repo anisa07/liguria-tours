@@ -25,10 +25,10 @@ export interface Props {
   translations?: Record<string, any>[];
   sections?: FooterSection[];
   socialLinks?: SocialLink[];
+  copyrightText?: string;
   showNewsletter?: boolean;
   newsletterTitle?: string;
   newsletterDescription?: string;
-  copyrightText?: string;
   logoText?: string;
   logoHref?: string;
   showBackToTop?: boolean;
@@ -36,13 +36,9 @@ export interface Props {
 }
 
 const {
-  locale = "en",
   translations = [],
   sections = [],
   socialLinks = [],
-  showNewsletter = false,
-  newsletterTitle,
-  newsletterDescription,
   copyrightText,
   logoText,
   logoHref = "/",
@@ -79,20 +75,6 @@ const defaultCopyright =
           )
         }
 
-        <!-- Company description slot -->
-        <div class="text-foreground text-sm leading-relaxed">
-          <slot name="description">
-            <p>
-              {
-                t(
-                  "footer.company_description",
-                  "Building exceptional digital experiences with modern web technologies."
-                )
-              }
-            </p>
-          </slot>
-        </div>
-
         <!-- Social Links -->
         {
           socialLinks.length > 0 && (
@@ -104,7 +86,7 @@ const defaultCopyright =
                 {socialLinks.map((social) => (
                   <a
                     href={social.href}
-                    class="inline-flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-1 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                     aria-label={
                       social.ariaLabel ||
                       t("footer.follow_on", `Follow us on ${social.name}`, {
@@ -171,16 +153,16 @@ const defaultCopyright =
         <div class="flex items-center space-x-4 text-sm">
           <slot name="legal">
             <a
-              href="/privacy"
+              href="/privacy-policy"
               class="text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
             >
-              {t("footer.legal.privacy", "Privacy Policy")}
+              {t("footer.legal.privacy", "Политика конфиденциальности")}
             </a>
             <a
               href="/terms"
               class="text-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-sm"
             >
-              {t("footer.legal.terms", "Terms of Service")}
+              {t("footer.legal.terms", "Условия использования")}
             </a>
           </slot>
         </div>

@@ -10,8 +10,8 @@ import type { Locale } from "@/i18n/config";
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode | ((error: Error, errorInfo: ErrorInfo) => ReactNode);
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  fallback?: ReactNode | ((_error: Error, _errorInfo: ErrorInfo) => ReactNode);
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
   resetKeys?: Array<string | number>;
   locale?: Locale;
   mode?: "development" | "production";
@@ -28,7 +28,7 @@ function DefaultErrorFallback({
   error,
   resetErrorBoundary,
   className,
-  locale = "en",
+  locale = "ru",
   mode = "production",
 }: FallbackProps & DefaultErrorFallbackProps) {
   const { t, isLoading } = useTranslation(locale, ["ui", "errors"]);
@@ -142,7 +142,7 @@ function ErrorBoundary({
   fallback,
   onError,
   resetKeys,
-  locale = "en",
+  locale = "ru",
   mode = "production",
 }: Props) {
   // Handle error reporting and development logging
@@ -194,7 +194,7 @@ function ErrorBoundary({
  * import ErrorBoundary from "@/components/state/ErrorBoundary";
  *
  * const mode = import.meta.env.MODE as "development" | "production";
- * const locale = "en"; // or from props/params
+ * const locale = "ru"; // or from props/params
  * ---
  *
  * <ErrorBoundary

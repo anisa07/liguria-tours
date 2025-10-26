@@ -1,5 +1,4 @@
 ---
-import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import HeroGallery from "./HeroGallery.astro";
 import HeroText from "./HeroText.astro";
@@ -19,6 +18,7 @@ export interface Props {
   mainTitle: string;
   subtitle?: string;
   description?: string;
+  chips?: string[];
   actions?: HeroAction[];
   galleryImages?: Array<{
     image: ImageMetadata;
@@ -31,50 +31,62 @@ export interface Props {
 }
 
 const {
-  subtitle = "",
-  description,
-  actions = [],
-  galleryImages = [],
-  class: className = "",
-  locale = "ru",
   mainTitle,
+  subtitle,
+  description,
+  chips = [],
+  galleryImages = [],
+  locale = "ru",
 } = Astro.props;
-
-// Get translations
-const { t } = await getPageTranslations(locale, ["hero", "common"]);
 ---
 
-<section class="relative border-none">
-  <!-- Gradient Background -->
+<section class="relative border-none overflow-hidden">
+  <!-- Enhanced Gradient Background -->
   <div
-    class="absolute inset-0 bg-gradient-to-b from-primary/20 to-transparent rounded-b-[150px]"
+    class="absolute inset-0 bg-gradient-to-b from-primary/15 via-primary/8 to-transparent"
+  >
+  </div>
+  <div
+    class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+  >
+  </div>
+  <div
+    class="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"
   >
   </div>
 
   <Container size="xl" padding="lg">
     <div
-      class="relative z-10 gap-8 md:gap-16 items-center min-h-screen py-20 flex flex-col w-full"
+      class="relative z-10 gap-12 md:gap-20 items-center min-h-screen pt-24 pb-12 flex flex-col w-full"
     >
-      <!-- Top Side - Content -->
+      <!-- Top Side - Enhanced Title -->
       <div
-        class="text-foreground/80 text-center flex flex-col items-center gap-8"
+        class="text-foreground text-center flex flex-col items-center gap-6 animate-fade-in"
       >
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1
+          class="text-5xl md:text-7xl font-bold mb-2 tracking-tight bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text"
+        >
           {mainTitle}
         </h1>
+
+        <div
+          class="w-32 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"
+        >
+        </div>
       </div>
 
-      <!-- Down Side - Gallery Preview -->
-      <div class="relative flex flex-col gap-6 w-full items-start">
+      <!-- Down Side - Gallery Preview with Enhanced Layout -->
+      <div class="relative flex flex-col gap-8 w-full items-start">
         <!-- Tour Info and Gallery Row -->
-        <div class="flex flex-col md:flex-row gap-4 w-full items-start">
-          <HeroText
-            locale={locale}
-            title={subtitle}
-            description={description}
-            actions={actions}
-          />
-          <div class="w-full md:w-2/3 lg:1/2 flex flex-col">
+        <div class="flex flex-col lg:flex-row gap-8 w-full items-stretch">
+          <div class="w-full lg:w-1/2">
+            <HeroText
+              title={subtitle || ""}
+              description={description}
+              chips={chips}
+            />
+          </div>
+          <div class="w-full lg:w-1/2 flex flex-col">
             <HeroGallery galleryImages={galleryImages} locale={locale} />
           </div>
         </div>
@@ -91,10 +103,26 @@ const { t } = await getPageTranslations(locale, ["hero", "common"]);
 
   /* Focus styles for action buttons */
   .focus\:ring-primary:focus {
-    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--primary) / var(--tw-ring-opacity));
   }
 
   .focus\:ring-secondary:focus {
-    --tw-ring-color: rgb(var(--color-secondary) / var(--tw-ring-opacity));
+    --tw-ring-color: rgb(var(--secondary) / var(--tw-ring-opacity));
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
   }
 </style>

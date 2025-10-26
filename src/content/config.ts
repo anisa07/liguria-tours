@@ -9,7 +9,7 @@ const heroCollection = defineCollection({
       mainTitle: z.string(),
       subtitle: z.string(),
       description: z.string(),
-      themeColor: z.number().min(0).max(360).default(260),
+      chips: z.array(z.string()),
       images: z.array(
         z.object({
           image: image(),
@@ -28,19 +28,18 @@ const italianToursGallery = defineCollection({
   }),
   schema: ({ image }) =>
     z.object({
-      themeColor: z.number().min(0).max(360).default(260),
       tours: z.array(
         z.object({
           title: z.string(),
           slug: z.string(),
-          category: z
-            .enum(["city", "coastal", "cultural", "history"])
-            .default("city"),
+          categories: z
+            .array(z.enum(["city", "coastal", "cultural", "history"]))
+            .min(1)
+            .default(["city"]),
           description: z.string(),
           fullDescription: z.string(),
           points: z.array(z.string()),
           duration: z.string().optional(),
-          price: z.string().optional(),
           images: z.array(
             z.object({
               image: image(),
@@ -59,13 +58,11 @@ const boatTourCollection = defineCollection({
   }),
   schema: ({ image }) =>
     z.object({
-      themeColor: z.number().min(0).max(360).default(260),
       tours: z.array(
         z.object({
           id: z.string(),
           title: z.string(),
           description: z.string(),
-          price: z.string().optional(),
           duration: z.string().optional(),
           badge: z.string().optional(),
           tourPoints: z.array(
@@ -89,7 +86,6 @@ const aboutMeCollection = defineCollection({
   }),
   schema: ({ image }) =>
     z.object({
-      themeColor: z.number().min(0).max(360).default(260),
       guide: z.object({
         name: z.string(),
         title: z.string(),

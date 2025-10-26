@@ -3,9 +3,8 @@
 import "@/styles/global.css";
 import "@/styles/animations.css";
 import SiteData from "@/config/siteData.json";
-import { THEME_KEY } from "@/config/variables";
 // If you already have config files, import them here:
-import { locales, defaultLocale, type Locale } from "@/i18n/config";
+import { defaultLocale, type Locale } from "@/i18n/config";
 import { getPageTranslations } from "@/i18n/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { SEO, type SEOProps } from "astro-seo";
@@ -43,7 +42,6 @@ const { t, dir } = await getPageTranslations(activeLocale, [
 
 // Build absolute URL for canonical
 const site = Astro.site?.origin ?? "https://example.com";
-const url = new URL(Astro.url, site).href;
 ---
 
 <html lang={activeLocale} dir={dir}>
@@ -57,27 +55,16 @@ const url = new URL(Astro.url, site).href;
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Canonical + hreflang -->
-    <link rel="canonical" href={url} />
+    <!-- hreflang -->
     {
       Object.entries(alternates).map(([lc, href]) => (
         <link rel="alternate" hreflang={lc} href={href} />
       ))
     }
-
-    <!-- No-flash theme restore -->
-    <script is:inline define:vars={{ THEME_KEY }}>
-      try {
-        const theme = localStorage.getItem(THEME_KEY);
-        if (theme === "dark") {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {}
-    </script>
-
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JEXSMTYYKJ"
+    ></script>
+    <script is:inline src="/js/analytics.js"></script>
     <link rel="alternate" hreflang="x-default" href={`${site}/`} />
 
     <!-- Sitemap and robots -->
@@ -114,20 +101,16 @@ const url = new URL(Astro.url, site).href;
       logoHref={`/`}
       navItems={[
         {
-          label: t("nav.tours", "Туры с гидом"),
+          label: t("nav.tours", "Туры"),
           href: `/#tours`,
         },
         {
-          label: t("nav.boatTours", "Морская прогулка"),
-          href: `/tour/boat-tour`,
+          label: t("nav.history", "История"),
+          href: `/#history`,
         },
         {
           label: t("nav.about", "Обо мне"),
           href: `/about-me`,
-        },
-        {
-          label: t("nav.contact", "Контакты"),
-          href: `/contact`,
         },
       ]}
       fixed={true}
@@ -160,8 +143,5 @@ const url = new URL(Astro.url, site).href;
     />
 
     <Toaster client:load />
-
-    <!-- Simple Scroll Animations (fallback for older browsers) -->
-    <script src="/src/utils/scroll-animations.ts"></script>
   </body>
 </html>

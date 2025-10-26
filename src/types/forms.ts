@@ -5,8 +5,10 @@ import { z } from "zod";
 export const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(120),
   email: z.string().email("Please enter a valid email"),
+  phone: z.string().min(1, "Phone is required"),
   subject: z.string().min(1, "Subject is required").max(200),
   message: z.string().min(1, "Message is required").max(5000),
+  "h-captcha-response": z.string(),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;
@@ -20,7 +22,7 @@ export interface FormSubmissionState {
 
 // Form submission hook return type
 export interface UseFormSubmissionReturn<T> {
-  submit: (data: T) => Promise<void>;
+  submit: (_data: T) => Promise<void>;
   state: FormSubmissionState;
   reset: () => void;
 }
