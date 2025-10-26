@@ -43,12 +43,16 @@ interface ContactFormProps {
   locale: Locale;
   emailApiAccessKey: string;
   capthaKey: string;
+  initialSubject?: string;
+  initialMessage?: string;
 }
 
 const ContactForm = ({
   locale,
   emailApiAccessKey,
   capthaKey,
+  initialSubject,
+  initialMessage,
 }: ContactFormProps) => {
   // Check if we're running on localhost
   const isLocalhost = () => {
@@ -75,14 +79,26 @@ const ContactForm = ({
 
   const savedUserData = loadSavedUserData();
 
+  // Get URL parameters for pre-filled values
+  const getUrlParameters = () => {
+    if (typeof window === 'undefined') return {};
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+      subject: urlParams.get('subject') || '',
+      message: urlParams.get('message') || '',
+    };
+  };
+
+  const urlParams = getUrlParameters();
+
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: savedUserData.name || "",
       email: savedUserData.email || "",
       phone: savedUserData.phone || "",
-      subject: "",
-      message: "",
+      subject: initialSubject || urlParams.subject || "",
+      message: initialMessage || urlParams.message || "",
       "h-captcha-response": "",
     },
   });
@@ -90,6 +106,16 @@ const ContactForm = ({
   const { sendEmail, status, message, reset } = useSendEmail();
   const hcaptchaRef = useRef<HCaptcha>(null);
   const [showCaptcha, setShowCaptcha] = useState(false);
+
+  // Clear URL parameters after form is initialized
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (urlParams.subject || urlParams.message)) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('subject');
+      url.searchParams.delete('message');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [urlParams.subject, urlParams.message]);
 
   const onHCaptchaChange = (token: string) => {
     form.setValue("h-captcha-response", token);

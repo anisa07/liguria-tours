@@ -1,5 +1,5 @@
 ---
-import { Clock } from "@lucide/astro";
+import { Clock, Mail } from "@lucide/astro";
 
 export interface Props {
   tour: {
@@ -16,54 +16,62 @@ export interface Props {
 const { tour } = Astro.props;
 ---
 
-<a
-  href={tour.href}
+<div
   class="tour-card bg-gradient-to-br from-background to-primary/5 rounded-3xl w-full lg:max-w-md min-w-64 shadow-lg hover:shadow-2xl group flex flex-col h-full border-2 border-primary/10 hover:border-primary/30 transition-all duration-300 overflow-hidden"
 >
-  <div
-    class="aspect-video overflow-hidden rounded-t-2xl flex-shrink-0 relative"
-  >
+  <a href={tour.href} class="block">
     <div
-      class="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+      class="aspect-video overflow-hidden rounded-t-2xl flex-shrink-0 relative"
     >
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+      >
+      </div>
+      <img
+        src={tour.image}
+        alt={tour.title}
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        loading="lazy"
+      />
     </div>
-    <img
-      src={tour.image}
-      alt={tour.title}
-      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-      loading="lazy"
-    />
-  </div>
 
-  <div class="flex flex-col flex-grow p-5">
-    <h3
-      class="text-xl font-bold mb-3 group-hover:text-primary transition-colors leading-tight"
-      style="height: 3.5rem; line-height: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;"
-    >
-      {tour.title}
-    </h3>
-    {
-      tour.description && (
-        <p class="text-sm text-foreground/70 mb-4 line-clamp-3 text-justify leading-relaxed">
-          {tour.description}
-        </p>
-      )
-    }
+    <div class="px-5 pt-5">
+      <h3
+        class="text-xl font-bold mb-3 group-hover:text-primary transition-colors leading-tight"
+        style="height: 3.5rem; line-height: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;"
+      >
+        {tour.title}
+      </h3>
+      {
+        tour.description && (
+          <p class="text-sm text-foreground/70 mb-4 line-clamp-3 text-justify leading-relaxed">
+            {tour.description}
+          </p>
+        )
+      }
+    </div>
+  </a>
+
+  <div class="flex flex-col flex-grow px-5 pb-5">
     <div class="flex-grow"></div>
     <div
       class="flex justify-between items-center pt-4 border-t-2 border-primary/10"
     >
       <span class="flex items-center gap-2 text-sm text-foreground/80">
-        <div
-          class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center"
-        >
-          <Clock class="w-4 h-4 text-primary" />
-        </div>
+        <Clock class="w-4 h-4 text-primary" />
         <span class="font-semibold">{tour.duration}</span>
       </span>
+      <a
+        href={`/about-me?contact=true&subject=${encodeURIComponent(`Хочу записаться на тур "${tour.title}"`)}&message=${encodeURIComponent(`Я хочу попасть на тур "${tour.title}". Мечтаю увидеть эту красоту.\nНе подскажите сколько стоит экскурсия и в какие дни можно записаться на нее?\nСпасибо!`)}`}
+        class="group/book p-2 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+        title="Забронировать"
+        aria-label={`Забронировать тур ${tour.title}`}
+      >
+        <Mail class="w-4 h-4" />
+      </a>
     </div>
   </div>
-</a>
+</div>
 
 <style>
   .tour-card {
