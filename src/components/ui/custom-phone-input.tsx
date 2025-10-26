@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { type Country, getCountryCallingCode, parsePhoneNumber } from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
 import { ChevronDown, Search } from "lucide-react";
 
 interface CustomPhoneInputProps {
@@ -10,36 +11,36 @@ interface CustomPhoneInputProps {
   defaultCountry?: Country;
 }
 
-// Define common countries for tours with their emoji flags
-const COUNTRIES_DATA: Array<{ code: Country; flag: string; name: string; dialCode: string }> = [
-  { code: "IT", flag: "🇮🇹", name: "Italy", dialCode: getCountryCallingCode("IT") },
-  { code: "RU", flag: "🇷🇺", name: "Russia", dialCode: getCountryCallingCode("RU") },
-  { code: "US", flag: "🇺🇸", name: "United States", dialCode: getCountryCallingCode("US") },
-  { code: "GB", flag: "🇬🇧", name: "United Kingdom", dialCode: getCountryCallingCode("GB") },
-  { code: "FR", flag: "🇫🇷", name: "France", dialCode: getCountryCallingCode("FR") },
-  { code: "DE", flag: "🇩🇪", name: "Germany", dialCode: getCountryCallingCode("DE") },
-  { code: "ES", flag: "🇪🇸", name: "Spain", dialCode: getCountryCallingCode("ES") },
-  { code: "CH", flag: "🇨🇭", name: "Switzerland", dialCode: getCountryCallingCode("CH") },
-  { code: "AT", flag: "🇦🇹", name: "Austria", dialCode: getCountryCallingCode("AT") },
-  { code: "NL", flag: "🇳🇱", name: "Netherlands", dialCode: getCountryCallingCode("NL") },
-  { code: "BE", flag: "🇧🇪", name: "Belgium", dialCode: getCountryCallingCode("BE") },
-  { code: "SE", flag: "🇸🇪", name: "Sweden", dialCode: getCountryCallingCode("SE") },
-  { code: "NO", flag: "🇳🇴", name: "Norway", dialCode: getCountryCallingCode("NO") },
-  { code: "DK", flag: "🇩🇰", name: "Denmark", dialCode: getCountryCallingCode("DK") },
-  { code: "FI", flag: "🇫🇮", name: "Finland", dialCode: getCountryCallingCode("FI") },
-  { code: "PL", flag: "🇵🇱", name: "Poland", dialCode: getCountryCallingCode("PL") },
-  { code: "CZ", flag: "🇨🇿", name: "Czech Republic", dialCode: getCountryCallingCode("CZ") },
-  { code: "HU", flag: "🇭🇺", name: "Hungary", dialCode: getCountryCallingCode("HU") },
-  { code: "GR", flag: "🇬🇷", name: "Greece", dialCode: getCountryCallingCode("GR") },
-  { code: "PT", flag: "🇵🇹", name: "Portugal", dialCode: getCountryCallingCode("PT") },
-  { code: "AU", flag: "🇦🇺", name: "Australia", dialCode: getCountryCallingCode("AU") },
-  { code: "CA", flag: "🇨🇦", name: "Canada", dialCode: getCountryCallingCode("CA") },
-  { code: "JP", flag: "🇯🇵", name: "Japan", dialCode: getCountryCallingCode("JP") },
-  { code: "CN", flag: "🇨🇳", name: "China", dialCode: getCountryCallingCode("CN") },
-  { code: "IN", flag: "🇮🇳", name: "India", dialCode: getCountryCallingCode("IN") },
-  { code: "BR", flag: "🇧🇷", name: "Brazil", dialCode: getCountryCallingCode("BR") },
-  { code: "AR", flag: "🇦🇷", name: "Argentina", dialCode: getCountryCallingCode("AR") },
-  { code: "MX", flag: "🇲🇽", name: "Mexico", dialCode: getCountryCallingCode("MX") },
+// Define common countries for tours
+const COUNTRIES_DATA: Array<{ code: Country; name: string; dialCode: string }> = [
+  { code: "IT", name: "Italy", dialCode: getCountryCallingCode("IT") },
+  { code: "RU", name: "Russia", dialCode: getCountryCallingCode("RU") },
+  { code: "US", name: "United States", dialCode: getCountryCallingCode("US") },
+  { code: "GB", name: "United Kingdom", dialCode: getCountryCallingCode("GB") },
+  { code: "FR", name: "France", dialCode: getCountryCallingCode("FR") },
+  { code: "DE", name: "Germany", dialCode: getCountryCallingCode("DE") },
+  { code: "ES", name: "Spain", dialCode: getCountryCallingCode("ES") },
+  { code: "CH", name: "Switzerland", dialCode: getCountryCallingCode("CH") },
+  { code: "AT", name: "Austria", dialCode: getCountryCallingCode("AT") },
+  { code: "NL", name: "Netherlands", dialCode: getCountryCallingCode("NL") },
+  { code: "BE", name: "Belgium", dialCode: getCountryCallingCode("BE") },
+  { code: "SE", name: "Sweden", dialCode: getCountryCallingCode("SE") },
+  { code: "NO", name: "Norway", dialCode: getCountryCallingCode("NO") },
+  { code: "DK", name: "Denmark", dialCode: getCountryCallingCode("DK") },
+  { code: "FI", name: "Finland", dialCode: getCountryCallingCode("FI") },
+  { code: "PL", name: "Poland", dialCode: getCountryCallingCode("PL") },
+  { code: "CZ", name: "Czech Republic", dialCode: getCountryCallingCode("CZ") },
+  { code: "HU", name: "Hungary", dialCode: getCountryCallingCode("HU") },
+  { code: "GR", name: "Greece", dialCode: getCountryCallingCode("GR") },
+  { code: "PT", name: "Portugal", dialCode: getCountryCallingCode("PT") },
+  { code: "AU", name: "Australia", dialCode: getCountryCallingCode("AU") },
+  { code: "CA", name: "Canada", dialCode: getCountryCallingCode("CA") },
+  { code: "JP", name: "Japan", dialCode: getCountryCallingCode("JP") },
+  { code: "CN", name: "China", dialCode: getCountryCallingCode("CN") },
+  { code: "IN", name: "India", dialCode: getCountryCallingCode("IN") },
+  { code: "BR", name: "Brazil", dialCode: getCountryCallingCode("BR") },
+  { code: "AR", name: "Argentina", dialCode: getCountryCallingCode("AR") },
+  { code: "MX", name: "Mexico", dialCode: getCountryCallingCode("MX") },
 ];
 
 const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
@@ -57,6 +58,9 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
 
   // Get current country data
   const currentCountry = COUNTRIES_DATA.find(c => c.code === selectedCountry) || COUNTRIES_DATA[0];
+
+  // Get flag component for country
+  const FlagComponent = flags[selectedCountry];
 
   // Filter countries based on search term
   const filteredCountries = COUNTRIES_DATA.filter(country =>
@@ -130,7 +134,11 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 px-3 py-2 hover:bg-accent rounded-l-md border-r border-input min-w-[4rem]"
           >
-            <span className="text-lg">{currentCountry.flag}</span>
+            {FlagComponent && (
+              <div className="w-5 h-4 flex items-center justify-center overflow-hidden">
+                <FlagComponent title={currentCountry.name} />
+              </div>
+            )}
             <span className="text-sm font-medium">+{currentCountry.dialCode}</span>
             <ChevronDown className="w-4 h-4 text-muted-foreground" />
           </button>
@@ -154,20 +162,27 @@ const CustomPhoneInput: React.FC<CustomPhoneInputProps> = ({
 
               {/* Countries List */}
               <div className="max-h-60 overflow-y-auto">
-                {filteredCountries.map((country) => (
-                  <button
-                    key={country.code}
-                    type="button"
-                    onClick={() => handleCountrySelect(country)}
-                    className="flex items-center gap-3 w-full px-3 py-2 hover:bg-accent text-left"
-                  >
-                    <span className="text-lg">{country.flag}</span>
-                    <span className="flex-1 text-sm">{country.name} (+{country.dialCode})</span>
-                    {selectedCountry === country.code && (
-                      <span className="text-primary">✓</span>
-                    )}
-                  </button>
-                ))}
+                {filteredCountries.map((country) => {
+                  const CountryFlag = flags[country.code];
+                  return (
+                    <button
+                      key={country.code}
+                      type="button"
+                      onClick={() => handleCountrySelect(country)}
+                      className="flex items-center gap-3 w-full px-3 py-2 hover:bg-accent text-left"
+                    >
+                      {CountryFlag && (
+                        <div className="w-5 h-4 flex items-center justify-center overflow-hidden">
+                          <CountryFlag title={country.name} />
+                        </div>
+                      )}
+                      <span className="flex-1 text-sm">{country.name} (+{country.dialCode})</span>
+                      {selectedCountry === country.code && (
+                        <span className="text-primary">✓</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
