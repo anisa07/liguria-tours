@@ -43,7 +43,6 @@ interface ContactFormProps {
   locale: Locale;
   emailApiAccessKey: string;
   capthaKey: string;
-  initialSubject?: string;
   initialMessage?: string;
 }
 
@@ -51,7 +50,6 @@ const ContactForm = ({
   locale,
   emailApiAccessKey,
   capthaKey,
-  initialSubject,
   initialMessage,
 }: ContactFormProps) => {
   // Check if we're running on localhost
@@ -84,7 +82,6 @@ const ContactForm = ({
     if (globalThis.window === undefined) return {};
     const urlParams = new URLSearchParams(globalThis.window.location.search);
     return {
-      subject: urlParams.get('subject') || '',
       message: urlParams.get('message') || '',
     };
   };
@@ -97,7 +94,6 @@ const ContactForm = ({
       name: savedUserData.name || "",
       email: savedUserData.email || "",
       phone: savedUserData.phone || "",
-      subject: initialSubject || urlParams.subject || "",
       message: initialMessage || urlParams.message || "",
       "h-captcha-response": "",
     },
@@ -112,13 +108,12 @@ const ContactForm = ({
 
   // Clear URL parameters after form is initialized
   useEffect(() => {
-    if (globalThis.window !== undefined && (urlParams.subject || urlParams.message)) {
+    if (globalThis.window !== undefined && urlParams.message) {
       const url = new URL(globalThis.window.location.href);
-      url.searchParams.delete('subject');
       url.searchParams.delete('message');
       globalThis.window.history.replaceState({}, '', url.toString());
     }
-  }, [urlParams.subject, urlParams.message]);
+  }, [urlParams.message]);
 
   const onHCaptchaChange = (token: string) => {
     form.setValue("h-captcha-response", token);
@@ -139,14 +134,13 @@ const ContactForm = ({
   
   useEffect(() => {
     // Check if all required fields are filled
-    const { name, email, phone, subject, message } = formValues;
+    const { name, email, phone, message } = formValues;
     
     // Simple check: all fields must have content
     const allFieldsFilled = !!(
       name && name.trim().length > 0 &&
       email && email.trim().length > 0 && email.includes('@') &&
       isValidPhone(phone) &&
-      subject && subject.trim().length > 0 &&
       message && message.trim().length > 0
     );
     
@@ -267,7 +261,6 @@ const ContactForm = ({
                   name: savedData.name || "",
                   email: savedData.email || "",
                   phone: savedData.phone || "",
-                  subject: "",
                   message: "",
                   "h-captcha-response": "",
                 });
@@ -387,31 +380,6 @@ const ContactForm = ({
             )}
           />
         </div>
-
-        <FormField
-          control={form.control}
-          name="subject"
-          render={({ field }) => (
-            <FormItem className="space-y-2">
-              <FormLabel className="text-sm font-medium text-foreground/80">
-                {t("forms.subject", "Тема")} <span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <div className="relative group">
-                  <Input
-                    placeholder={t("forms.subject_placeholder", "Тема сообщения")}
-                    className="h-12 rounded-xl border-2 border-primary/20 bg-white/70 backdrop-blur-sm transition-all duration-300 focus:border-primary focus:bg-white focus:shadow-lg hover:border-primary/40 hover:bg-white/80 pl-4"
-                    {...field}
-                  />
-                  {field.value && field.value.trim().length > 0 && (
-                    <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-5 w-5" />
-                  )}
-                </div>
-              </FormControl>
-              <FormMessage className="text-sm text-red-600" />
-            </FormItem>
-          )}
-        />
 
         <FormField
           control={form.control}

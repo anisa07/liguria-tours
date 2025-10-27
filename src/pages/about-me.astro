@@ -270,64 +270,6 @@ const { guide, story, personalTouch } = cmsData;
         id="contact-form-section"
         class="hidden max-w-full md:max-w-4xl mx-auto"
       >
-        <div class="text-center mb-12">
-          <div class="flex items-center justify-center gap-4 mb-6">
-            <div
-              class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg"
-            >
-              <Mail class="w-8 h-8 text-white" />
-            </div>
-            <div class="text-left">
-              <h2
-                class="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-              >
-                {t("about.contact_form.title", "Отправить сообщение")}
-              </h2>
-              <p class="text-lg text-muted-foreground max-w-2xl">
-                {
-                  t(
-                    "about.contact_form.description",
-                    "Заполните форму ниже, и я свяжусь с вами в ближайшее время для обсуждения вашего идеального тура по Лигурии"
-                  )
-                }
-              </p>
-            </div>
-          </div>
-
-          {/* Trust indicators */}
-          <div
-            class="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground mb-8"
-          >
-            <div class="flex items-center gap-2">
-              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span
-                >{
-                  t("about.contact_form.secure", "Безопасная передача данных")
-                }</span
-              >
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span
-                >{
-                  t(
-                    "about.contact_form.fast_response",
-                    "Быстрый ответ в течение 24 часов"
-                  )
-                }</span
-              >
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-2 h-2 bg-primary rounded-full"></div>
-              <span
-                >{
-                  t("about.contact_form.personalized", "Индивидуальный подход")
-                }</span
-              >
-            </div>
-          </div>
-        </div>
-
         <ContactForm
           locale={locale}
           capthaKey={capthaKey}

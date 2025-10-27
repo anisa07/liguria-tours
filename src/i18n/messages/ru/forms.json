@@ -2,22 +2,14 @@
   "name": "Ваше Имя",
   "email": "Ваш E-mail",
   "phone": "Телефон",
-  "subject": "Тема",
   "message": "Сообщение",
   "name_placeholder": "Введите ваше имя",
   "email_placeholder": "example@email.com",
   "phone_placeholder": "+39 123 456 7890",
-  "subject_placeholder": "Тема сообщения",
   "message_placeholder": "Напишите ваше сообщение",
   "captcha_required": "Пожалуйста, подтвердите, что вы не робот",
   "captcha_error": "Ошибка загрузки проверки безопасности",
   "message_sent": "Сообщение отправлено",
-  "labels": {
-    "name": "Имя",
-    "email": "Email",
-    "phone": "Телефон",
-    "message": "Сообщение"
-  },
   "placeholders": {
     "name": "Введите ваше имя",
     "email": "Введите ваш email",

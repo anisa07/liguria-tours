@@ -9,7 +9,6 @@ export const contactFormSchema = z.object({
     .min(7, "Минимум 7 цифр")
     .max(15, "Максимум 15 цифр")
     .regex(/^[0-9]+$/, "Только цифры"),
-  subject: z.string().min(1, "Введите тему сообщения").max(200),
   message: z.string().min(10, "Введите сообщение минимум 10 символов").max(5000),
   "h-captcha-response": z.string(),
 });
