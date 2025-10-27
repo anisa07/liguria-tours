@@ -1,4 +1,6 @@
 ---
+import "@/styles/components/navbar.css";
+
 export interface DropdownItem {
   label: string;
   href: string;
@@ -226,65 +228,3 @@ const {
   // Initialize immediately - DOM is ready in Astro
   initDropdowns();
 </script>
-
-<style>
-  /* Comprehensive anti-jumping navigation styles */
-
-  /* Force stable rendering for all elements */
-  nav,
-  nav * {
-    transform: translateZ(0) !important;
-    backface-visibility: hidden !important;
-    transition: none !important;
-    animation: none !important;
-    will-change: auto !important;
-  }
-
-  /* Prevent any hover/focus movements */
-  nav a,
-  nav button,
-  nav span {
-    transition: none !important;
-    transform: none !important;
-  }
-
-  nav a:hover,
-  nav a:focus,
-  nav a:active,
-  nav button:hover,
-  nav button:focus,
-  nav button:active {
-    transition: none !important;
-    transform: none !important;
-  }
-
-  /* Static dropdown styles - no animations or transforms */
-  [role="menu"] {
-    transition: none !important;
-    transform: none !important;
-  }
-
-  /* Focus styles for dropdown items - no outline offset */
-  [role="menuitem"]:focus {
-    outline: none;
-    outline-offset: 0 !important;
-  }
-
-  /* Static hover states - remove all transforms */
-  [data-dropdown-trigger="true"] [aria-hidden="true"]:last-child {
-    /* Remove rotation to prevent any movement */
-  }
-
-  /* No transforms on any state */
-  [aria-expanded="true"] [aria-hidden="true"]:last-child {
-    /* Remove rotation to prevent any movement */
-  }
-
-  /* Force text stability */
-  .text-xl,
-  .font-bold,
-  .text-sm,
-  .font-medium {
-    text-rendering: geometricPrecision !important;
-  }
-</style>

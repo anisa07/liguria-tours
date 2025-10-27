@@ -1,0 +1,179 @@
+---
+export interface BusinessSchemaProps {
+  name?: string;
+  description?: string;
+  url?: string;
+  logo?: string;
+  image?: string;
+  telephone?: string;
+  email?: string;
+  geo?: {
+    latitude?: number;
+    longitude?: number;
+  };
+  openingHours?: string[];
+  sameAs?: string[];
+  aggregateRating?: {
+    ratingValue?: number;
+    reviewCount?: number;
+  };
+  priceRange?: string;
+}
+
+const {
+  name = "Светлана Жукова - Гид по Лигурии",
+  description = "Профессиональные экскурсии по Лигурии, Генуе, Портофино, Чинкве-Терре с русскоговорящим гидом. Индивидуальные и групповые туры с лицензированным гидом.",
+  url = "https://liguria-tours.com",
+  logo = "https://liguria-tours.com/images/og-image.jpg",
+  image = "https://liguria-tours.com/images/og-image.jpg",
+  telephone = "+39-333-5787461",
+  email = "joukova.svetlana@gmail.com",
+  geo = {
+    latitude: 44.4056,
+    longitude: 8.9463,
+  },
+  sameAs = [],
+  aggregateRating,
+  priceRange = "€€-€€€",
+} = Astro.props;
+
+const businessSchema = {
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  "@id": `${url}#business`,
+  name: name,
+  description: description,
+  url: url,
+  logo: {
+    "@type": "ImageObject",
+    url: logo,
+    width: 600,
+    height: 315,
+  },
+  image: {
+    "@type": "ImageObject",
+    url: image,
+    width: 1200,
+    height: 630,
+  },
+  telephone: telephone,
+  email: email,
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: geo.latitude,
+    longitude: geo.longitude,
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Генуя",
+    addressRegion: "Лигурия",
+    addressCountry: "IT",
+    postalCode: "16100",
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ],
+    opens: "09:00",
+    closes: "20:00",
+  },
+  priceRange: priceRange,
+  knowsLanguage: ["ru", "en", "it"],
+  ...(sameAs.length > 0 && { sameAs: sameAs }),
+  ...(aggregateRating && {
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: aggregateRating.ratingValue,
+      reviewCount: aggregateRating.reviewCount,
+    },
+  }),
+  makesOffer: [
+    {
+      "@type": "Offer",
+      "@id": `${url}#offer-genoa-tours`,
+      name: "Экскурсии по Генуе",
+      description:
+        "Обзорные и тематические экскурсии по историческому центру Генуи с посещением основных достопримечательностей",
+      itemOffered: {
+        "@type": "TouristTrip",
+        name: "Экскурсии по Генуе",
+        description: "Пешеходные экскурсии по историческому центру Генуи",
+        touristType: "https://schema.org/Tourist",
+        itinerary: {
+          "@type": "TouristDestination",
+          name: "Генуя",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Генуя",
+            addressRegion: "Лигурия",
+            addressCountry: "IT",
+          },
+        },
+      },
+      availability: "https://schema.org/InStock",
+      priceCurrency: "EUR",
+    },
+    {
+      "@type": "Offer",
+      "@id": `${url}#offer-cinque-terre-tours`,
+      name: "Экскурсии по Чинкве-Терре",
+      description:
+        "Путешествие по пяти живописным деревням Чинкве-Терре с панорамными видами и дегустацией местных продуктов",
+      itemOffered: {
+        "@type": "TouristTrip",
+        name: "Экскурсии по Чинкве-Терре",
+        description:
+          "Однодневные экскурсии по национальному парку Чинкве-Терре",
+        touristType: "https://schema.org/Tourist",
+        itinerary: {
+          "@type": "TouristDestination",
+          name: "Чинкве-Терре",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Чинкве-Терре",
+            addressRegion: "Лигурия",
+            addressCountry: "IT",
+          },
+        },
+      },
+      availability: "https://schema.org/InStock",
+      priceCurrency: "EUR",
+    },
+    {
+      "@type": "Offer",
+      "@id": `${url}#offer-portofino-tours`,
+      name: "Экскурсии в Портофино",
+      description:
+        "Поездки в один из самых красивых городков итальянской Ривьеры с морскими прогулками",
+      itemOffered: {
+        "@type": "TouristTrip",
+        name: "Экскурсии в Портофино",
+        description: "Экскурсии в живописный приморский город Портофино",
+        touristType: "https://schema.org/Tourist",
+        itinerary: {
+          "@type": "TouristDestination",
+          name: "Портофино",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Портофино",
+            addressRegion: "Лигурия",
+            addressCountry: "IT",
+          },
+        },
+      },
+      availability: "https://schema.org/InStock",
+      priceCurrency: "EUR",
+    },
+  ],
+  serviceType: "Туристические услуги",
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />

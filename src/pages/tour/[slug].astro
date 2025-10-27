@@ -2,10 +2,13 @@
 import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
 import Section from "@/components/layout/Section.astro";
+import TourSchema from "@/components/content/TourSchema.astro";
+import TourGrid from "@/components/content/TourGrid.astro";
+import SocialShare from "@/components/interactive/SocialShare.astro";
 import { getPageTranslations } from "@/i18n/i18n";
-import type { Locale } from "@/i18n/config";
+import type { Locale } from "@/types";
 import { getCollection } from "astro:content";
-import { ChevronLeft, Check } from "@lucide/astro";
+import { Check, ChevronRight } from "@lucide/astro";
 
 export interface Props {
   locale: Locale;
@@ -34,6 +37,18 @@ if (!tour) {
   return Astro.redirect("/404");
 }
 
+// Get related tours (same categories, different from current)
+const getRelatedTours = (currentTour: any, allTours: any[], limit = 3) => {
+  return allTours
+    .filter((t) => 
+      t.slug !== currentTour.slug && 
+      t.categories.some((cat: string) => currentTour.categories.includes(cat))
+    )
+    .slice(0, limit);
+};
+
+const relatedTours = getRelatedTours(tour, allTours, 3);
+
 // Static paths generation for pre-rendering
 export async function getStaticPaths() {
   const toursCollection = await getCollection("italianToursGallery");
@@ -58,23 +73,50 @@ export async function getStaticPaths() {
 ---
 
 <IntlBaseLayout
-  title={`${tour.title} - ${t("tours.title", "Туры по Италии")}`}
-  description={tour.description}
   locale={locale}
+  pageNS={["common", "ui", "tours"]}
+  seo={{
+    title: `${tour.title} - ${t("tours.title", "Туры по Италии")}`,
+    description: tour.description,
+    canonical: `${Astro.site}tour/${tour.slug}`,
+    openGraph: {
+      basic: {
+        title: tour.title,
+        type: "article",
+        image: "/images/og-image.jpg",
+        url: `${Astro.site}tour/${tour.slug}`,
+      },
+      optional: {
+        description: tour.description,
+        siteName: "Туры по Лигурии",
+      },
+    },
+  }}
 >
+  <!-- Add structured data for this tour -->
+  <TourSchema
+    name={tour.title}
+    description={tour.fullDescription || tour.description}
+    url={`${Astro.site}tour/${tour.slug}`}
+    image={tour.images && tour.images[0] ? `${Astro.site}${tour.images[0].image}` : undefined}
+    duration={tour.duration}
+    category={tour.categories}
+    location={{
+      name: "Лигурия",
+      address: "Лигурия, Италия",
+      geo: {
+        latitude: 44.4056,
+        longitude: 8.9463,
+      }
+    }}
+    offers={{
+      price: "80",
+      currency: "EUR",
+      availability: "https://schema.org/InStock",
+    }}
+  />
   <Section class="py-12">
     <Container>
-      <!-- Back Button -->
-      <div class="mb-8">
-        <button
-          id="back-button"
-          class="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors"
-        >
-          <ChevronLeft class="w-5 h-5" />
-          {t("common.back", "Назад")}
-        </button>
-      </div>
-
       <!-- Title -->
       <div class="mb-12">
         <h1 class="text-3xl md:text-4xl font-bold text-center">{tour.title}</h1>
@@ -136,6 +178,17 @@ export async function getStaticPaths() {
               {t("tours.book_now", "Забронировать")}
             </a>
           </div>
+
+          <!-- Social Share Section -->
+          <div class="pt-6">
+            <SocialShare 
+              locale={locale}
+              url={`${Astro.site}tour/${tour.slug}`}
+              title={tour.title}
+              description={tour.description}
+              showLabels={true}
+            />
+          </div>
         </div>
       </div>
 
@@ -188,6 +241,33 @@ export async function getStaticPaths() {
                   <span class="text-foreground/80">{point}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Related Tours Section -->
+      {
+        relatedTours.length > 0 && (
+          <div class="mt-20">
+            <h3 class="text-2xl font-bold mb-8 text-center">
+              {t("tours.related", "Похожие туры")}
+            </h3>
+            <TourGrid 
+              tours={relatedTours}
+              locale={locale}
+              gridClass="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            />
+            
+            <!-- Link back to all tours -->
+            <div class="text-center mt-8">
+              <a
+                href="/#tours"
+                class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
+              >
+                {t("tours.view_all", "Посмотреть все туры")}
+                <ChevronRight class="w-4 h-4" />
+              </a>
             </div>
           </div>
         )

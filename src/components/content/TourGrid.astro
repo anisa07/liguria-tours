@@ -1,0 +1,46 @@
+---
+import TourCard from "./TourCard.astro";
+import type { Locale } from "@/types";
+
+export interface Tour {
+  id?: string;
+  slug: string;
+  title: string;
+  images: Array<{ image: { src: string }; alt?: string }>;
+  duration?: string;
+  description: string;
+  categories?: string[];
+}
+
+export interface Props {
+  tours: Tour[];
+  locale?: Locale;
+  gridClass?: string;
+}
+
+const {
+  tours,
+  locale = "ru",
+  gridClass = "grid md:grid-cols-2 lg:grid-cols-3 gap-6",
+} = Astro.props;
+
+// Transform tours to match TourCard interface
+const transformedTours = tours.map((tour) => ({
+  id: tour.id || tour.slug,
+  title: tour.title,
+  image: tour.images[0]?.image?.src || "",
+  duration: tour.duration || "По запросу",
+  href: `/tour/${tour.slug}`,
+  description: tour.description,
+}));
+---
+
+<div class={gridClass}>
+  {
+    transformedTours.map((tour) => (
+      <div class="h-full">
+        <TourCard tour={tour} locale={locale} />
+      </div>
+    ))
+  }
+</div>

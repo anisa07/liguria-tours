@@ -1,0 +1,26 @@
+/* Custom background color utilities */
+.bg-primary-50 {
+  background-color: rgb(var(--primary-light) / 0.2);
+}
+
+.bg-secondary-50 {
+  background-color: rgb(var(--secondary-light) / 0.2);
+}
+
+.bg-accent-50 {
+  background-color: rgb(var(--tertiary-light) / 0.3);
+}
+
+.bg-neutral-50 {
+  background-color: rgb(var(--bg-muted));
+}
+
+/* Border color utilities */
+.border-neutral-200 {
+  border-color: rgb(var(--color-neutral-200));
+}
+
+/* Full height flex support */
+.min-h-screen.flex.items-center > * {
+  width: 100%;
+}

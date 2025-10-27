@@ -1,0 +1,162 @@
+---
+import { Facebook, Linkedin, Copy, MessageCircle, Send } from "@lucide/astro";
+import { getPageTranslations } from "@/i18n/i18n";
+import type { Locale } from "@/i18n/config";
+import "@/styles/components/social-share.css";
+
+export interface Props {
+  locale?: Locale;
+  url: string;
+  title: string;
+  description?: string;
+  className?: string;
+  showLabels?: boolean;
+}
+
+const {
+  locale = "ru",
+  url,
+  title,
+  description = "",
+  className = "",
+  showLabels = false,
+} = Astro.props;
+
+// Get translations
+const { t } = await getPageTranslations(locale, ["common", "social"]);
+
+// Encode URL and text for sharing
+const encodedUrl = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+
+// Social media share URLs
+const shareUrls = {
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+  twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+  linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+  whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+  telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
+};
+
+const copyText = t("social.copy_link", "Копировать ссылку");
+const copiedText = t("social.copied", "Скопировано!");
+---
+
+<div class={`social-share ${className}`}>
+  <div class="flex flex-wrap gap-2">
+    <!-- Facebook -->
+    <a
+      href={shareUrls.facebook}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 px-3 py-2 bg-light hover:bg-primary text-primary hover:text-white rounded-md transition-colors text-sm"
+      aria-label={t("social.share_facebook", "Поделиться в Facebook")}
+    >
+      <Facebook class="w-4 h-4" />
+      {showLabels && <span>Facebook</span>}
+    </a>
+
+    <!-- X (Twitter) -->
+    <a
+      href={shareUrls.twitter}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 px-3 py-2 bg-light hover:bg-primary text-primary hover:text-white rounded-md transition-colors text-sm"
+      aria-label={t("social.share_twitter", "Поделиться в X")}
+    >
+      <Send class="w-4 h-4" />
+      {showLabels && <span>X</span>}
+    </a>
+
+    <!-- LinkedIn -->
+    <a
+      href={shareUrls.linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 px-3 py-2 bg-light hover:bg-primary text-primary hover:text-white rounded-md transition-colors text-sm"
+      aria-label={t("social.share_linkedin", "Поделиться в LinkedIn")}
+    >
+      <Linkedin class="w-4 h-4" />
+      {showLabels && <span>LinkedIn</span>}
+    </a>
+
+    <!-- WhatsApp -->
+    <a
+      href={shareUrls.whatsapp}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 px-3 py-2 bg-light hover:bg-primary text-primary hover:text-white rounded-md transition-colors text-sm"
+      aria-label={t("social.share_whatsapp", "Поделиться в WhatsApp")}
+    >
+      <MessageCircle class="w-4 h-4" />
+      {showLabels && <span>WhatsApp</span>}
+    </a>
+
+    <!-- Copy Link Button -->
+    <button
+      class="inline-flex items-center gap-2 px-3 py-2 bg-light hover:bg-primary text-primary hover:text-white rounded-md transition-colors text-sm"
+      id="copy-link-btn"
+      data-url={url}
+      data-copy-text={copyText}
+      data-copied-text={copiedText}
+      aria-label={copyText}
+    >
+      <Copy class="w-4 h-4" />
+      {showLabels && <span>{copyText}</span>}
+    </button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const copyBtn = document.getElementById("copy-link-btn");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async function () {
+        const url = this.getAttribute("data-url");
+
+        if (!url) return;
+
+        try {
+          await navigator.clipboard.writeText(url);
+
+          // Store original content
+          const originalContent = this.innerHTML;
+
+          // Show success state
+          this.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            ${this.querySelector("span") ? `<span>${this.getAttribute("data-copied-text") || "Copied!"}</span>` : ""}
+          `;
+
+          // Restore original content after 2 seconds
+          setTimeout(() => {
+            this.innerHTML = originalContent;
+          }, 2000);
+        } catch {
+          // Fallback for older browsers
+          const textArea = document.createElement("textarea");
+          textArea.value = url;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+
+          // Show success state for fallback too
+          const originalContent = this.innerHTML;
+          this.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            ${this.querySelector("span") ? `<span>${this.getAttribute("data-copied-text") || "Copied!"}</span>` : ""}
+          `;
+
+          setTimeout(() => {
+            this.innerHTML = originalContent;
+          }, 2000);
+        }
+      });
+    }
+  });
+</script>

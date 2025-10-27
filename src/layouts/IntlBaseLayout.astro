@@ -8,6 +8,7 @@ import { defaultLocale, type Locale } from "@/i18n/config";
 import { getPageTranslations } from "@/i18n/i18n";
 import { Toaster } from "@/components/ui/sonner";
 import { SEO, type SEOProps } from "astro-seo";
+import BusinessSchema from "@/components/content/BusinessSchema.astro";
 
 // Layout components
 import Header from "@/components/layout/Header.astro";
@@ -70,10 +71,14 @@ const site = Astro.site?.origin ?? "https://example.com";
     <!-- Sitemap and robots -->
     <link rel="sitemap" href="/sitemap-index.xml" />
 
+    <!-- Business Schema for SEO -->
+    <BusinessSchema />
+
     <!-- Add SEO component from astro-seo -->
     <SEO
       title={seo?.title || SiteData.default.title}
       description={seo?.description ?? SiteData.default.description}
+      canonical={seo?.canonical}
       openGraph={seo?.openGraph ?? {
         basic: {
           image: SiteData.default.openGraph.image,

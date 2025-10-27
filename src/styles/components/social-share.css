@@ -1,0 +1,3 @@
+.social-share {
+  @apply border border-border rounded-lg p-4 bg-muted/20;
+}
