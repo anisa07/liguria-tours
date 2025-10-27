@@ -3,14 +3,16 @@ import { Image } from "astro:assets";
 import svetlanaPhoto from "@/assets/images/Sveta.avif";
 import { Check } from "@lucide/astro";
 import SkillChips from "@/components/ui/SkillChips.astro";
+import type { TranslationFunction } from "@/i18n/t";
 
 export interface Props {
   title: string;
   description?: string;
   chips?: string[];
+  t: TranslationFunction;
 }
 
-const { title, description = "", chips = [] } = Astro.props;
+const { title, description = "", chips = [], t } = Astro.props;
 
 // Split description into lines for layout
 const descriptionLines = description
@@ -28,7 +30,10 @@ const descriptionLines = description
       <div class="flex-shrink-0 relative">
         <Image
           src={svetlanaPhoto}
-          alt="Светлана Жукова"
+          alt={t(
+            "ui.images.guide_photo",
+            "Светлана Жукова - профессиональный гид по Лигурии"
+          )}
           class="w-36 h-36 rounded-full object-cover shadow-xl ring-4 ring-primary/30"
           width={144}
           height={144}

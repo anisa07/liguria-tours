@@ -1,46 +1,16 @@
 {
-  "name": "Ваше Имя",
-  "email": "Ваш E-mail",
-  "phone": "Телефон",
-  "subject": "Тема",
-  "message": "Сообщение",
   "name_placeholder": "Введите ваше имя",
   "email_placeholder": "example@email.com",
-  "phone_placeholder": "+39 123 456 7890",
-  "subject_placeholder": "Тема сообщения",
-  "message_placeholder": "Напишите ваше сообщение",
+  "phone_placeholder": "123 456 7890",
+  "message": "Сообщение",
+  "message_placeholder": "Расскажите о ваших интересах, предпочтениях и пожеланиях для идеального тура по Лигурии...",
+  "security_check": "Проверка безопасности",
   "captcha_required": "Пожалуйста, подтвердите, что вы не робот",
   "captcha_error": "Ошибка загрузки проверки безопасности",
-  "message_sent": "Сообщение отправлено",
-  "labels": {
-    "name": "Имя",
-    "email": "Email",
-    "phone": "Телефон",
-    "message": "Сообщение"
-  },
-  "placeholders": {
-    "name": "Введите ваше имя",
-    "email": "Введите ваш email",
-    "phone": "123 456 7890",
-    "message": "Напишите ваше сообщение"
-  },
-  "validation": {
-    "name_required": "Имя обязательно",
-    "name_min": "Имя должно содержать минимум 2 символа",
-    "email_required": "Email обязателен",
-    "email_invalid": "Некорректный email",
-    "phone_required": "Телефон обязателен",
-    "phone_invalid": "Некорректный номер телефона",
-    "message_required": "Сообщение обязательно",
-    "message_min": "Сообщение должно содержать минимум 10 символов",
-    "captcha_required": "Пожалуйста, пройдите проверку"
-  },
+  "captcha_note": "Подтвердите, что вы не робот, чтобы отправить сообщение",
+  "privacy_note": "Ваши данные защищены и не будут переданы третьим лицам",
   "buttons": {
-    "submit": "Отправить"
-  },
-  "status": {
-    "success": "Сообщение успешно отправлено!",
-    "error": "Ошибка при отправке сообщения",
-    "loading": "Отправка..."
+    "submit": "Отправить",
+    "sending": "Отправляется..."
   }
 }

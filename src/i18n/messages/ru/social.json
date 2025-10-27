@@ -1,9 +1,8 @@
 {
-  "share": "Поделиться",
   "copy_link": "Копировать ссылку",
+  "copied": "Скопировано!",
   "share_facebook": "Поделиться в Facebook",
   "share_twitter": "Поделиться в X",
   "share_linkedin": "Поделиться в LinkedIn",
-  "share_whatsapp": "Поделиться в WhatsApp",
-  "share_telegram": "Поделиться в Telegram"
+  "share_whatsapp": "Поделиться в WhatsApp"
 }
