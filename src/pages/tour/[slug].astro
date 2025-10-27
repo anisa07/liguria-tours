@@ -3,9 +3,10 @@ import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
 import Section from "@/components/layout/Section.astro";
 import TourSchema from "@/components/content/TourSchema.astro";
+import TourGrid from "@/components/content/TourGrid.astro";
 import SocialShare from "@/components/interactive/SocialShare.astro";
 import { getPageTranslations } from "@/i18n/i18n";
-import type { Locale } from "@/i18n/config";
+import type { Locale } from "@/types";
 import { getCollection } from "astro:content";
 import { Check, ChevronRight } from "@lucide/astro";
 
@@ -252,39 +253,11 @@ export async function getStaticPaths() {
             <h3 class="text-2xl font-bold mb-8 text-center">
               {t("tours.related", "Похожие туры")}
             </h3>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {relatedTours.map((relatedTour) => (
-                <a
-                  href={`/tour/${relatedTour.slug}`}
-                  class="group bg-background border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/50 flex flex-col h-full"
-                >
-                  <div class="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={relatedTour.images[0]?.image?.src}
-                      alt={relatedTour.title}
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <div class="p-4 flex flex-col flex-grow">
-                    <h4 class="font-semibold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2 min-h-[3rem] leading-6">
-                      {relatedTour.title}
-                    </h4>
-                    <p class="text-sm text-muted-foreground line-clamp-2 mb-3 flex-grow min-h-[2.5rem] leading-5">
-                      {relatedTour.description}
-                    </p>
-                    <div class="mt-auto">
-                      {relatedTour.duration ? (
-                        <div class="flex items-center gap-2 text-xs text-primary truncate">
-                          <span class="truncate">{t("tours.duration", "Продолжительность")}: {relatedTour.duration}</span>
-                        </div>
-                      ) : (
-                        <div class="h-4"></div>
-                      )}
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+            <TourGrid 
+              tours={relatedTours}
+              locale={locale}
+              gridClass="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            />
             
             <!-- Link back to all tours -->
             <div class="text-center mt-8">
