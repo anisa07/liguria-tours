@@ -1,4 +1,6 @@
 ---
+import type { TranslationFunction } from "@/i18n/t";
+
 export interface CTAAction {
   label: string;
   href: string;
@@ -23,6 +25,7 @@ export interface Props {
   overlayOpacity?: number;
   size?: "sm" | "md" | "lg";
   class?: string;
+  t?: TranslationFunction;
 }
 
 const {
@@ -36,6 +39,7 @@ const {
   overlayOpacity = 0.8,
   size = "md",
   class: className = "",
+  t,
 } = Astro.props;
 
 const getBackgroundClasses = (bgType: string) => {
@@ -66,7 +70,7 @@ const getSizeClasses = (size: string) => {
 
 const getActionButtonClasses = (
   actionVariant: string = "primary",
-  isOnPrimary: boolean = false,
+  isOnPrimary: boolean = false
 ) => {
   const baseClasses =
     "inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
@@ -115,7 +119,12 @@ const isOnPrimaryBg =
       <div class="absolute inset-0 z-0">
         <img
           src={backgroundImage}
-          alt=""
+          alt={
+            t?.(
+              "ui.images.background_decoration",
+              "Декоративное фоновое изображение"
+            ) || ""
+          }
           class="w-full h-full object-cover"
           loading="lazy"
         />
@@ -259,7 +268,7 @@ const isOnPrimaryBg =
                   href={action.href}
                   class={getActionButtonClasses(
                     action.variant,
-                    !!isOnPrimaryBg,
+                    !!isOnPrimaryBg
                   )}
                   target={action.external ? "_blank" : undefined}
                   rel={action.external ? "noopener noreferrer" : undefined}

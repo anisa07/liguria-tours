@@ -1,6 +1,7 @@
 ---
 import Container from "@/components/layout/Container.astro";
 import type { Locale } from "@/i18n/config";
+import { getPageTranslations } from "@/i18n/i18n";
 import { getCollection } from "astro:content";
 import { X, ChevronLeft, ChevronRight } from "@lucide/astro";
 
@@ -9,6 +10,9 @@ export interface Props {
 }
 
 const { locale } = Astro.props;
+
+// Get the translation function
+const { t } = await getPageTranslations(locale, ["ui"]);
 
 // Load boat tours from content collection for images
 const boatToursCollection = await getCollection("boatTourCollection");
@@ -141,7 +145,10 @@ const allImages = allBoatTours.flatMap((tour: any) =>
             <img
               id="lightbox-image"
               src=""
-              alt=""
+              alt={t(
+                "ui.images.history_gallery",
+                "Историческая фотография Лигурии"
+              )}
               class="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-2xl"
             />
           </div>

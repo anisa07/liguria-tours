@@ -386,9 +386,6 @@ const ContactForm = ({
           name="message"
           render={({ field }) => (
             <FormItem className="space-y-2">
-              <FormLabel className="text-sm font-medium text-foreground/80">
-                {t("forms.message", "Сообщение")} <span className="text-red-500">*</span>
-              </FormLabel>
               <FormControl>
                 <div className="relative group">
                   <Textarea
@@ -464,12 +461,12 @@ const ContactForm = ({
               {status === "loading" ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  {t("buttons.sending", "Отправляется...")}
+                  {t("forms.buttons.sending", "Отправляется...")}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  {t("buttons.submit", "Отправить сообщение")}
+                  {t("forms.buttons.submit", "Отправить сообщение")}
                 </div>
               )}
             </Button>

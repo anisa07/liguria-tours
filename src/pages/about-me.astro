@@ -203,13 +203,13 @@ const { guide, story, personalTouch } = cmsData;
           id="story-tab"
           class="tab-button active px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          {t("about.tabs.story", "Моя история")}
+          {t("ui.about.tabs.story", "Моя история")}
         </button>
         <button
           id="form-tab"
           class="tab-button px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          {t("about.tabs.contact", "Напишите мне")}
+          {t("ui.about.tabs.contact", "Напишите мне")}
         </button>
       </div>
 
@@ -259,7 +259,7 @@ const { guide, story, personalTouch } = cmsData;
             </blockquote>
             <cite
               class="block mt-6 text-lg text-foreground/70 not-italic font-semibold"
-              >{t("about.quote.attribution", "— Светлана Жукова")}
+              >{t("ui.about.quote.attribution", "— Светлана Жукова")}
             </cite>
           </div>
         </div>
@@ -359,6 +359,7 @@ const { guide, story, personalTouch } = cmsData;
     variant="centered"
     backgroundColor="primary"
     size="sm"
+    t={t}
   />
 </IntlBaseLayout>
 
