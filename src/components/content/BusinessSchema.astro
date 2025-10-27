@@ -32,7 +32,6 @@ const {
     latitude: 44.4056,
     longitude: 8.9463,
   },
-  openingHours = ["Mo-Su 09:00-20:00"],
   sameAs = [],
   aggregateRating,
   priceRange = "€€-€€€",
@@ -64,6 +63,13 @@ const businessSchema = {
     latitude: geo.latitude,
     longitude: geo.longitude,
   },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Генуя",
+    addressRegion: "Лигурия",
+    addressCountry: "IT",
+    postalCode: "16100",
+  },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: [
@@ -79,6 +85,7 @@ const businessSchema = {
     closes: "20:00",
   },
   priceRange: priceRange,
+  knowsLanguage: ["ru", "en", "it"],
   ...(sameAs.length > 0 && { sameAs: sameAs }),
   ...(aggregateRating && {
     aggregateRating: {
@@ -165,15 +172,6 @@ const businessSchema = {
       priceCurrency: "EUR",
     },
   ],
-  areaServed: {
-    "@type": "State",
-    name: "Лигурия",
-    containedInPlace: {
-      "@type": "Country",
-      name: "Италия",
-    },
-  },
-  knowsLanguage: ["ru", "it", "en"],
   serviceType: "Туристические услуги",
 };
 ---

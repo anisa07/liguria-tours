@@ -78,6 +78,7 @@ const site = Astro.site?.origin ?? "https://example.com";
     <SEO
       title={seo?.title || SiteData.default.title}
       description={seo?.description ?? SiteData.default.description}
+      canonical={seo?.canonical}
       openGraph={seo?.openGraph ?? {
         basic: {
           image: SiteData.default.openGraph.image,

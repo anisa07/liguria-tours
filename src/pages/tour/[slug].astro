@@ -3,6 +3,7 @@ import IntlBaseLayout from "@/layouts/IntlBaseLayout.astro";
 import Container from "@/components/layout/Container.astro";
 import Section from "@/components/layout/Section.astro";
 import TourSchema from "@/components/content/TourSchema.astro";
+import SocialShare from "@/components/interactive/SocialShare.astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
 import { getCollection } from "astro:content";
@@ -175,6 +176,17 @@ export async function getStaticPaths() {
             >
               {t("tours.book_now", "Забронировать")}
             </a>
+          </div>
+
+          <!-- Social Share Section -->
+          <div class="pt-6">
+            <SocialShare 
+              locale={locale}
+              url={`${Astro.site}tour/${tour.slug}`}
+              title={tour.title}
+              description={tour.description}
+              showLabels={true}
+            />
           </div>
         </div>
       </div>
