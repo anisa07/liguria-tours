@@ -275,7 +275,7 @@ export async function getStaticPaths() {
                     <div class="mt-auto">
                       {relatedTour.duration ? (
                         <div class="flex items-center gap-2 text-xs text-primary truncate">
-                          <span class="truncate">Продолжительность: {relatedTour.duration}</span>
+                          <span class="truncate">{t("tours.duration", "Продолжительность")}: {relatedTour.duration}</span>
                         </div>
                       ) : (
                         <div class="h-4"></div>

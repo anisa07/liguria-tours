@@ -2,6 +2,7 @@
 import { Facebook, Linkedin, Copy, MessageCircle, Send } from "@lucide/astro";
 import { getPageTranslations } from "@/i18n/i18n";
 import type { Locale } from "@/i18n/config";
+import "@/styles/components/social-share.css";
 
 export interface Props {
   locale?: Locale;
@@ -38,6 +39,7 @@ const shareUrls = {
 };
 
 const copyText = t("social.copy_link", "Копировать ссылку");
+const copiedText = t("social.copied", "Скопировано!");
 ---
 
 <div class={`social-share ${className}`}>
@@ -96,6 +98,7 @@ const copyText = t("social.copy_link", "Копировать ссылку");
       id="copy-link-btn"
       data-url={url}
       data-copy-text={copyText}
+      data-copied-text={copiedText}
       aria-label={copyText}
     >
       <Copy class="w-4 h-4" />
@@ -103,12 +106,6 @@ const copyText = t("social.copy_link", "Копировать ссылку");
     </button>
   </div>
 </div>
-
-<style>
-  .social-share {
-    @apply border border-border rounded-lg p-4 bg-muted/20;
-  }
-</style>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -130,7 +127,7 @@ const copyText = t("social.copy_link", "Копировать ссылку");
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            ${this.querySelector("span") ? "<span>Скопировано!</span>" : ""}
+            ${this.querySelector("span") ? `<span>${this.getAttribute("data-copied-text") || "Copied!"}</span>` : ""}
           `;
 
           // Restore original content after 2 seconds
@@ -152,7 +149,7 @@ const copyText = t("social.copy_link", "Копировать ссылку");
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            ${this.querySelector("span") ? "<span>Скопировано!</span>" : ""}
+            ${this.querySelector("span") ? `<span>${this.getAttribute("data-copied-text") || "Copied!"}</span>` : ""}
           `;
 
           setTimeout(() => {

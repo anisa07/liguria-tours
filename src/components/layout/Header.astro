@@ -4,6 +4,7 @@ import NavBar from "./NavBar.astro";
 import type { Locale } from "@/i18n/config";
 import { getPageTranslations } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
+import { Map } from "@lucide/astro";
 
 // Import types from NavBar to avoid duplication
 import type { NavItem } from "./NavBar.astro";
@@ -96,7 +97,7 @@ const headerClasses = [
         >
           <img
             src="/images/flag_map_of_liguria.svg"
-            alt="Карта Лигурии"
+            alt={t("common.liguria_map", "Карта Лигурии")}
             class="h-12 w-auto mt-2.5 opacity-60"
           />
           <span

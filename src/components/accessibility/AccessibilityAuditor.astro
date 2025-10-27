@@ -133,6 +133,10 @@ const {
     margin-bottom: 4px;
   }
 
+  .violation-title.success {
+    color: #059669;
+  }
+
   .violation-description {
     color: #6b7280;
     margin-bottom: 8px;
@@ -249,7 +253,7 @@ const {
         if (allIssues.length === 0) {
           const noIssues = document.createElement('div');
           noIssues.className = 'violation-item';
-          noIssues.innerHTML = '<div class="violation-title" style="color: #059669;">✓ No accessibility issues found</div>';
+          noIssues.innerHTML = '<div class="violation-title success">✓ No accessibility issues found</div>';
           violationsList.appendChild(noIssues);
           return;
         }
