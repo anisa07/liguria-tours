@@ -2,7 +2,7 @@
 import Container from "@/components/layout/Container.astro";
 import type { Locale } from "@/i18n/config";
 import { getPageTranslations } from "@/i18n/i18n";
-import { ChevronLeft, ChevronRight, Star } from "@lucide/astro";
+import { ChevronLeft, ChevronRight, Star, X } from "@lucide/astro";
 import reviewsData from "@/content/liguria-reviews.json";
 
 export interface Props {
@@ -63,8 +63,11 @@ const reviews = reviewsData || [];
         >
           {reviews.map((review, index) => (
             <div
-              class="review-card flex-shrink-0 w-full md:w-1/2 lg:w-1/3 p-6 bg-background/80 backdrop-blur-sm border border-primary/10 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              class="review-card flex-shrink-0 w-full md:w-1/2 lg:w-1/3 p-6 bg-background/80 backdrop-blur-sm border border-primary/10 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
               data-index={index}
+              data-review-text={review.text}
+              data-review-name={review.name}
+              data-review-rating={review.rating}
             >
               <!-- Rating Stars -->
               <div class="flex gap-1 mb-4">
@@ -89,6 +92,7 @@ const reviews = reviewsData || [];
                 <span class="font-semibold text-foreground text-lg">
                   {review.name}
                 </span>
+                <span class="text-xs text-foreground/50">Нажмите для полного текста</span>
               </div>
             </div>
           ))}
@@ -117,6 +121,45 @@ const reviews = reviewsData || [];
       ))}
     </div>
   </Container>
+
+  <!-- Review Modal -->
+  <div
+    id="review-modal"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4"
+  >
+    <div
+      class="review-modal-content bg-background rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-6 border-b border-primary/10">
+        <div class="flex items-center gap-4">
+          <div id="modal-rating" class="flex gap-1">
+          </div>
+          <h3
+            id="modal-name"
+            class="text-2xl font-bold text-foreground"
+          >
+          </h3>
+        </div>
+        <button
+          id="close-modal"
+          class="w-10 h-10 bg-primary/10 hover:bg-primary/20 rounded-full flex items-center justify-center text-primary transition-all"
+          aria-label="Close modal"
+        >
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
+        <p
+          id="modal-text"
+          class="text-foreground/90 leading-relaxed text-base md:text-lg whitespace-pre-wrap"
+        >
+        </p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -142,7 +185,9 @@ const reviews = reviewsData || [];
     let totalSets = Math.ceil(totalReviews / reviewsPerView);
 
     function updateCarousel() {
-      const cardWidth = reviewCards[0]?.offsetWidth || 0;
+      if (!track) return;
+      const firstCard = reviewCards[0] as HTMLElement;
+      const cardWidth = firstCard?.offsetWidth || 0;
       const gap = 24; // gap-6 = 1.5rem = 24px
       // Calculate translateX: move by currentIndex cards
       const translateX = -(currentIndex * (cardWidth + gap));
@@ -253,6 +298,87 @@ const reviews = reviewsData || [];
         goToNext();
       }
     });
+
+    // Review Modal functionality
+    const modal = document.getElementById("review-modal");
+    const modalText = document.getElementById("modal-text");
+    const modalName = document.getElementById("modal-name");
+    const modalRating = document.getElementById("modal-rating");
+    const closeModalBtn = document.getElementById("close-modal");
+
+    if (!modal || !modalText || !modalName || !modalRating || !closeModalBtn) return;
+
+    function openModal(reviewCard: HTMLElement) {
+      if (!modal || !modalText || !modalName || !modalRating) return;
+      
+      const text = reviewCard.getAttribute("data-review-text");
+      const name = reviewCard.getAttribute("data-review-name");
+      const rating = parseInt(reviewCard.getAttribute("data-review-rating") || "5");
+
+      if (!text || !name) return;
+
+      // Set modal content
+      modalText.textContent = `"${text}"`;
+      modalName.textContent = name;
+
+      // Set rating stars
+      modalRating.innerHTML = "";
+      for (let i = 0; i < 5; i++) {
+        const star = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        star.setAttribute("viewBox", "0 0 24 24");
+        star.setAttribute("fill", i < rating ? "currentColor" : "none");
+        star.setAttribute("class", `w-6 h-6 ${
+          i < rating
+            ? "text-primary fill-primary"
+            : "text-primary/20"
+        }`);
+        star.setAttribute("stroke", "currentColor");
+        star.setAttribute("stroke-width", "1.5");
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute(
+          "d",
+          "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+        );
+        star.appendChild(path);
+        modalRating.appendChild(star);
+      }
+
+      // Show modal
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    // Add click handlers to review cards
+    reviewCards.forEach((card) => {
+      card.addEventListener("click", (e) => {
+        // Don't open modal if clicking on navigation buttons
+        if ((e.target as HTMLElement).closest("button")) return;
+        openModal(card as HTMLElement);
+      });
+    });
+
+    // Close modal handlers
+    closeModalBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeModal();
+      }
+    });
   });
 </script>
 
@@ -295,6 +421,54 @@ const reviews = reviewsData || [];
   /* Smooth scrolling */
   #reviews-track {
     will-change: transform;
+  }
+
+  /* Review Modal Styles */
+  #review-modal {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .review-modal-content {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Custom scrollbar for modal */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(var(--primary), 0.1);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(var(--primary), 0.4);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--primary), 0.6);
   }
 </style>
 
