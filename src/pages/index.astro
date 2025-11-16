@@ -6,6 +6,7 @@ import { getEntry } from "astro:content";
 import Hero from "@/components/content/Hero.astro";
 import ItalianToursGallery from "@/components/content/ItalianToursGallery.astro";
 import LiguriaHistory from "@/components/content/LiguriaHistory.astro";
+import Reviews from "@/components/content/Reviews.astro";
 import { getCollection } from "astro:content";
 
 // Set locale to Russian
@@ -69,4 +70,7 @@ const italianToursGalleryData = toursEntry && toursEntry[0]?.data;
 
   <!-- Liguria History Gallery -->
   <LiguriaHistory locale={locale} />
+
+  <!-- Reviews Section -->
+  <Reviews locale={locale} />
 </IntlBaseLayout>
